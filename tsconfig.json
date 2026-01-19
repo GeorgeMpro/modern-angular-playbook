@@ -28,6 +28,36 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/directives/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/directives/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/animation/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/animation/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/error-handling/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/error-handling/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/centralized-error-handling/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/centralized-error-handling/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/signals/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/signals/tsconfig.spec.json"
     }
   ]
 }
