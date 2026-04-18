@@ -409,6 +409,74 @@
           "builder": "@angular/build:unit-test"
         }
       }
+    },
+    "challenge-07-auth-interceptors-guards": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/challenge-07-auth-interceptors-guards",
+      "sourceRoot": "projects/challenge-07-auth-interceptors-guards/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/challenge-07-auth-interceptors-guards/src/main.ts",
+            "tsConfig": "projects/challenge-07-auth-interceptors-guards/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/challenge-07-auth-interceptors-guards/public"
+              }
+            ],
+            "styles": [
+              "projects/challenge-07-auth-interceptors-guards/src/styles.scss"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "challenge-07-auth-interceptors-guards:build:production"
+            },
+            "development": {
+              "buildTarget": "challenge-07-auth-interceptors-guards:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
     }
   }
 }

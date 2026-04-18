@@ -26,6 +26,7 @@ Build a **complete authentication system** with these features:
 ### 1. HTTP Interceptors
 
 **Auth Token Interceptor:**
+
 - Automatically attach JWT token to all requests
 - Skip token for public endpoints (/login, /register)
 - Handle token expiration
@@ -34,12 +35,14 @@ Build a **complete authentication system** with these features:
 - Logout on 401/403 errors
 
 **Error Handling Interceptor:**
+
 - Global error handling
 - Retry failed requests (network errors)
 - Show user-friendly error messages
 - Log errors to analytics
 
 **Loading Interceptor:**
+
 - Show global loading spinner
 - Track concurrent requests
 - Hide spinner when all done
@@ -49,25 +52,162 @@ Build a **complete authentication system** with these features:
 ### 2. Route Guards
 
 **AuthGuard (CanActivate):**
+
 - Redirect to /login if not authenticated
 - Check token validity
 - Allow access if logged in
 
 **RoleGuard (CanActivate):**
+
 - Check user roles/permissions
 - Allow admin routes only for admins
 - Redirect to /forbidden if not authorized
 
 **UnsavedChangesGuard (CanDeactivate):**
+
 - Warn user about unsaved form changes
 - Show confirmation dialog
 - Allow navigation if user confirms
 
 **FeatureFlagGuard (CanMatch):**
+
 - Lazy load routes based on feature flags
 - Show/hide entire route branches
 - A/B testing support
 
+---
+
+## ✅ Acceptance Criteria
+
+### HTTP Interceptors
+
+- [ ] Auth token automatically attached to requests
+- [ ] Public endpoints skip token
+- [ ] Token refresh on 401
+- [ ] Requests queued during refresh
+- [ ] Logout on refresh failure
+- [ ] Network errors retry 3 times
+- [ ] User-friendly error messages
+- [ ] Loading spinner for requests
+
+### Route Guards
+
+- [ ] AuthGuard redirects to login if not authenticated
+- [ ] RoleGuard checks user roles
+- [ ] UnsavedChangesGuard warns about unsaved data
+- [ ] FeatureFlagGuard shows/hides routes
+- [ ] Return URL preserved after login
+- [ ] Forbidden page for unauthorized access
+
+### Auth State
+
+- [ ] User state managed with signals
+- [ ] Token stored in localStorage
+- [ ] Token expiration checked
+- [ ] Auto-refresh before expiration
+- [ ] Logout clears all state
+- [ ] Role-based UI rendering
+
+---
+
+## 🧪 Testing Strategy
+
+**Test Auth Service:**
+
+```typescript
+describe('AuthService', () => {
+  it('should login and store token', () => {
+    service.login('test@test.com', 'password').subscribe(response => {
+      expect(localStorage.getItem('access_token')).toBeTruthy();
+      expect(service.isAuthenticated()).toBe(true);
+    });
+  });
+
+  it('should logout and clear tokens', () => {
+    service.logout();
+    expect(localStorage.getItem('access_token')).toBeNull();
+    expect(service.isAuthenticated()).toBe(false);
+  });
+
+  it('should refresh token', () => {
+    service.refreshToken().subscribe(() => {
+      const newToken = service.getToken();
+      expect(newToken).toBeTruthy();
+    });
+  });
+});
+```
+
+**Test Auth Interceptor:**
+
+```typescript
+describe('Auth Interceptor', () => {
+  it('should add auth token to requests', () => {
+    const req = new HttpRequest('GET', '/api/protected');
+    // Execute interceptor
+    // Check Authorization header exists
+  });
+
+  it('should skip token for public endpoints', () => {
+    const req = new HttpRequest('POST', '/api/auth/login');
+    // Execute interceptor
+    // Check no Authorization header
+  });
+});
+```
+
+**Test Guards:**
+
+```typescript
+describe('AuthGuard', () => {
+  it('should allow access if authenticated', () => {
+    spyOn(authService, 'isAuthenticated').and.returnValue(true);
+    expect(guard(route, state)).toBe(true);
+  });
+
+  it('should redirect to login if not authenticated', () => {
+    spyOn(authService, 'isAuthenticated').and.returnValue(false);
+    guard(route, state);
+    expect(router.navigate).toHaveBeenCalledWith(['/login']);
+  });
+});
+```
+
+---
+
+## 📚 Resources
+
+**HTTP Interceptors:**
+
+- [Angular HTTP Interceptors Guide](https://angular.dev/guide/http/interceptors)
+- [Functional Interceptors](https://angular.dev/guide/http/making-requests#intercepting-requests-and-responses)
+
+**Route Guards:**
+
+- [Angular Route Guards](https://angular.dev/guide/routing/common-router-tasks#preventing-unauthorized-access)
+- [CanActivate, CanDeactivate, CanMatch](https://angular.dev/api/router)
+
+**JWT Tokens:**
+
+- [JWT.io](https://jwt.io/)
+- [JWT Best Practices](https://auth0.com/blog/a-look-at-the-latest-draft-for-jwt-bcp/)
+
+---
+
+## 💡 Production Tips
+
+1. **Never store sensitive data in localStorage** - use httpOnly cookies for refresh tokens
+2. **Implement CSRF protection** for write operations
+3. **Use secure, httpOnly cookies** for production
+4. **Refresh token before expiration** (not after)
+5. **Implement token rotation** (new refresh token on each use)
+6. **Add request/response logging** for debugging
+7. **Implement rate limiting** on login endpoint
+8. **Use Content Security Policy (CSP)** headers
+
+---
+
+**This is production-ready auth. Everything you need for real applications!**
 ---
 
 ## 🏗️ Implementation Guide
@@ -76,11 +216,11 @@ Build a **complete authentication system** with these features:
 
 ```typescript
 // services/auth.service.ts
-import { Injectable, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import {Injectable, signal, computed} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Router} from '@angular/router';
+import {Observable, BehaviorSubject, throwError} from 'rxjs';
+import {tap, catchError} from 'rxjs/operators';
 
 interface User {
   id: string;
@@ -96,7 +236,7 @@ interface AuthResponse {
   user: User;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class AuthService {
   private readonly TOKEN_KEY = 'access_token';
   private readonly REFRESH_KEY = 'refresh_token';
@@ -119,7 +259,7 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>('/api/auth/login', { email, password })
+    return this.http.post<AuthResponse>('/api/auth/login', {email, password})
       .pipe(
         tap(response => this.handleAuthResponse(response)),
         catchError(err => {
@@ -155,13 +295,13 @@ export class AuthService {
       return this.refreshTokenSubject.asObservable().pipe(
         filter(token => token !== null),
         take(1),
-        switchMap(() => of({ access_token: localStorage.getItem(this.TOKEN_KEY)! }))
+        switchMap(() => of({access_token: localStorage.getItem(this.TOKEN_KEY)!}))
       ) as Observable<AuthResponse>;
     }
 
     this.refreshTokenInProgress = true;
 
-    return this.http.post<AuthResponse>('/api/auth/refresh', { refresh_token: refreshToken })
+    return this.http.post<AuthResponse>('/api/auth/refresh', {refresh_token: refreshToken})
       .pipe(
         tap(response => {
           this.handleAuthResponse(response);
@@ -227,11 +367,11 @@ export class AuthService {
 
 ```typescript
 // interceptors/auth.interceptor.ts
-import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
-import { catchError, switchMap } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import {HttpInterceptorFn} from '@angular/common/http';
+import {inject} from '@angular/core';
+import {AuthService} from '../services/auth.service';
+import {catchError, switchMap} from 'rxjs/operators';
+import {throwError} from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -301,10 +441,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
 ```typescript
 // interceptors/error.interceptor.ts
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { catchError, retry, timer } from 'rxjs';
-import { throwError } from 'rxjs';
+import {HttpInterceptorFn, HttpErrorResponse} from '@angular/common/http';
+import {inject} from '@angular/core';
+import {catchError, retry, timer} from 'rxjs';
+import {throwError} from 'rxjs';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
@@ -370,10 +510,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
 ```typescript
 // interceptors/loading.interceptor.ts
-import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { finalize } from 'rxjs/operators';
-import { LoadingService } from '../services/loading.service';
+import {HttpInterceptorFn} from '@angular/common/http';
+import {inject} from '@angular/core';
+import {finalize} from 'rxjs/operators';
+import {LoadingService} from '../services/loading.service';
 
 export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   const loadingService = inject(LoadingService);
@@ -391,7 +531,7 @@ export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
 };
 
 // services/loading.service.ts
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class LoadingService {
   private loadingCount = signal(0);
   isLoading = computed(() => this.loadingCount() > 0);
@@ -412,9 +552,9 @@ export class LoadingService {
 
 ```typescript
 // guards/auth.guard.ts
-import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import {inject} from '@angular/core';
+import {Router, CanActivateFn} from '@angular/router';
+import {AuthService} from '../services/auth.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -426,15 +566,16 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   // Store attempted URL for redirect after login
   const returnUrl = state.url;
-  router.navigate(['/login'], { queryParams: { returnUrl } });
+  router.navigate(['/login'], {queryParams: {returnUrl}});
   return false;
 };
 ```
 
 **Usage in routes:**
+
 ```typescript
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
+  {path: 'login', component: LoginComponent},
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -454,9 +595,9 @@ const routes: Routes = [
 
 ```typescript
 // guards/role.guard.ts
-import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import {inject} from '@angular/core';
+import {Router, CanActivateFn} from '@angular/router';
+import {AuthService} from '../services/auth.service';
 
 export const roleGuard = (requiredRoles: string[]): CanActivateFn => {
   return (route, state) => {
@@ -484,6 +625,7 @@ export const roleGuard = (requiredRoles: string[]): CanActivateFn => {
 ```
 
 **Usage:**
+
 ```typescript
 const routes: Routes = [
   {
@@ -505,7 +647,7 @@ const routes: Routes = [
 
 ```typescript
 // guards/unsaved-changes.guard.ts
-import { CanDeactivateFn } from '@angular/router';
+import {CanDeactivateFn} from '@angular/router';
 
 export interface CanComponentDeactivate {
   canDeactivate: () => boolean | Promise<boolean>;
@@ -552,6 +694,7 @@ export class EditProfileComponent implements CanComponentDeactivate {
 ```
 
 **Usage:**
+
 ```typescript
 const routes: Routes = [
   {
@@ -568,9 +711,9 @@ const routes: Routes = [
 
 ```typescript
 // guards/feature-flag.guard.ts
-import { inject } from '@angular/core';
-import { CanMatchFn } from '@angular/router';
-import { FeatureFlagService } from '../services/feature-flag.service';
+import {inject} from '@angular/core';
+import {CanMatchFn} from '@angular/router';
+import {FeatureFlagService} from '../services/feature-flag.service';
 
 export const featureFlagGuard = (flagName: string): CanMatchFn => {
   return () => {
@@ -580,7 +723,7 @@ export const featureFlagGuard = (flagName: string): CanMatchFn => {
 };
 
 // services/feature-flag.service.ts
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class FeatureFlagService {
   private flags = signal({
     newDashboard: true,
@@ -593,16 +736,17 @@ export class FeatureFlagService {
   }
 
   enable(flagName: string): void {
-    this.flags.update(current => ({ ...current, [flagName]: true }));
+    this.flags.update(current => ({...current, [flagName]: true}));
   }
 
   disable(flagName: string): void {
-    this.flags.update(current => ({ ...current, [flagName]: false }));
+    this.flags.update(current => ({...current, [flagName]: false}));
   }
 }
 ```
 
 **Usage:**
+
 ```typescript
 const routes: Routes = [
   {
@@ -623,13 +767,13 @@ const routes: Routes = [
 
 ```typescript
 // app.config.ts
-import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authInterceptor } from './interceptors/auth.interceptor';
-import { errorInterceptor } from './interceptors/error.interceptor';
-import { loadingInterceptor } from './interceptors/loading.interceptor';
-import { routes } from './app.routes';
+import {ApplicationConfig} from '@angular/core';
+import {provideRouter} from '@angular/router';
+import {provideHttpClient, withInterceptors} from '@angular/common/http';
+import {authInterceptor} from './interceptors/auth.interceptor';
+import {errorInterceptor} from './interceptors/error.interceptor';
+import {loadingInterceptor} from './interceptors/loading.interceptor';
+import {routes} from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -647,125 +791,4 @@ export const appConfig: ApplicationConfig = {
 
 ---
 
-## ✅ Acceptance Criteria
 
-### HTTP Interceptors
-- [ ] Auth token automatically attached to requests
-- [ ] Public endpoints skip token
-- [ ] Token refresh on 401
-- [ ] Requests queued during refresh
-- [ ] Logout on refresh failure
-- [ ] Network errors retry 3 times
-- [ ] User-friendly error messages
-- [ ] Loading spinner for requests
-
-### Route Guards
-- [ ] AuthGuard redirects to login if not authenticated
-- [ ] RoleGuard checks user roles
-- [ ] UnsavedChangesGuard warns about unsaved data
-- [ ] FeatureFlagGuard shows/hides routes
-- [ ] Return URL preserved after login
-- [ ] Forbidden page for unauthorized access
-
-### Auth State
-- [ ] User state managed with signals
-- [ ] Token stored in localStorage
-- [ ] Token expiration checked
-- [ ] Auto-refresh before expiration
-- [ ] Logout clears all state
-- [ ] Role-based UI rendering
-
----
-
-## 🧪 Testing Strategy
-
-**Test Auth Service:**
-```typescript
-describe('AuthService', () => {
-  it('should login and store token', () => {
-    service.login('test@test.com', 'password').subscribe(response => {
-      expect(localStorage.getItem('access_token')).toBeTruthy();
-      expect(service.isAuthenticated()).toBe(true);
-    });
-  });
-
-  it('should logout and clear tokens', () => {
-    service.logout();
-    expect(localStorage.getItem('access_token')).toBeNull();
-    expect(service.isAuthenticated()).toBe(false);
-  });
-
-  it('should refresh token', () => {
-    service.refreshToken().subscribe(() => {
-      const newToken = service.getToken();
-      expect(newToken).toBeTruthy();
-    });
-  });
-});
-```
-
-**Test Auth Interceptor:**
-```typescript
-describe('Auth Interceptor', () => {
-  it('should add auth token to requests', () => {
-    const req = new HttpRequest('GET', '/api/protected');
-    // Execute interceptor
-    // Check Authorization header exists
-  });
-
-  it('should skip token for public endpoints', () => {
-    const req = new HttpRequest('POST', '/api/auth/login');
-    // Execute interceptor
-    // Check no Authorization header
-  });
-});
-```
-
-**Test Guards:**
-```typescript
-describe('AuthGuard', () => {
-  it('should allow access if authenticated', () => {
-    spyOn(authService, 'isAuthenticated').and.returnValue(true);
-    expect(guard(route, state)).toBe(true);
-  });
-
-  it('should redirect to login if not authenticated', () => {
-    spyOn(authService, 'isAuthenticated').and.returnValue(false);
-    guard(route, state);
-    expect(router.navigate).toHaveBeenCalledWith(['/login']);
-  });
-});
-```
-
----
-
-## 📚 Resources
-
-**HTTP Interceptors:**
-- [Angular HTTP Interceptors Guide](https://angular.dev/guide/http/interceptors)
-- [Functional Interceptors](https://angular.dev/guide/http/making-requests#intercepting-requests-and-responses)
-
-**Route Guards:**
-- [Angular Route Guards](https://angular.dev/guide/routing/common-router-tasks#preventing-unauthorized-access)
-- [CanActivate, CanDeactivate, CanMatch](https://angular.dev/api/router)
-
-**JWT Tokens:**
-- [JWT.io](https://jwt.io/)
-- [JWT Best Practices](https://auth0.com/blog/a-look-at-the-latest-draft-for-jwt-bcp/)
-
----
-
-## 💡 Production Tips
-
-1. **Never store sensitive data in localStorage** - use httpOnly cookies for refresh tokens
-2. **Implement CSRF protection** for write operations
-3. **Use secure, httpOnly cookies** for production
-4. **Refresh token before expiration** (not after)
-5. **Implement token rotation** (new refresh token on each use)
-6. **Add request/response logging** for debugging
-7. **Implement rate limiting** on login endpoint
-8. **Use Content Security Policy (CSP)** headers
-
----
-
-**This is production-ready auth. Everything you need for real applications!**

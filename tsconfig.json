@@ -58,6 +58,12 @@
     },
     {
       "path": "./projects/signals/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/challenge-07-auth-interceptors-guards/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/challenge-07-auth-interceptors-guards/tsconfig.spec.json"
     }
   ]
 }

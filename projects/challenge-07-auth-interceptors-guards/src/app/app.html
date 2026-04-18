@@ -1,0 +1,88 @@
+<style>
+  .links {
+  }
+</style>
+<section class="links">
+  <a [routerLink]="''">Home</a>
+  <a [routerLink]="'/register'">Register</a>
+  <a [routerLink]="'/login'">Login</a>
+  <a [routerLink]="'/admin'">Admin</a>
+  <a [routerLink]="'/dashboard'">Dashboard</a>
+</section>
+<router-outlet></router-outlet>
+
+<!--TODO
+1- public endpoints -login - register
+2- admin routes-->
+<!-- 1. HTTP Interceptors
+Auth Token Interceptor:
+
+Automatically attach JWT token to all requests
+Skip token for public endpoints (/login, /register)
+Handle token expiration
+Refresh expired tokens automatically
+Queue requests during refresh
+Logout on 401/403 errors
+Error Handling Interceptor:
+
+Global error handling
+Retry failed requests (network errors)
+Show user-friendly error messages
+Log errors to analytics
+Loading Interceptor:
+
+Show global loading spinner
+Track concurrent requests
+Hide spinner when all done--->
+
+<!--
+. Route Guards
+AuthGuard (CanActivate):
+
+Redirect to /login if not authenticated
+Check token validity
+Allow access if logged in
+RoleGuard (CanActivate):
+
+Check user roles/permissions
+Allow admin routes only for admins
+Redirect to /forbidden if not authorized
+UnsavedChangesGuard (CanDeactivate):
+
+Warn user about unsaved form changes
+Show confirmation dialog
+Allow navigation if user confirms
+FeatureFlagGuard (CanMatch):
+
+Lazy load routes based on feature flags
+Show/hide entire route branches
+A/B testing support
+-->
+
+<!--
+Acceptance Criteria
+HTTP Interceptors
+Auth token automatically attached to requests
+Public endpoints skip token
+Token refresh on 401
+Requests queued during refresh
+Logout on refresh failure
+Network errors retry 3 times
+User-friendly error messages
+Loading spinner for requests
+Route Guards
+AuthGuard redirects to login if not authenticated
+RoleGuard checks user roles
+UnsavedChangesGuard warns about unsaved data
+FeatureFlagGuard shows/hides routes
+Return URL preserved after login
+Forbidden page for unauthorized access
+Auth State
+User state managed with signals
+Token stored in localStorage
+Token expiration checked
+Auto-refresh before expiration
+Logout clears all state
+Role-based UI rendering
+
+-->
