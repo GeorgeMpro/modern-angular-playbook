@@ -1,0 +1,57 @@
+<div class="test-container">
+  <header class="test-header">
+    <h1>HTTP Error Simulation</h1>
+    <p class="subtitle">Click a status code to trigger a simulated API error and test your interceptors.</p>
+  </header>
+
+  <section class="error-grid">
+    @for (err of errors; track err.label) {
+      <div class="error-card">
+        <div class="error-card__header">
+          <span class="status-badge">Status: {{ err.label }}</span>
+        </div>
+        <div class="error-card__body">
+          <p class="error-description">{{ err.description }}</p>
+          <button class="btn-trigger" (click)="simulateError(err)">
+            Trigger Error
+          </button>
+        </div>
+      </div>
+    }
+  </section>
+  <section [style.visibility]="isLoading()? 'visible':'hidden'">
+    <div class="error-card__body">
+      <button
+        class="btn-trigger"
+        (click)="onCancel()"
+        [disabled]="!isLoading()">
+        Cancel Reconnect
+      </button>
+    </div>
+  </section>
+  <div class="test-container">
+    <header class="test-header">
+      <h1>Global Error Simulation</h1>
+      <p class="subtitle">
+        Click to simulate a global error and test the global error handler.
+      </p>
+    </header>
+    <section class="error-grid">
+      @for (err of globalErrors; track err.label) {
+        <div class="error-card">
+          <div class="error-card__header">
+            <span class="status-badge">Status: {{ err.label }}</span>
+          </div>
+          <div class="error-card__body">
+            <button class="btn-trigger"
+                    (click)="err.callback()">
+              Trigger Error
+            </button>
+          </div>
+        </div>
+      }
+    </section>
+  </div>
+
+</div>
+

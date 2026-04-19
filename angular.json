@@ -613,6 +613,74 @@
           "builder": "@angular/build:unit-test"
         }
       }
+    },
+    "challenge-11-centralized-error-handling": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/challenge-11-centralized-error-handling",
+      "sourceRoot": "projects/challenge-11-centralized-error-handling/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/challenge-11-centralized-error-handling/src/main.ts",
+            "tsConfig": "projects/challenge-11-centralized-error-handling/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/challenge-11-centralized-error-handling/public"
+              }
+            ],
+            "styles": [
+              "projects/challenge-11-centralized-error-handling/src/styles.scss"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "challenge-11-centralized-error-handling:build:production"
+            },
+            "development": {
+              "buildTarget": "challenge-11-centralized-error-handling:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
     }
   }
 }

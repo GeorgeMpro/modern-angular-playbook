@@ -1,0 +1,19 @@
+<h2>Toast Notifications</h2>
+<section class="toast-container">
+  @for (t of toasts(); track t.id) {
+    <div class="toast toast--{{ t.status }}">
+      <div class="toast__content">
+        <span class="toast__id">#{{ t.id }}</span>
+        <span class="toast__message">{{ t.content }}</span>
+      </div>
+
+      <div class="toast__actions">
+        @for (a of t.actions; track a.label) {
+          <button class="btn-action" (click)="a.callback(t)">
+            {{ a.label | titlecase }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+</section>

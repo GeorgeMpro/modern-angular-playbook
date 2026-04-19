@@ -76,6 +76,12 @@
     },
     {
       "path": "./projects/prep/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/challenge-11-centralized-error-handling/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/challenge-11-centralized-error-handling/tsconfig.spec.json"
     }
   ]
 }

@@ -23,12 +23,14 @@
 Build a **complete centralized error handling system** with these features:
 
 ### 1. GlobalErrorHandler
+
 - Catch all uncaught JavaScript errors
 - Log errors to console and/or remote service
 - Show user-friendly toast notification
 - Don't crash the app
 
 ### 2. HTTP Error Interceptor
+
 - Intercept all HTTP errors
 - Map status codes to user-friendly messages
 - Handle network errors (status 0)
@@ -36,17 +38,20 @@ Build a **complete centralized error handling system** with these features:
 - Skip mechanism for manual error handling
 
 ### 3. Toast Notification Service
+
 - Show error, warning, success, info toasts
 - Auto-dismiss after configurable duration
 - Stack multiple toasts
 - Dismissible by user
 
 ### 4. Error Logging Service
+
 - Log to console in development
 - Optionally send to remote service (Sentry-style)
 - Include error context (URL, user, timestamp)
 
 ### 5. Mock Backend
+
 - Simulate various HTTP errors
 - Configurable delay and failure rates
 - Test all error scenarios
@@ -68,7 +73,7 @@ cd error-handling-challenge
 
 ```typescript
 // services/toast.service.ts
-import { Injectable, signal, computed } from '@angular/core';
+import {Injectable, signal, computed} from '@angular/core';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -79,14 +84,14 @@ export interface Toast {
   duration: number;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class ToastService {
   private readonly toasts = signal<Toast[]>([]);
   readonly activeToasts = computed(() => this.toasts());
 
   show(message: string, type: ToastType = 'info', duration: number = 5000): void {
     const id = crypto.randomUUID();
-    const toast: Toast = { id, message, type, duration };
+    const toast: Toast = {id, message, type, duration};
 
     this.toasts.update(current => [...current, toast]);
 
@@ -127,8 +132,8 @@ export class ToastService {
 
 ```typescript
 // components/toast-container/toast-container.component.ts
-import { Component, inject } from '@angular/core';
-import { ToastService, Toast } from '../../services/toast.service';
+import {Component, inject} from '@angular/core';
+import {ToastService, Toast} from '../../services/toast.service';
 
 @Component({
   selector: 'app-toast-container',
@@ -227,8 +232,8 @@ export class ToastContainerComponent {
 
 ```typescript
 // services/error-logger.service.ts
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {Injectable, inject} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 
 export interface ErrorLog {
   message: string;
@@ -239,7 +244,7 @@ export interface ErrorLog {
   context?: Record<string, unknown>;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class ErrorLoggerService {
   private http = inject(HttpClient);
   private readonly remoteLoggingEnabled = false; // Toggle for production
@@ -281,7 +286,7 @@ export class ErrorLoggerService {
   private logToRemote(errorLog: ErrorLog): void {
     // Fire and forget - don't let logging errors cause more errors
     this.http.post(this.remoteLoggingUrl, errorLog, {
-      headers: { 'X-Skip-Error-Handler': 'true' }
+      headers: {'X-Skip-Error-Handler': 'true'}
     }).subscribe({
       error: () => console.warn('Failed to send error log to remote service')
     });
@@ -295,9 +300,9 @@ export class ErrorLoggerService {
 
 ```typescript
 // handlers/global-error.handler.ts
-import { ErrorHandler, Injectable, inject, NgZone } from '@angular/core';
-import { ToastService } from '../services/toast.service';
-import { ErrorLoggerService } from '../services/error-logger.service';
+import {ErrorHandler, Injectable, inject, NgZone} from '@angular/core';
+import {ToastService} from '../services/toast.service';
+import {ErrorLoggerService} from '../services/error-logger.service';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
@@ -307,7 +312,7 @@ export class GlobalErrorHandler implements ErrorHandler {
 
   handleError(error: Error): void {
     // Log the error
-    this.errorLogger.log(error, { source: 'GlobalErrorHandler' });
+    this.errorLogger.log(error, {source: 'GlobalErrorHandler'});
 
     // Show user-friendly toast (run inside Angular zone)
     this.ngZone.run(() => {
@@ -359,12 +364,12 @@ export function getHttpErrorMessage(status: number, fallback?: string): string {
 
 ```typescript
 // interceptors/http-error.interceptor.ts
-import { HttpInterceptorFn, HttpErrorResponse, HttpContextToken } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { catchError, retry, timer, throwError } from 'rxjs';
-import { ToastService } from '../services/toast.service';
-import { ErrorLoggerService } from '../services/error-logger.service';
-import { getHttpErrorMessage } from '../utils/http-error-messages';
+import {HttpInterceptorFn, HttpErrorResponse, HttpContextToken} from '@angular/common/http';
+import {inject} from '@angular/core';
+import {catchError, retry, timer, throwError} from 'rxjs';
+import {ToastService} from '../services/toast.service';
+import {ErrorLoggerService} from '../services/error-logger.service';
+import {getHttpErrorMessage} from '../utils/http-error-messages';
 
 // Context token to skip error handling for specific requests
 export const SKIP_ERROR_HANDLER = new HttpContextToken<boolean>(() => false);
@@ -443,8 +448,8 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
 ```typescript
 // interceptors/mock-backend.interceptor.ts
-import { HttpInterceptorFn, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { delay, of, throwError } from 'rxjs';
+import {HttpInterceptorFn, HttpResponse, HttpErrorResponse} from '@angular/common/http';
+import {delay, of, throwError} from 'rxjs';
 
 interface MockConfig {
   path: string;
@@ -460,15 +465,15 @@ const MOCK_RESPONSES: MockConfig[] = [
     path: '/api/users',
     method: 'GET',
     response: [
-      { id: 1, name: 'John Doe', email: 'john@example.com' },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com' }
+      {id: 1, name: 'John Doe', email: 'john@example.com'},
+      {id: 2, name: 'Jane Smith', email: 'jane@example.com'}
     ],
     delay: 500
   },
   {
     path: '/api/users/1',
     method: 'GET',
-    response: { id: 1, name: 'John Doe', email: 'john@example.com' },
+    response: {id: 1, name: 'John Doe', email: 'john@example.com'},
     delay: 300
   },
 
@@ -477,35 +482,35 @@ const MOCK_RESPONSES: MockConfig[] = [
     path: '/api/error/400',
     method: 'GET',
     status: 400,
-    response: { message: 'Bad request - invalid parameters' },
+    response: {message: 'Bad request - invalid parameters'},
     delay: 200
   },
   {
     path: '/api/error/401',
     method: 'GET',
     status: 401,
-    response: { message: 'Unauthorized - token expired' },
+    response: {message: 'Unauthorized - token expired'},
     delay: 200
   },
   {
     path: '/api/error/403',
     method: 'GET',
     status: 403,
-    response: { message: 'Forbidden - insufficient permissions' },
+    response: {message: 'Forbidden - insufficient permissions'},
     delay: 200
   },
   {
     path: '/api/error/404',
     method: 'GET',
     status: 404,
-    response: { message: 'Resource not found' },
+    response: {message: 'Resource not found'},
     delay: 200
   },
   {
     path: '/api/error/500',
     method: 'GET',
     status: 500,
-    response: { message: 'Internal server error' },
+    response: {message: 'Internal server error'},
     delay: 200
   },
   {
@@ -518,7 +523,7 @@ const MOCK_RESPONSES: MockConfig[] = [
     path: '/api/error/timeout',
     method: 'GET',
     status: 408,
-    response: { message: 'Request timeout' },
+    response: {message: 'Request timeout'},
     delay: 5000
   }
 ];
@@ -539,7 +544,7 @@ export const mockBackendInterceptor: HttpInterceptorFn = (req, next) => {
       status: 404,
       statusText: 'Not Found',
       url: req.url,
-      error: { message: `No mock found for ${req.method} ${req.url}` }
+      error: {message: `No mock found for ${req.method} ${req.url}`}
     })).pipe(delay(100));
   }
 
@@ -582,13 +587,13 @@ function getStatusText(status: number): string {
 
 ```typescript
 // app.config.ts
-import { ApplicationConfig, ErrorHandler } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { routes } from './app.routes';
-import { GlobalErrorHandler } from './handlers/global-error.handler';
-import { httpErrorInterceptor } from './interceptors/http-error.interceptor';
-import { mockBackendInterceptor } from './interceptors/mock-backend.interceptor';
+import {ApplicationConfig, ErrorHandler} from '@angular/core';
+import {provideRouter} from '@angular/router';
+import {provideHttpClient, withInterceptors} from '@angular/common/http';
+import {routes} from './app.routes';
+import {GlobalErrorHandler} from './handlers/global-error.handler';
+import {httpErrorInterceptor} from './interceptors/http-error.interceptor';
+import {mockBackendInterceptor} from './interceptors/mock-backend.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -599,7 +604,7 @@ export const appConfig: ApplicationConfig = {
         httpErrorInterceptor     // Then - handle errors
       ])
     ),
-    { provide: ErrorHandler, useClass: GlobalErrorHandler }
+    {provide: ErrorHandler, useClass: GlobalErrorHandler}
   ]
 };
 ```
@@ -610,9 +615,9 @@ export const appConfig: ApplicationConfig = {
 
 ```typescript
 // app.component.ts
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { ToastContainerComponent } from './components/toast-container/toast-container.component';
+import {Component} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
+import {ToastContainerComponent} from './components/toast-container/toast-container.component';
 
 @Component({
   selector: 'app-root',
@@ -623,7 +628,8 @@ import { ToastContainerComponent } from './components/toast-container/toast-cont
     <router-outlet />
   `
 })
-export class AppComponent {}
+export class AppComponent {
+}
 ```
 
 ---
@@ -632,10 +638,10 @@ export class AppComponent {}
 
 ```typescript
 // pages/error-test/error-test.component.ts
-import { Component, inject } from '@angular/core';
-import { HttpClient, HttpContext } from '@angular/common/http';
-import { ToastService } from '../../services/toast.service';
-import { SKIP_ERROR_HANDLER } from '../../interceptors/http-error.interceptor';
+import {Component, inject} from '@angular/core';
+import {HttpClient, HttpContext} from '@angular/common/http';
+import {ToastService} from '../../services/toast.service';
+import {SKIP_ERROR_HANDLER} from '../../interceptors/http-error.interceptor';
 
 @Component({
   selector: 'app-error-test',
@@ -797,7 +803,7 @@ export class ErrorTestComponent {
       error: (err) => {
         // Handle manually
         this.toast.warning('Manually handled: Resource not found, showing fallback.');
-        this.lastResponse.set({ fallback: 'No data available' });
+        this.lastResponse.set({fallback: 'No data available'});
       }
     });
   }
@@ -823,8 +829,8 @@ export class ErrorTestComponent {
   }
 }
 
-import { JsonPipe } from '@angular/common';
-import { signal } from '@angular/core';
+import {JsonPipe} from '@angular/common';
+import {signal} from '@angular/core';
 ```
 
 ---
@@ -833,7 +839,7 @@ import { signal } from '@angular/core';
 
 ```typescript
 // app.routes.ts
-import { Routes } from '@angular/router';
+import {Routes} from '@angular/router';
 
 export const routes: Routes = [
   {
@@ -854,6 +860,7 @@ export const routes: Routes = [
 ## Acceptance Criteria
 
 ### Toast Service
+
 - [ ] Shows success, error, warning, info toasts
 - [ ] Auto-dismisses after duration
 - [ ] Dismissible by clicking
@@ -861,12 +868,14 @@ export const routes: Routes = [
 - [ ] Smooth animations
 
 ### GlobalErrorHandler
+
 - [ ] Catches uncaught JavaScript errors
 - [ ] Logs errors with context
 - [ ] Shows user-friendly toast
 - [ ] Doesn't crash the app
 
 ### HTTP Error Interceptor
+
 - [ ] Intercepts all HTTP errors
 - [ ] Maps status codes to messages
 - [ ] Retries network errors (status 0)
@@ -874,12 +883,14 @@ export const routes: Routes = [
 - [ ] Logs all errors
 
 ### Mock Backend
+
 - [ ] Returns success responses
 - [ ] Simulates various HTTP errors (400-500)
 - [ ] Simulates network errors
 - [ ] Configurable delay
 
 ### Error Logging
+
 - [ ] Logs to console with formatted output
 - [ ] Includes error context (URL, timestamp, stack)
 - [ ] Optional remote logging structure ready
@@ -955,8 +966,8 @@ Complete the basics above first, then add these production-ready features.
 
 ```typescript
 // interceptors/retry.interceptor.ts
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { retry, timer, throwError } from 'rxjs';
+import {HttpInterceptorFn, HttpErrorResponse} from '@angular/common/http';
+import {retry, timer, throwError} from 'rxjs';
 
 export const retryInterceptor: HttpInterceptorFn = (req, next) => {
   const maxRetries = 4;
@@ -968,7 +979,7 @@ export const retryInterceptor: HttpInterceptorFn = (req, next) => {
       delay: (error: HttpErrorResponse, retryCount) => {
         // Don't retry client errors (4xx) except timeout/rate-limit
         if (error.status >= 400 && error.status < 500 &&
-            error.status !== 408 && error.status !== 429) {
+          error.status !== 408 && error.status !== 429) {
           return throwError(() => error);
         }
 
@@ -993,9 +1004,9 @@ export const retryInterceptor: HttpInterceptorFn = (req, next) => {
 
 ```typescript
 // services/network.service.ts
-import { Injectable, signal } from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class NetworkService {
   isOnline = signal(navigator.onLine);
 
@@ -1014,10 +1025,10 @@ export class NetworkService {
 
 ```typescript
 // services/offline-queue.service.ts
-import { Injectable, inject, signal, effect } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { NetworkService } from './network.service';
-import { ToastService } from './toast.service';
+import {Injectable, inject, signal, effect} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {NetworkService} from './network.service';
+import {ToastService} from './toast.service';
 
 interface QueuedRequest {
   id: string;
@@ -1027,7 +1038,7 @@ interface QueuedRequest {
   timestamp: number;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class OfflineQueueService {
   private http = inject(HttpClient);
   private network = inject(NetworkService);
@@ -1063,7 +1074,7 @@ export class OfflineQueueService {
 
   private processQueue(): void {
     this.queue().forEach(req => {
-      this.http.request(req.method, req.url, { body: req.body }).subscribe({
+      this.http.request(req.method, req.url, {body: req.body}).subscribe({
         next: () => {
           this.removeFromQueue(req.id);
           this.toast.success('Queued request completed');
@@ -1139,7 +1150,7 @@ export class OfflineBannerComponent {
 
 ```typescript
 // services/request-cache.service.ts
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class RequestCacheService {
   private cache = new Map<string, { response: unknown; timestamp: number }>();
   private readonly TTL = 5 * 60 * 1000; // 5 minutes
@@ -1158,7 +1169,7 @@ export class RequestCacheService {
   }
 
   set(url: string, response: unknown): void {
-    this.cache.set(url, { response, timestamp: Date.now() });
+    this.cache.set(url, {response, timestamp: Date.now()});
     console.log('💾 Cached:', url);
   }
 
@@ -1174,7 +1185,7 @@ export class RequestCacheService {
 
 ```typescript
 // app.config.ts
-import { provideRouter, withNavigationErrorHandler } from '@angular/router';
+import {provideRouter, withNavigationErrorHandler} from '@angular/router';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -1197,9 +1208,9 @@ export const appConfig: ApplicationConfig = {
 // app.routes.ts - Add error pages
 export const routes: Routes = [
   // ... your routes
-  { path: '404', loadComponent: () => import('./pages/not-found.component') },
-  { path: '403', loadComponent: () => import('./pages/forbidden.component') },
-  { path: '**', redirectTo: '/404' }
+  {path: '404', loadComponent: () => import('./pages/not-found.component')},
+  {path: '403', loadComponent: () => import('./pages/forbidden.component')},
+  {path: '**', redirectTo: '/404'}
 ];
 ```
 
@@ -1209,7 +1220,7 @@ export const routes: Routes = [
 
 ```typescript
 // services/toast.service.ts - Add rate limiting
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class ToastService {
   private recentMessages = new Map<string, number>();
   private readonly RATE_LIMIT_MS = 5000;
@@ -1256,12 +1267,14 @@ export class ToastService {
 ## Interview Tips
 
 **Why Interviewers Care:**
+
 - Error handling shows production readiness
 - Retry logic shows understanding of resilience
 - Offline support shows mobile-first thinking
 - Proper error display shows UX awareness
 
 **Common Questions:**
+
 1. "How would you handle errors in Angular?" → Global ErrorHandler + HTTP interceptors
 2. "When would you retry a request?" → Network errors, NOT client errors (4xx)
 3. "How do you show errors to users?" → Toast notifications, error components
@@ -1269,6 +1282,7 @@ export class ToastService {
 5. "How do you handle offline mode?" → Queue requests, retry when back online
 
 **Mistakes to Avoid:**
+
 - ❌ Silent failures (no user feedback)
 - ❌ Retrying 4xx errors (client errors shouldn't retry)
 - ❌ No loading states (user doesn't know what's happening)
@@ -1279,11 +1293,11 @@ export class ToastService {
 
 ## Resources
 
-- [Angular Error Handling Best Practices](https://angular.dev/best-practices/error-handling)
-- [Angular HTTP Interceptors](https://angular.dev/guide/http/interceptors)
-- [Advanced Error Handling Patterns](https://dev.to/codewithrajat/advanced-angular-error-handling-best-practices-architecture-tips-code-examples-3939)
-- [TrackJS Angular Error Handling Guide](https://trackjs.com/blog/angular-error-handling/)
-- [Global Error Handling in Angular](https://pkief.medium.com/global-error-handling-in-angular-ea395ce174b1)
+-[ ] [Angular Error Handling Best Practices](https://angular.dev/best-practices/error-handling)
+- [ ] [Angular HTTP Interceptors](https://angular.dev/guide/http/interceptors)
+- [ ] [Advanced Error Handling Patterns](https://dev.to/codewithrajat/advanced-angular-error-handling-best-practices-architecture-tips-code-examples-3939)
+- [ ] [TrackJS Angular Error Handling Guide](https://trackjs.com/blog/angular-error-handling/)
+- [ ] [Global Error Handling in Angular](https://pkief.medium.com/global-error-handling-in-angular-ea395ce174b1)
 
 ---
 

@@ -1,0 +1,20 @@
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.column {
+  min-width: 0; // Prevent flex/grid item overflow
+}
+
+@media (max-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}

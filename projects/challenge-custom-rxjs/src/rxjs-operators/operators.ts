@@ -41,7 +41,6 @@ export function withLoading<T>(loadingSignal: WritableSignal<boolean>): Operator
     return source.pipe(
       finalize(() => loadingSignal.set(false)
       ));
-
   });
 }
 
