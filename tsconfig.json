@@ -64,6 +64,18 @@
     },
     {
       "path": "./projects/challenge-07-auth-interceptors-guards/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/challenge-custom-rxjs/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/challenge-custom-rxjs/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/prep/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/prep/tsconfig.spec.json"
     }
   ]
 }
