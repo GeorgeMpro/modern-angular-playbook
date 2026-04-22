@@ -1,7 +1,25 @@
 <div class="display-container">
-  <h1>Highlight Directive</h1>
+  <section>
+    <h1>Debounce Click</h1>
+    <div class="preview-box">
+      <button appDebounceClick
+              (btnClick)="onDebounceClick()"
+              [timeDelay]="500"
+              class="btn-trigger">
+        Click Me Fast
+      </button>
+      <p class="counter">Triggered: {{ clickCount() }} times.</p>
+
+      <div class="log-view">
+        @for (entry of log().slice(0, 1); track $index) {
+          <p class="log-entry">{{ entry }}</p>
+        }
+      </div>
+    </div>
+  </section>
 
   <section>
+    <h1>Highlight Directive</h1>
     <h2>Pick a Highlight Color</h2>
     <div class="color-picker">
       @for (c of colorsDisplay; track c.label) {
