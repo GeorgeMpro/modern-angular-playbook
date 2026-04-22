@@ -82,6 +82,12 @@
     },
     {
       "path": "./projects/challenge-11-centralized-error-handling/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/challenge-08-custom-directives/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/challenge-08-custom-directives/tsconfig.spec.json"
     }
   ]
 }
