@@ -9,13 +9,16 @@ interface Colors {
 }
 
 const COLORS: Record<string, string> = {
-  'slate': '#1e293b',
-  'yellow': '#fef08a',
-  'cyan': '#a5f3fc',
-  'rose': '#fecdd3',
-  'violet': '#ddd6fe',
+  'slate':   '#1e293b',
+  'yellow':  '#fef08a',
+  'cyan':    '#a5f3fc',
+  'rose':    '#fecdd3',
+  'violet':  '#ddd6fe',
   'emerald': '#a7f3d0',
-  'indigo': '#312e81',
+  'indigo':  '#312e81',
+  'orange':  '#fed7aa',
+  'fuchsia': '#f0abfc',
+  'teal':    '#0f766e',
 }
 
 @Component({

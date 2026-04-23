@@ -2,20 +2,13 @@
   <div ngProjectAs="[controls]">
     <div class="color-picker">
       @for (c of colorsDisplay; track c.label) {
-        <label class="color-option">
-          <input type="radio" name="colors" (click)="color.set(c.color)"/>
-          <span>{{ c.label | titlecase }}</span>
+        <label [appHighlight]="c.color"
+               defaultColor="violet"
+               for="color-option"
+               class="color-option">
+          <span>{{ c.label |titlecase }}</span>
         </label>
       }
     </div>
-  </div>
-  <div ngProjectAs="[preview]" class="preview-box">
-    <p>
-      <span class="highlight-text"
-            [appHighlight]="color()"
-            defaultColor="violet">
-        Hover over me to see the highlight!
-      </span>
-    </p>
   </div>
 </app-demo-shell>

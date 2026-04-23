@@ -1,4 +1,4 @@
-import {computed, Directive, ElementRef, inject, input, signal} from '@angular/core';
+import {computed, Directive,  input, signal} from '@angular/core';
 
 @Directive({
   selector: '[appHighlight]',
