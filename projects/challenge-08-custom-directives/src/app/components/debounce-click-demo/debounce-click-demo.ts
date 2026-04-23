@@ -1,15 +1,19 @@
 import {Component, signal} from '@angular/core';
 import {DebounceClick} from '../../directives/debounce-click';
+import {DemoShell} from '../demo-shell/demo-shell';
 
 @Component({
   selector: 'app-debounce-click-demo',
   imports: [
-    DebounceClick
+    DebounceClick,
+    DemoShell
   ],
   templateUrl: './debounce-click-demo.html',
   styleUrl: './debounce-click-demo.scss',
 })
 export class DebounceClickDemo {
+  protected readonly customDelay: number = 500;
+
   protected readonly clickCount = signal<number>(0);
   protected readonly log = signal<string[]>([]);
 

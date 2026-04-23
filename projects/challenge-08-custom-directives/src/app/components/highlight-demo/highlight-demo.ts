@@ -1,6 +1,7 @@
 import {Component, signal} from '@angular/core';
 import {Highlight} from '../../directives/highlight';
 import {TitleCasePipe} from '@angular/common';
+import {DemoShell} from '../demo-shell/demo-shell';
 
 interface Colors {
   label: string;
@@ -21,7 +22,8 @@ const COLORS: Record<string, string> = {
   selector: 'app-highlight-demo',
   imports: [
     Highlight,
-    TitleCasePipe
+    TitleCasePipe,
+    DemoShell
   ],
   templateUrl: './highlight-demo.html',
   styleUrl: './highlight-demo.scss',

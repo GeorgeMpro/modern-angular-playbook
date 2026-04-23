@@ -1,6 +1,5 @@
-<div class="display-container">
-  <section>
-    <h1>Highlight Directive</h1>
+<app-demo-shell title="highlight">
+  <div ngProjectAs="[controls]">
     <div class="color-picker">
       @for (c of colorsDisplay; track c.label) {
         <label class="color-option">
@@ -9,14 +8,14 @@
         </label>
       }
     </div>
-    <div class="preview-box">
-      <p>
+  </div>
+  <div ngProjectAs="[preview]" class="preview-box">
+    <p>
       <span class="highlight-text"
             [appHighlight]="color()"
             defaultColor="violet">
         Hover over me to see the highlight!
       </span>
-      </p>
-    </div>
-  </section>
-</div>
+    </p>
+  </div>
+</app-demo-shell>

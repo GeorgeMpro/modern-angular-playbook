@@ -1,0 +1,18 @@
+@use '../../styles/demo-ui' as demo;
+
+.display-container {
+  @include demo.demo-container;
+}
+
+.preview-box {
+  @include demo.preview-box;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: left;
+
+  .btn-trigger {
+    @include demo.btn-trigger;
+    flex-shrink: 0;
+  }
+}

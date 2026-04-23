@@ -1,20 +1,17 @@
-<div class="display-container">
-  <section>
-    <h1>Debounce Click</h1>
-    <div class="preview-box">
-      <button appDebounceClick
-              (btnClick)="onDebounceClick()"
-              [timeDelay]="500"
-              class="btn-trigger">
-        Click Me Fast
-      </button>
-      <p class="counter">Triggered: {{ clickCount() }} times.</p>
+<app-demo-shell title="debounce click">
+  <div ngProjectAs="[preview]" class="preview-box">
+    <button appDebounceClick
+            (btnClick)="onDebounceClick()"
+            [timeDelay]="customDelay"
+            class="btn-trigger">
+      Click Me Fast
+    </button>
+    <p class="counter">Triggered: {{ clickCount() }} times.</p>
 
-      <div class="log-view">
-        @for (entry of log().slice(0, 1); track $index) {
-          <p class="log-entry">{{ entry }}</p>
-        }
-      </div>
+    <div class="log-view">
+      @for (entry of log().slice(0, 1); track $index) {
+        <p class="log-entry">{{ entry }}</p>
+      }
     </div>
-  </section>
-</div>
+  </div>
+</app-demo-shell>
