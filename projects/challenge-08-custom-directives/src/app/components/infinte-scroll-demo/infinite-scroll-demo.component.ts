@@ -1,9 +1,10 @@
-import {Component, inject} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+
+import {finalize, map, Observable, tap} from 'rxjs';
+import {takeUntilDestroyed,} from '@angular/core/rxjs-interop';
 
 import {DemoShell} from '../demo-shell/demo-shell';
-import {HttpClient} from '@angular/common/http';
-import {map, Observable} from 'rxjs';
-import {toSignal} from '@angular/core/rxjs-interop';
 import {InfiniteScroll} from '../../directives/infinite-scroll';
 
 interface Product {
@@ -22,8 +23,6 @@ interface ProductResponse {
 
 const URL = 'https://dummyjson.com/products?limit=5'
 
-// const URL = 'https://dummyjson.com/products'
-
 @Component({
   selector: 'app-infinte-scroll-demo',
   imports: [
@@ -33,30 +32,46 @@ const URL = 'https://dummyjson.com/products?limit=5'
   templateUrl: './infinite-scroll-demo.component.html',
   styleUrl: './infinite-scroll-demo.component.scss',
 })
-export class InfiniteScrollDemo {
+export class InfiniteScrollDemo implements OnInit {
+  private readonly stepsize: number = 5;
+  private steps: number = 1;
+
+  private readonly destroyRef = inject(DestroyRef);
   private readonly http = inject(HttpClient);
-
   private readonly products$: Observable<Product[]> = this.http.get<ProductResponse>(URL)
-    .pipe(map(res => res.products))
+    .pipe(
+      tap(res => this.productLimit.set(res.total)),
+      map(res => res.products));
 
-  protected readonly products = toSignal(this.products$, {
-    initialValue: []
-  })
+  protected readonly products = signal<Product[]>([]);
+  private readonly productLimit = signal<number>(30);
+  private readonly isLoading = signal<boolean>(false);
+
+  ngOnInit() {
+    this.products$.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: val => this.products.set(val),
+      })
+  }
 
   protected onScrollEnd() {
-
+    let isInBounds = this.products().length + this.stepsize <= this.productLimit();
+    if (isInBounds && !this.isLoading()) {
+      this.isLoading.set(true);
+      const url = `${URL}&skip=${this.stepsize * this.steps}`;
+      this.steps += 1;
+      this.http.get<ProductResponse>(url)
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          map(res => res.products),
+          finalize(() => this.isLoading.set(false))
+        ).subscribe(
+        value => {
+          this.products.update(v => {
+            return [...v, ...value]
+          })
+        }
+      );
+    }
   }
 }
-
-/*
-
-● 1. Replace toSignal with a plain signal<Product[]>([]) — you're building
-  the list incrementally, not from a single observable
-  2. Add state signals — skip, total, loading
-  3. Write a loadMore() method — fetches ?limit=5&skip=${skip()}, appends
-  results to the products signal, updates skip and total
-  4. Call loadMore() on init — so the first batch loads automatically
-  5. Guard with loading — if a request is in flight, loadMore() returns early
-  6. Stop when exhausted — if skip() >= total(), loadMore() returns early
-  7. Wire (scrollEnd) to loadMore() in the template
-*/

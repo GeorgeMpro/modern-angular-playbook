@@ -4,25 +4,27 @@
     appInfiniteScroll
     (scrollEnd)="onScrollEnd()"
     ngProjectAs="[preview]"
-    class="scroll-container" >
-  <table >
-    <thead>
+    class="scroll-container">
+    <table>
+      <thead>
       <th>Id</th>
       <th>Title</th>
       <th>Category</th>
       <th>Price</th>
-    </thead>
-    <tbody >
-      @for (prod of products(); track prod.id) {
-        <tr>
-          <td>{{ prod.id }}</td>
-          <td>{{ prod.title }}</td>
-          <td>{{ prod.category }}</td>
-          <td>{{ prod.price }}</td>
-        </tr>
-      }
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        @for (prod of products(); track prod.id) {
+          <tr>
+            <td>{{ prod.id }}</td>
+            <td>{{ prod.title }}</td>
+            <td>{{ prod.category }}</td>
+            <td>{{ prod.price }}</td>
+          </tr>
+        } @empty {
+          <p>No Products</p>
+        }
+      </tbody>
+    </table>
   </div>
 </app-demo-shell>
 
