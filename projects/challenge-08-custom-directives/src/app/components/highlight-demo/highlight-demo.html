@@ -1,0 +1,21 @@
+ <section>
+    <h1>Highlight Directive</h1>
+    <h2>Pick a Highlight Color</h2>
+    <div class="color-picker">
+      @for (c of colorsDisplay; track c.label) {
+        <label class="color-option">
+          <input type="radio" name="colors" (click)="color.set(c.color)"/>
+          <span>{{ c.label | titlecase }}</span>
+        </label>
+      }
+    </div>
+    <div class="preview-box">
+      <p>
+      <span class="highlight-text"
+            [appHighlight]="color()"
+            defaultColor="violet">
+        Hover over me to see the highlight!
+      </span>
+      </p>
+    </div>
+  </section>

@@ -1,0 +1,22 @@
+@use '../../styles/demo-ui' as demo;
+
+.display-container {
+  @include demo.demo-container;
+}
+
+.color-picker {
+  @include demo.color-picker;
+}
+
+.preview-box {
+  @include demo.preview-box;
+
+  .highlight-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+  }
+}
