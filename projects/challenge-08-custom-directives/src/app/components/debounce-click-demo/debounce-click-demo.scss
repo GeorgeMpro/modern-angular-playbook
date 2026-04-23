@@ -1,0 +1,24 @@
+@use '../../styles/demo-ui' as demo;
+
+.display-container {
+  @include demo.demo-container;
+}
+
+.preview-box {
+  @include demo.preview-box;
+
+  .btn-trigger {
+    @include demo.btn-trigger;
+  }
+}
+
+.counter {
+  margin-top: 1rem;
+  font-weight: bold;
+  color: #3b82f6;
+  font-size: 1.125rem;
+}
+
+.log-view {
+  @include demo.log-view;
+}

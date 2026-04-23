@@ -1,5 +1,5 @@
 import {Directive, input} from '@angular/core';
-import {debounce, debounceTime, Subject, timer} from 'rxjs';
+import {debounce,  Subject, timer} from 'rxjs';
 import {outputFromObservable} from '@angular/core/rxjs-interop';
 
 @Directive({

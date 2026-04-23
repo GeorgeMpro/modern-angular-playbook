@@ -1,23 +1,4 @@
-<div class="display-container">
-  <section>
-    <h1>Debounce Click</h1>
-    <div class="preview-box">
-      <button appDebounceClick
-              (btnClick)="onDebounceClick()"
-              [timeDelay]="500"
-              class="btn-trigger">
-        Click Me Fast
-      </button>
-      <p class="counter">Triggered: {{ clickCount() }} times.</p>
-
-      <div class="log-view">
-        @for (entry of log().slice(0, 1); track $index) {
-          <p class="log-entry">{{ entry }}</p>
-        }
-      </div>
-    </div>
-  </section>
-
+<div class="main-shell">
+  <app-debounce-click-demo></app-debounce-click-demo>
   <app-highlight-demo></app-highlight-demo>
-
 </div>
