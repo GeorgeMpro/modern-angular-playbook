@@ -1,0 +1,45 @@
+<form (submit)="onSubmit($event)">
+  <label for="username">
+    Username:
+    <input id="username"
+           type="text"
+           [formField]="userForm.username"/>
+  </label>
+
+  <label for="nickname">
+    Nickname:
+    <input id="nickname"
+           type="text"
+           [formField]="userForm.nickname"/>
+  </label>
+
+  <button type="submit">
+    Save Profile
+  </button>
+</form>
+<p>Total ignored clicks: {{ totalIgnoredCounter() }}.</p>
+<p>Current ignored clicks: {{ currentIgnoredCounter() }}</p>
+
+@if (retryAttempt() > 0) {
+  <p>Save failed. Retry attempt ({{ retryAttempt() }}/{{ maxRetries }}).</p>
+} @else if (isLoading()) {
+  <p>Processing...</p>
+} @else {
+  <p>
+    @let status = saveStatus();
+    @switch (status) {
+      @case ('success') {
+        {{ status | titlecase }}!
+      }
+      @case ('fail') {
+        Failed saving update. Please try again.
+      }
+      @case ('initial') {
+      }
+      <!-- notice: GitHub issue #67406 with @default never at the moment -->
+    }
+  </p>
+  <p>
+    Last saved - Username: {{ userCredentials().username }} Nickname: {{ userCredentials().nickname }}
+  </p>
+}

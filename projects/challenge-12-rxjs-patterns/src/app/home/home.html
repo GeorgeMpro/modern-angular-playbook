@@ -1,0 +1,14 @@
+<div class="home-container">
+  <main class="content">
+    <div class="grid-header">
+      <h2>{{ title|titlecase }}</h2>
+      <p>A deep-dive into complex RxJS orchestration and defensive stream management.</p>
+    </div>
+
+    <div class="challenges-grid">
+      @for (challenge of challenges(); track challenge.id) {
+        <app-challenge-card [challenge]="challenge"></app-challenge-card>
+      }
+    </div>
+  </main>
+</div>

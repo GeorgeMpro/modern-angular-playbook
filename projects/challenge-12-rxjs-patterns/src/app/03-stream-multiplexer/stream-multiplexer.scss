@@ -1,0 +1,23 @@
+.dashboard-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-top: 1rem;
+
+  section {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  table{
+    table-layout: fixed;
+  }
+
+}
+
+.total {
+  width: fit-content;
+  margin: 1rem auto 2rem;
+  text-align: center;
+}

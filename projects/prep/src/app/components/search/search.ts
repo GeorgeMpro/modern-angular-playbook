@@ -1,4 +1,4 @@
-import {Component, inject, Signal, signal} from '@angular/core';
+import {Component, inject, Signal, signal, ChangeDetectionStrategy} from '@angular/core';
 import {toObservable, toSignal} from '@angular/core/rxjs-interop';
 import {FormsModule} from '@angular/forms';
 import {catchError, debounceTime, distinctUntilChanged, finalize, map, Observable, of, switchMap, tap} from 'rxjs';
@@ -73,6 +73,7 @@ interface Product {
     FormsModule
   ],
   templateUrl: './search.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './search.scss',
 })
 export class Search {
@@ -80,7 +81,7 @@ export class Search {
 
   protected readonly query = signal<string>('');
   private readonly query$ = toObservable(this.query);
-  private readonly queryDealy$ = this.query$.pipe(
+  private readonly queryDelay$ = this.query$.pipe(
     debounceTime(300),
     distinctUntilChanged(),
     tap(_ => this.isLoading.set(true)),
@@ -98,7 +99,7 @@ export class Search {
   protected readonly isLoading = signal<boolean>(false);
 
 
-  protected readonly results: Signal<User[]> = toSignal(this.queryDealy$, {
+  protected readonly results: Signal<User[]> = toSignal(this.queryDelay$, {
     initialValue: []
   });
 

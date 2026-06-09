@@ -1,0 +1,9 @@
+<form>
+  <label for="search">Search</label>
+  <input id="search" type="text" [formField]="searchForm.query"/>
+</form>
+
+<app-product-table [products]="products()"
+                   [isLoading]="isLoading()"
+                   [hasSearchTerm]="hasSearchTerm()">
+</app-product-table>

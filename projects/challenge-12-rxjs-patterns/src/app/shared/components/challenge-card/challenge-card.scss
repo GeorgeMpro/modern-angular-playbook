@@ -1,0 +1,115 @@
+@import "../../styles/variables";
+
+.card {
+  background-color: $bg-secondary;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform $transition, box-shadow $transition, border-color $transition;
+  box-shadow: $shadow-sm;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-md;
+    border-color: $accent;
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+
+  .challenge-id {
+    background-color: $bg-primary;
+    color: $accent;
+    font-family: monospace;
+    font-weight: bold;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $radius;
+    font-size: 0.85rem;
+  }
+
+  .card-title {
+    margin: 0;
+    color: $heading;
+    font-size: 1.25rem;
+  }
+}
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  section {
+    h4 {
+      margin: 0 0 $spacing-xs 0;
+      color: $text-secondary;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+  }
+
+  .win {
+    background-color: rgba($success, 0.1);
+    border-left: 3px solid $success;
+    padding: $spacing-sm $spacing-md;
+    border-radius: 0 $radius $radius 0;
+
+    h4 {
+      color: $success;
+    }
+  }
+}
+
+.card-footer {
+  margin-top: $spacing-lg;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-md;
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+
+    .tag {
+      font-size: 0.75rem;
+      background-color: $bg-primary;
+      color: $text-secondary;
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid $border;
+    }
+  }
+
+  .view-btn {
+    text-decoration: none;
+    background-color: $accent;
+    color: white;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background-color $transition;
+
+    &:hover {
+      background-color: $accent-hover;
+    }
+  }
+}

@@ -1,0 +1,33 @@
+<h3>{{ title() |titlecase }}</h3>
+
+<table>
+  @let hasLength = actions().length;
+  <thead>
+  <tr>
+    <th>Id</th>
+    <th>Type</th>
+    <th>Timestamp</th>
+    @if (hasLength) {
+      <th> Actions</th>
+    }
+  </tr>
+  </thead>
+  <tbody>
+    @for (item of items(); track item.timestamp; let id = $index) {
+      <tr [style.color]="CATEGORY_COLORS[item.type]">
+        <td>{{ id }}</td>
+        <td>{{ item.type }}</td>
+        <td>{{ item.timestamp }}</td>
+        @if (hasLength) {
+          <td>
+            @for (action of actions(); track action.label) {
+              <button (click)="action.callback(item)">
+                {{ action.label | titlecase }}
+              </button>
+            }
+          </td>
+        }
+      </tr>
+    }
+  </tbody>
+</table>

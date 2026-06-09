@@ -1,4 +1,4 @@
-import {Component, Signal} from '@angular/core';
+import {Component, Signal, ChangeDetectionStrategy} from '@angular/core';
 import {interval, Observable} from 'rxjs';
 import {toSignal} from '@angular/core/rxjs-interop';
 
@@ -6,6 +6,7 @@ import {toSignal} from '@angular/core/rxjs-interop';
   selector: 'app-ticker',
   imports: [],
   templateUrl: './ticker.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './ticker.scss',
 })
 export class Ticker {

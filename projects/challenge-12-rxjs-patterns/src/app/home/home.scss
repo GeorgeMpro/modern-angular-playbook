@@ -1,0 +1,43 @@
+@import "../shared/styles/variables";
+
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: -$spacing-md; // Negate body margin for edge-to-edge layout
+}
+
+
+.content {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-xl $spacing-md;
+  width: 100%;
+
+  .grid-header {
+    text-align: center;
+    margin-bottom: $spacing-xl;
+
+    h2 {
+      padding-top: 0;
+      margin-bottom: $spacing-xs;
+    }
+
+    p {
+      color: $text-secondary;
+    }
+  }
+}
+
+.challenges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: $spacing-lg;
+}
+
+@media (max-width: 768px) {
+  .challenges-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -12,6 +12,7 @@ You already built `callTimer<T>` — a pipeable operator using `defer` + `finali
 That's the pattern. Now build 5 more.
 
 Each operator must:
+
 - Be a **pipeable operator** — works inside `.pipe()`
 - Be **generic** — preserves the `Observable<T>` type
 - Clean up after itself — no leaks
@@ -28,11 +29,19 @@ Each operator must:
 Retries a failed observable with exponential backoff delay. After each failure, wait longer before retrying. After max retries, throw the error.
 
 **Signature:**
+
 ```ts
-retryWithBackoff<T>(maxRetries: number, baseDelayMs: number): OperatorFunction<T, T>
+retryWithBackoff<T>(maxRetries
+:
+number, baseDelayMs
+:
+number
+):
+OperatorFunction<T, T>
 ```
 
 **Behavior:**
+
 - Retry 1 → wait `baseDelayMs * 1`
 - Retry 2 → wait `baseDelayMs * 2`
 - Retry 3 → wait `baseDelayMs * 4`
@@ -40,6 +49,7 @@ retryWithBackoff<T>(maxRetries: number, baseDelayMs: number): OperatorFunction<T
 - **Do NOT retry 4xx HTTP errors** — only retry network errors (status 0) and 5xx
 
 **Usage:**
+
 ```ts
 this.http.get('/api/data').pipe(
   retryWithBackoff(3, 1000)
@@ -56,18 +66,26 @@ this.http.get('/api/data').pipe(
 Sets an Angular signal to `true` when the stream starts and `false` when it completes, errors, or is unsubscribed.
 
 **Signature:**
+
 ```ts
-withLoading<T>(loadingSignal: WritableSignal<boolean>): OperatorFunction<T, T>
+withLoading<T>(loadingSignal
+:
+WritableSignal<boolean>
+):
+OperatorFunction<T, T>
 ```
 
 **Behavior:**
+
 - On subscribe → `loadingSignal.set(true)`
 - On finalize (complete/error/unsubscribe) → `loadingSignal.set(false)`
 - Does NOT modify the emitted values
 
 **Usage:**
+
 ```ts
-readonly isLoading = signal(false);
+readonly
+isLoading = signal(false);
 
 this.http.get('/api/users').pipe(
   withLoading(this.isLoading)
@@ -84,16 +102,23 @@ this.http.get('/api/users').pipe(
 Like `tap`, but the side effect only runs on the **first emission**. All subsequent emissions pass through untouched.
 
 **Signature:**
+
 ```ts
-tapOnce<T>(fn: (value: T) => void): OperatorFunction<T, T>
+tapOnce<T>(fn
+:
+(value: T) => void
+):
+OperatorFunction<T, T>
 ```
 
 **Behavior:**
+
 - First value → run `fn(value)`, then emit it
 - All other values → emit them, skip `fn`
 - Does NOT modify emitted values
 
 **Usage:**
+
 ```ts
 this.searchResults$.pipe(
   tapOnce(results => this.logFirstSearchEvent(results))
@@ -110,17 +135,24 @@ this.searchResults$.pipe(
 Caches the observable result for a given TTL (time-to-live in ms). If re-subscribed within the TTL, returns the cached result. After TTL expires, next subscription re-executes the source.
 
 **Signature:**
+
 ```ts
-cacheFor<T>(ttlMs: number): OperatorFunction<T, T>
+cacheFor<T>(ttlMs
+:
+number
+):
+OperatorFunction<T, T>
 ```
 
 **Behavior:**
+
 - First subscription → executes source, caches result
 - Re-subscribe within TTL → returns cached result instantly (no re-fetch)
 - Re-subscribe after TTL → executes source again, refreshes cache
 - Multiple concurrent subscriptions → all share the same execution (no duplicate requests)
 
 **Usage:**
+
 ```ts
 this.http.get<Config>('/api/config').pipe(
   cacheFor(5 * 60 * 1000) // cache for 5 minutes
@@ -137,11 +169,15 @@ this.http.get<Config>('/api/config').pipe(
 Records every emission into a log array (with timestamp and label), and optionally pushes to a provided signal. The values pass through unchanged.
 
 **Signature:**
+
 ```ts
 auditTrail<T>(
-  label: string,
-  store?: WritableSignal<AuditEntry<T>[]>
-): OperatorFunction<T, T>
+  label
+:
+string,
+  store ? : WritableSignal<AuditEntry<T>[]>
+):
+OperatorFunction<T, T>
 
 interface AuditEntry<T> {
   label: string;
@@ -151,12 +187,14 @@ interface AuditEntry<T> {
 ```
 
 **Behavior:**
+
 - Every emission → create an `AuditEntry`, push to internal log
 - If `store` signal is provided → update it with the full log
 - On complete → log `[AuditTrail] ${label}: stream completed (${count} events)`
 - Does NOT modify emitted values
 
 **Usage:**
+
 ```ts
 this.authService.tokenRefresh$.pipe(
   auditTrail('token-refresh', this.auditLog)
@@ -170,6 +208,7 @@ this.authService.tokenRefresh$.pipe(
 ## Acceptance Criteria
 
 ### Each operator must:
+
 - [ ] Be a standalone function in its own file (`retry-with-backoff.operator.ts`, etc.)
 - [ ] Export a named function
 - [ ] Be fully typed with generics — no `any`
@@ -177,6 +216,7 @@ this.authService.tokenRefresh$.pipe(
 - [ ] Not leak subscriptions or references
 
 ### Integration test:
+
 Build a single `demo.component.ts` that uses **all 5 operators together** in one pipe:
 
 ```ts
@@ -210,21 +250,21 @@ src/app/demo/
 
 ## Key Concepts to Know Cold
 
-| Concept | Used in |
-|---|---|
-| `defer()` | withLoading, tapOnce — per-subscription setup |
-| `finalize()` | withLoading, auditTrail, callTimer |
-| `retry({ delay })` | retryWithBackoff |
-| `timer()` | retryWithBackoff backoff delay |
-| `shareReplay()` | cacheFor |
-| `tap()` | auditTrail, tapOnce |
-| closure variables | tapOnce, cacheFor — state across emissions |
+| Concept            | Used in                                       |
+|--------------------|-----------------------------------------------|
+| `defer()`          | withLoading, tapOnce — per-subscription setup |
+| `finalize()`       | withLoading, auditTrail, callTimer            |
+| `retry({ delay })` | retryWithBackoff                              |
+| `timer()`          | retryWithBackoff backoff delay                |
+| `shareReplay()`    | cacheFor                                      |
+| `tap()`            | auditTrail, tapOnce                           |
+| closure variables  | tapOnce, cacheFor — state across emissions    |
 
 ---
 
-## Why These Matter for Appdome
+## Why These Matter
 
-| Operator | Appdome relevance |
+| Operator |
 |---|---|
 | `retryWithBackoff` | Resilient API calls for security monitoring services |
 | `withLoading` | UX during security scans / threat detection requests |

@@ -1,0 +1,32 @@
+<div class="card">
+  <div class="card-header">
+    <span class="challenge-id">#{{ challenge().id }}</span>
+    <h3 class="card-title">{{ challenge().title }}</h3>
+  </div>
+
+  <div class="card-body">
+    <section>
+      <h4>Problem</h4>
+      <p>{{ challenge().problem }}</p>
+    </section>
+
+    <section>
+      <h4>Solution</h4>
+      <p>{{ challenge().solution }}</p>
+    </section>
+
+    <section class="win">
+      <h4>The Win</h4>
+      <p>{{ challenge().win }}</p>
+    </section>
+  </div>
+
+  <div class="card-footer">
+    <div class="tags">
+      @for (tag of challenge().tags; track tag) {
+        <span class="tag">{{ tag }}</span>
+      }
+    </div>
+    <a [routerLink]="challenge().route" class="view-btn">View Challenge</a>
+  </div>
+</div>

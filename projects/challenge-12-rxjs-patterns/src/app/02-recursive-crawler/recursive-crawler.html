@@ -1,0 +1,6 @@
+@if (!isLoading()) {
+  <p>Loaded {{ pages() }} pages.</p>
+}
+
+<app-product-table [products]="products()" [isLoading]="isLoading()">
+</app-product-table>

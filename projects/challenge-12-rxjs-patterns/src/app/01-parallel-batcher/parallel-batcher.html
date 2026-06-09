@@ -1,0 +1,30 @@
+<section>
+  <table>
+    <thead>
+    <tr>
+      <th>Id</th>
+      <th>Name</th>
+      <th>Category</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for (item of sortedItems(); track item.id) {
+        <tr [style.color]="CATEGORY_COLORS[item.category]">
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.category }}</td>
+        </tr>
+      } @empty {
+        @if (isLoading()) {
+          <tr class="empty-state">
+            <td colspan="3">Loading...</td>
+          </tr>
+        } @else {
+          <tr class="empty-state">
+            <td colspan="3">Could not load any items.</td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</section>

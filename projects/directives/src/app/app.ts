@@ -1,4 +1,4 @@
-import {Component, signal} from '@angular/core';
+import {Component, signal, ChangeDetectionStrategy} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {Highlight} from '../../highlight';
 
@@ -6,6 +6,7 @@ import {Highlight} from '../../highlight';
   selector: 'app-root',
   imports: [Highlight],
   templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.scss'
 })
 export class App {

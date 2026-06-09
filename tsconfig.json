@@ -82,6 +82,24 @@
     },
     {
       "path": "./projects/challenge-11-centralized-error-handling/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/challenge-08-custom-directives/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/challenge-08-custom-directives/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/rxjs-course/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/rxjs-course/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/challenge-12-rxjs-patterns/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/challenge-12-rxjs-patterns/tsconfig.spec.json"
     }
   ]
 }

@@ -6,7 +6,7 @@ import {ErrorLogger} from '../services/error-logger';
 
 import {retryOnNetworkError} from '../shared/rxjs-operators';
 import {ToastService} from '../services/toast-service';
-import {ToastMessage} from '../toast.model';
+import {ToastMessage} from '../shared/toast.model';
 
 import {ERROR_DESCRIPTIONS, USER_ERROR_MESSAGES} from '../shared/error-descriptions';
 

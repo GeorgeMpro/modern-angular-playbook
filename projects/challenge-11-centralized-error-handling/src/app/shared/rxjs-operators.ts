@@ -1,7 +1,7 @@
-import {defer, finalize, MonoTypeOperatorFunction, Observable, of, retry, tap, throwError, timer} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
 import {WritableSignal} from '@angular/core';
 
+import {defer, finalize, MonoTypeOperatorFunction, Observable, retry, throwError, timer} from 'rxjs';
 
 export function retryOnNetworkError<T>(
   onRetry?: (count: number, max: number) => void
@@ -23,17 +23,16 @@ export function retryOnNetworkError<T>(
           }
         }
       }));
-  }
+  };
 }
 
 export function trackRequest<T>(flag: WritableSignal<boolean>): MonoTypeOperatorFunction<T> {
   return (source$: Observable<T>) => {
-    // defer to handle setting the flag when the subscription happens
     return defer(() => {
       flag.set(true);
       return source$.pipe(
         finalize(() => flag.set(false))
       );
-    })
-  }
+    });
+  };
 }

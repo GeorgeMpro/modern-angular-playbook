@@ -1,5 +1,5 @@
 import {Injectable, signal} from '@angular/core';
-import {ToastAction, ToastMessage, ToastType} from '../toast.model';
+import {ToastAction, ToastMessage, ToastType} from '../shared/toast.model';
 
 
 @Injectable({
@@ -21,7 +21,7 @@ export class ToastService {
   private readonly undoAction: ToastAction = {
     label: 'undo',
     callback: (t: ToastMessage) => {
-      console.warn(`Undoing: ${t.content}`)
+      console.warn(`Undoing: ${t.content}`);
       this.dismissToast(t);
 
       this.addToast({...t, content: `(Rolled Back) ${t.content}`, status: 'info'})
@@ -45,8 +45,7 @@ export class ToastService {
     {id: 6, content: 'Unknown Error', status: 'error', duration: 30000, actions: []},
     {id: 7, content: 'Another Success!', status: 'success', duration: 30000, actions: []},
     {id: 8, content: 'Complete', status: 'success', duration: 30000, actions: []},
-
-  ]
+  ];
   private idCounter: number = 1;
   private readonly _toasts = signal<ToastMessage[]>([]);
   private readonly _timers = new Map<number, ReturnType<typeof setTimeout>>

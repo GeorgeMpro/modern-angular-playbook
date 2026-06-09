@@ -1,9 +1,10 @@
-import {Component, signal} from '@angular/core';
+import {Component, signal, ChangeDetectionStrategy} from '@angular/core';
 
 @Component({
   selector: 'app-enter-binding',
   imports: [],
   templateUrl: './enter-binding.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './enter-binding.scss',
 })
 export class EnterBinding {

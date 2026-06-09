@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectionStrategy} from '@angular/core';
 import {interval, map} from 'rxjs';
 import {toSignal} from '@angular/core/rxjs-interop';
 
@@ -6,6 +6,7 @@ import {toSignal} from '@angular/core/rxjs-interop';
   selector: 'app-equal-example',
   imports: [],
   templateUrl: './equal-example.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './equal-example.scss',
 })
 export class EqualExample {

@@ -1,0 +1,8 @@
+@let latest = latestItem();
+<app-event-table title="latest item" [items]="latest? [latest]:[]">
+</app-event-table>
+
+<p>Items in batch: {{ items().length }}</p>
+<p>Rolling Count: {{ rollingBatchCount() }}</p>
+<app-event-table title="Events" [items]="items()">
+</app-event-table>

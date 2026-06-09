@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, ChangeDetectionStrategy} from '@angular/core';
 import {RouterLink, RouterOutlet} from '@angular/router';
 import {LoginService} from './services/login.service';
 
@@ -6,6 +6,7 @@ import {LoginService} from './services/login.service';
   selector: 'app-root',
   imports: [RouterOutlet, RouterLink],
   templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.scss'
 })
 export class App {

@@ -1,0 +1,102 @@
+<section class="total">
+  <h3>Total</h3>
+  <table>
+    <thead>
+    <tr>
+      @for (status of STATUS_COLORS | keyvalue; track status.key) {
+        <th>{{ status.key | titlecase }}</th>
+      }
+    </tr>
+    </thead>
+    <tbody>
+    <tr style="text-align: left">
+      <td>
+        {{ logCount() }}
+      </td>
+      <td>
+        {{ warnings().length }}
+      </td>
+      <td>
+        {{ errors().length }}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="dashboard-grid">
+  <section>
+    <h3>
+      Error Events:
+    </h3>
+    <table>
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>
+          Message
+        </th>
+        <th>
+          Timestamp
+        </th>
+        <th>
+          Status
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (error of errors(); track error.event.timestamp; let i = $index) {
+          @let err = error.event;
+          <tr>
+            <td>
+              {{ i + 1 }}
+            </td>
+            <td>
+              {{ err.message }}
+            </td>
+            <td style="text-align: right;">
+              {{ err.timestamp }}
+            </td>
+            <td [style.color]="STATUS_COLORS[error.status]">
+              {{ error.status }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h3>
+      Warning Events:
+    </h3>
+    <table>
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>
+          Message
+        </th>
+        <th>
+          Timestamp
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (warning of warnings(); track warning.timestamp; let i = $index) {
+          <tr>
+            <td>
+              {{ i + 1 }}
+            </td>
+            <td>
+              {{ warning.message }}
+            </td>
+            <td style="text-align: right;">
+              {{ warning.timestamp }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>

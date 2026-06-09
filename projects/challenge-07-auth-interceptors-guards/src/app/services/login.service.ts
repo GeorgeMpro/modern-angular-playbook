@@ -33,7 +33,7 @@ export class LoginService {
     return token ?? '';
   }
 
-  getUerRole(): string {
+  getUserRole(): string {
     return this.isAdmin() ? 'admin' : '';
   }
 

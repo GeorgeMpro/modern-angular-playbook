@@ -1,12 +1,12 @@
-import {Component, signal} from '@angular/core';
-import {RouterOutlet} from '@angular/router';
+import {Component, signal, ChangeDetectionStrategy} from '@angular/core';
 import {Toast} from './components/toast/toast';
 import {ErrorTest} from './components/error-test/error-test';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Toast, ErrorTest],
+  imports: [ Toast, ErrorTest],
   templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './app.scss'
 })
 export class App {

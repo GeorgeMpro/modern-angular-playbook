@@ -1,0 +1,13 @@
+@if (isComplete()) {
+  <h3>Stream Completed</h3>
+}
+<div class="tables">
+  <app-event-table title="normal" [items]="normal()">
+  </app-event-table>
+
+  <app-event-table title="critical"
+                   [items]="criticalDisplay()"
+                   [actions]="[dismiss]"
+  >
+  </app-event-table>
+</div>

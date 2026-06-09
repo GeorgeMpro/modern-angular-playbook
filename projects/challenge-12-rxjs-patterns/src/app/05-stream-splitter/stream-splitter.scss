@@ -1,0 +1,11 @@
+.tables {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 1rem;
+
+  app-event-table {
+    flex: 1;
+    min-width: 0;
+  }
+}

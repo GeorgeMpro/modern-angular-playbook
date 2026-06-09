@@ -5,5 +5,5 @@ import {LoginService} from '../services/login.service';
 export const roleGuard = (role: string): CanActivateFn => (route, state) => {
   const loginService = inject(LoginService);
 
-  return role === loginService.getUerRole() || inject(Router).createUrlTree(['/forbidden']);
+  return role === loginService.getUserRole() || inject(Router).createUrlTree(['/forbidden']);
 };

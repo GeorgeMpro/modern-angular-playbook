@@ -1,4 +1,4 @@
-import {Component, inject, Signal} from '@angular/core';
+import {Component, inject, Signal, ChangeDetectionStrategy} from '@angular/core';
 import {toObservable} from '@angular/core/rxjs-interop';
 import {switchMap} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
@@ -8,6 +8,7 @@ import Query from '../query';
   selector: 'app-search-results',
   imports: [],
   templateUrl: './search-results.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './search-results.scss',
 })
 export class SearchResults {

@@ -1,0 +1,29 @@
+<div class="save-controls">
+  <button (click)="onClick()">Click To Save Items</button>
+  @if (saveCounter() > 0) {
+    <span class="save-status">Saving {{ saveCounter() }}...</span>
+  }
+</div>
+
+<section>
+  <table>
+    <thead>
+    <tr>
+      <th>Id</th>
+      <th>Result</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for (item of savedItems(); track item.id) {
+        <tr>
+          <td>{{ item.id }}</td>
+          <td>{{ item.success ? 'Saved' : 'Failed' }}</td>
+        </tr>
+      } @empty {
+        <tr class="empty-state">
+          <td colspan="2">Try saving items.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>

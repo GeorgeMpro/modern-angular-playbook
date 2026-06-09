@@ -17,7 +17,6 @@ export class GlobalErrorHandler implements ErrorHandler {
       actions: []
     });
 
-    // 3. Keep standard console log for developers
     console.error('ErrorHandler:', error);
   }
 }

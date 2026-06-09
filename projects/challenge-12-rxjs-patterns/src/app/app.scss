@@ -1,0 +1,46 @@
+@import "./shared/styles/variables";
+
+.main-header {
+  background-color: $bg-secondary;
+  border-bottom: 1px solid $border;
+  padding: $spacing-sm $spacing-md;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  background-color: rgba($bg-secondary, 0.8);
+  margin-left: -$spacing-md;
+  margin-right: -$spacing-md;
+  width: calc(100% + 2 * $spacing-md);
+
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing-lg;
+  }
+}
+
+main {
+  padding-top: $spacing-lg;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  text-decoration: none;
+  color: $heading;
+  font-weight: 700;
+  font-size: 1.25rem;
+
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, signal, ChangeDetectionStrategy} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {catchError, EMPTY, exhaustMap, map, Subject, takeUntil} from 'rxjs';
@@ -20,6 +20,7 @@ interface GlobalDummyError {
 @Component({
   selector: 'app-error-test',
   templateUrl: './error-test.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './error-test.scss'
 })
 export class ErrorTest {
@@ -29,7 +30,7 @@ export class ErrorTest {
   private readonly errSubj$ = new Subject<DummyError>();
   private readonly cancelSubj$ = new Subject<void>();
 
-  protected readonly isLoading = signal<boolean>(false);
+  protected readonly isLoading = signal(false);
 
   constructor() {
     this.errSubj$.pipe(
@@ -68,7 +69,7 @@ export class ErrorTest {
   }
 
   protected onCancel() {
-    console.warn('Request Canceled.');
+    console.log('Request Canceled.');
     this.toastService.addToast({
       content: 'Request retry canceled.',
       status: 'info',
