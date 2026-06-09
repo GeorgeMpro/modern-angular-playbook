@@ -16,7 +16,8 @@ A collection of hands-on Angular challenges built to master modern framework pat
 
 **Focus:** GlobalErrorHandler, HTTP interceptors, toast notifications, custom RxJS operators
 
-**Project:** `challenge-11-centralized-error-handling`
+**Project:** `challenge-11-centralized-error-handling`  
+**Live:** https://modern-angular-ch11.web.app
 
 ```bash
 ng serve challenge-11-centralized-error-handling
@@ -39,7 +40,8 @@ ng serve challenge-11-centralized-error-handling
 
 **Focus:** Advanced RxJS orchestration patterns implemented as eight standalone, production-grade challenges
 
-**Project:** `challenge-12-rxjs-patterns`
+**Project:** `challenge-12-rxjs-patterns`  
+**Live:** https://modern-angular-ch12.web.app
 
 ```bash
 ng serve challenge-12-rxjs-patterns
