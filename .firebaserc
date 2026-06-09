@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "modern-angular-playbook"
+  },
+  "targets": {
+    "modern-angular-playbook": {
+      "hosting": {
+        "ch12": [
+          "modern-angular-ch12"
+        ],
+        "ch11": [
+          "modern-angular-ch11"
+        ]
+      }
+    }
+  }
+}
