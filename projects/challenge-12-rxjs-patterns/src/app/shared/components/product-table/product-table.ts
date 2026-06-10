@@ -9,6 +9,7 @@ import {CurrencyPipe} from '@angular/common';
   ],
   templateUrl: './product-table.html',
   styleUrl: './product-table.scss',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductTable {
