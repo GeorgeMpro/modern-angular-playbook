@@ -84,6 +84,15 @@ export default class HomeComponent {
       win: 'Data-layer protection that persists even if the UI isn\'t disabled.',
       route: '/form-guard',
       tags: ['exhaustMap', 'defer', 'Retry Strategy']
+    },
+    {
+      id: '09',
+      title: 'Dashboard Filter',
+      problem: 'Two independent controls (category + search) that each trigger re-queries without blocking each other.',
+      solution: 'combineLatest with debounced search, ViewModel pattern for atomic loading/data state, and a Map-based category cache to avoid redundant HTTP calls.',
+      win: 'Flicker-free UI with cancellation, caching, and zero state synchronization bugs.',
+      route: '/dashboard-filter',
+      tags: ['combineLatest', 'switchMap', 'debounceTime', 'ViewModel']
     }
   ]);
 }

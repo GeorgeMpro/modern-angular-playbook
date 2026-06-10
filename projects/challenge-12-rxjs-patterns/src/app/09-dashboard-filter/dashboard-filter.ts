@@ -12,7 +12,7 @@ import {
   Observable,
   of,
   startWith,
-  switchMap
+  switchMap, tap
 } from 'rxjs';
 
 import {withLoading} from '../shared/operators/operators';
@@ -23,6 +23,11 @@ interface SearchState {
   data: Product[];
   loading: boolean;
   active: boolean;
+}
+
+interface CategoryCache {
+  category: string;
+  data: Product[];
 }
 
 const INITIAL_STATE: SearchState = {data: [], loading: false, active: false}
@@ -49,6 +54,7 @@ export default class DashboardFilter {
   protected readonly isLoading = signal(false);
   protected readonly chosenCategory = signal('');
   protected readonly query = signal('');
+  private readonly categoryDataCache = signal<CategoryCache>({category: '', data: []});
 
   private readonly categories$ = this.http.get<string[]>(this.categoryApi)
     .pipe(
@@ -118,12 +124,25 @@ export default class DashboardFilter {
     return this.getProducts(`${this.baseApi}category/${category}`)
   }
 
-  private filterProductsCategoryByQuery(query: string, category: string) {
-    return this.getProductsByCategory(category).pipe(
-      map(products => {
-        return products.filter(p => p.title.toLowerCase().includes(query.toLowerCase()));
-      })
+  private filterProductsCategoryByQuery(query: string, category: string): Observable<Product[]> {
+    return this.getData(category).pipe(
+      map(products => this.filterProducts(query, products))
     );
+  }
+
+  private getData(category: string): Observable<Product[]> {
+    if (this.categoryDataCache().category === category) {
+      return of(this.categoryDataCache().data);
+    }
+    return this.getProductsByCategory(category).pipe(
+      tap(products => this.categoryDataCache.set({category, data: products}))
+    );
+  }
+
+  private filterProducts(query: string, products: Product[]): Product[] {
+    return products.filter(
+      p => p.title.toLowerCase().includes(query.toLowerCase())
+    )
   }
 
   private getProducts(api: string): Observable<Product[]> {
@@ -133,11 +152,11 @@ export default class DashboardFilter {
   }
 
 
-  onCategoryChange(category: string): void {
+  protected onCategoryChange(category: string): void {
     this.chosenCategory.set(category);
   }
 
-  onQuery(query: string) {
+  protected onQuery(query: string) {
     this.query.set(query);
   }
 }

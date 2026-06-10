@@ -19,7 +19,7 @@
              #categoryInput
              (input)="onCategoryChange(categoryInput.value)">
       <datalist id="categories">
-        @for (cat of categories(); track $index) {
+        @for (cat of categories(); track cat) {
           <option [value]="cat">
         }
       </datalist>
