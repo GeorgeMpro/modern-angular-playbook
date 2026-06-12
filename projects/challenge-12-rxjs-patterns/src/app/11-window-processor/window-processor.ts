@@ -1,48 +1,46 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
+import {DatePipe, TitleCasePipe} from '@angular/common';
+
+import {toSignal} from '@angular/core/rxjs-interop';
+import {filter, reduce, scan, windowTime, mergeMap, map} from 'rxjs';
+
+import {MockApiService} from '../mock/mock-api.service';
+
+export interface WindowSnapshot {
+  errorsPerWindow: number;
+  date: Date;
+}
 
 @Component({
   selector: 'app-window-processor',
-  imports: [],
+  imports: [
+    TitleCasePipe,
+    DatePipe
+  ],
   templateUrl: './window-processor.html',
   styleUrl: './window-processor.scss',
   standalone: true
 })
-export class WindowProcessor {
+export default class WindowProcessor {
 
+  private readonly windowSpan = 1000;
+  private readonly windowSize = 10;
+  protected readonly title = 'errors per window';
+
+  private readonly service = inject(MockApiService);
+
+  private readonly eventStream = this.service.getEventStream();
+  private readonly windowAnalytics$ = this.eventStream.pipe(
+    windowTime(this.windowSpan),
+    mergeMap(window$ => window$.pipe(
+      filter(event => event.type === 'error'),
+      reduce((acc) => acc + 1, 0),
+    )),
+    map((val): WindowSnapshot => ({errorsPerWindow: val, date: new Date()})),
+    scan((acc: WindowSnapshot[], curr: WindowSnapshot) => [...acc, curr].slice(
+      -this.windowSize
+    ), []),
+  );
+
+  protected readonly windowHistory = toSignal(this.windowAnalytics$, {initialValue: []})
 }
-
-/*
-
-## Challenge 11: The Window Processor
-
-**Operators:** `windowTime`, `mergeMap`, `reduce`
-**Data source:** Mock only — `MockApiService.getEventStream()`
-
-### The Problem
-
-`bufferTime` from Challenge 6 collects events into arrays. But what if you need to perform **async work on each event within a window** as it arrives — not after the window closes? You need a window that is itself an Observable, not a snapshot array.
-
-### Task
-
-Take the high-frequency event stream. Use `windowTime` to create 1-second windows. For each window, count only the `error` events inside it and emit that count. Display a live rolling series of "errors per second."
-
-### Behavior
-
-- Each 1-second window is processed as its own stream
-- Only `error` type events are counted per window
-- The count for each window emits when the window closes
-- A rolling history of the last N window counts is displayed
-- Empty windows (zero errors) still emit a count of 0
-
-### What you'll learn
-
-`bufferTime` → gives you `T[]` after the window closes. You can only process the snapshot.
-`windowTime` → gives you `Observable<T>` for each window, open while the window is live. You can `filter`, `map`, `reduce`, or pipe any operator through it while it streams.
-
-Use `windowTime` when the work inside the window is async or requires operators. Use `bufferTime` when you only need the collected array.
-
-### Hint
-
-`windowTime` emits an `Observable<T>` per window via the outer stream. To process each window, pipe through `mergeMap` and apply your inner pipeline there. The inner observable completes when the window closes — that is when you can use `reduce` or `toArray` to get a final value per window.
-
----*/

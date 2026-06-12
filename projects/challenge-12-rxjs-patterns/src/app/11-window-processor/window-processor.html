@@ -1,1 +1,21 @@
-<p>window-processor works!</p>
+<h3>{{ title | titlecase }}</h3>
+<table>
+  <thead>
+  <tr>
+    <th>Time</th>
+    <th>Error Count</th>
+  </tr>
+  </thead>
+  <tbody>
+    @for (error of windowHistory(); track error.date.getTime()) {
+      <tr>
+        <td>
+          {{ error.date | date:'HH:mm:ss' }}
+        </td>
+        <td>
+          {{ error.errorsPerWindow }}
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

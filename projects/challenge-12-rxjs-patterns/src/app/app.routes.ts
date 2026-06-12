@@ -60,5 +60,10 @@ export const routes: Routes = [
     path: 'save-queue',
     loadComponent: () => import('./10-save-queue/save-queue'),
     title: 'The Save Queue'
+  },
+  {
+    path: 'window-processor',
+    loadComponent: () => import('./11-window-processor/window-processor'),
+    title: 'The Window Processor'
   }
 ];

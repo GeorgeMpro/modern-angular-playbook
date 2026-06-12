@@ -61,6 +61,7 @@ ng serve challenge-12-rxjs-patterns
 | 08 | Form Guard | Submission guarding + resilient retry | `exhaustMap`, `defer`, `retry` |
 | 09 | Dashboard Filter | Multi-source reactive filtering + ViewModel | `combineLatest`, `switchMap`, `debounceTime` |
 | 10 | Save Queue | Sequential queue orchestration + Command dispatch | `concatMap`, `Subject`, `signal` |
+| 11 | Window Processor | Live window analytics + rolling history | `windowTime`, `mergeMap`, `reduce`, `scan` |
 
 ### Shared infrastructure
 

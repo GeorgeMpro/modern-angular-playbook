@@ -102,6 +102,15 @@ export default class HomeComponent {
       win: 'Order-guaranteed saves with per-item retry, dismiss, and failure recovery — zero race conditions by design.',
       route: '/save-queue',
       tags: ['concatMap', 'Subject', 'Dispatch Table', 'Signals']
+    },
+    {
+      id: '11',
+      title: 'Window Processor',
+      problem: 'A high-frequency event stream needs per-second error analytics — but processing must happen while the window is live, not after it closes.',
+      solution: 'windowTime to open live Observable windows, mergeMap to process each window as a stream, reduce to count on close, scan to maintain a rolling history.',
+      win: 'Per-window analytics with full operator power inside each window — impossible with bufferTime alone.',
+      route: '/window-processor',
+      tags: ['windowTime', 'mergeMap', 'reduce', 'scan']
     }
   ]);
 }
