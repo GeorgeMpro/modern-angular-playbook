@@ -8,11 +8,18 @@ import {QueueEntryTable} from './queue-entry-table';
 import {SaveResult} from '../shared/models/products.model';
 
 type SaveStatus = 'idle' | 'pending' | 'success' | 'fail';
+type ActionStyle = 'primary' | 'danger'
 
 export interface QueueEntry {
   id: number;
   category: Item['category'];
   saveStatus: SaveStatus;
+}
+
+export interface QueueEntryAction {
+  label: string;
+  callback: (q: QueueEntry) => void;
+  style?: ActionStyle;
 }
 
 export const COLOR_MAP: Record<SaveStatus, string> = {
@@ -42,6 +49,31 @@ export default class SaveQueue {
     {id: 5, category: 'error', saveStatus: 'idle'},
     {id: 6, category: 'warning', saveStatus: 'idle'},
   ]);
+
+  private readonly saveAction: QueueEntryAction = {
+    label: 'save',
+    callback: (q: QueueEntry) => this.onSaveItem(q),
+    style: 'primary',
+  };
+
+  private readonly retryAction: QueueEntryAction = {
+    label: 'retry',
+    callback: (q: QueueEntry) => this.onSaveItem(q),
+    style: 'primary'
+  };
+
+  private readonly dismissAction: QueueEntryAction = {
+    label: 'dismiss',
+    callback: (q: QueueEntry) => this.dismissItem(q),
+    style: 'danger',
+  };
+
+  protected readonly actionMap: Record<QueueEntry['saveStatus'], QueueEntryAction[]> = {
+    idle: [this.saveAction],
+    pending: [],
+    fail: [this.retryAction],
+    success: [this.dismissAction]
+  }
 
   private readonly service = inject(MockApiService);
 
@@ -91,11 +123,17 @@ export default class SaveQueue {
     this.itemToSave$.next(item);
   }
 
-  private statusUpdate(item: QueueEntry) {
+  private statusUpdate(item: QueueEntry): void {
     this.items.update(curr => {
       return curr.map(
         entry => entry.id === item.id ? {...item} : {...entry}
       )
+    });
+  }
+
+  private dismissItem(item: QueueEntry): void {
+    this.items.update(curr => {
+      return curr.filter(entry => entry.id !== item.id);
     });
   }
 }

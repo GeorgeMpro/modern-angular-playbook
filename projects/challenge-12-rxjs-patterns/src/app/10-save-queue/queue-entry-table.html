@@ -6,7 +6,7 @@
     <th>Id</th>
     <th>Category</th>
     <th>Status</th>
-    @if (hasActions()) {
+    @if (hasAnyActions()) {
       <th>Action</th>
     }
   </tr>
@@ -19,9 +19,12 @@
         <td [style.color]="COLOR_MAP[item.saveStatus]">
           {{ item.saveStatus }}
         </td>
-        @if (hasActions()) {
+        @for (action of actionMap()[item.saveStatus]; track action.label) {
           <td>
-            <button (click)="onSaveItem(item)">Save</button>
+            <button (click)="action.callback(item)"
+                    [class]="action.style">
+              {{ action.label }}
+            </button>
           </td>
         }
       </tr>

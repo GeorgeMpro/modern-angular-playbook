@@ -1,6 +1,6 @@
-import {Component, input, output} from '@angular/core';
+import {Component, computed, input, output} from '@angular/core';
 import {TitleCasePipe} from '@angular/common';
-import {COLOR_MAP, QueueEntry} from './save-queue';
+import {COLOR_MAP, QueueEntry, QueueEntryAction} from './save-queue';
 
 @Component({
   selector: 'app-queue-entry-table',
@@ -12,14 +12,15 @@ import {COLOR_MAP, QueueEntry} from './save-queue';
 export class QueueEntryTable {
 
   readonly title = input.required<string>();
-  readonly hasActions = input(true);
   readonly items = input.required<QueueEntry[]>();
   readonly saved = output<QueueEntry>();
 
+  readonly actionMap = input.required<Record<QueueEntry['saveStatus'], QueueEntryAction[]>>()
 
-  protected onSaveItem(item: QueueEntry) {
-    this.saved.emit(item)
-  }
-
+  protected readonly hasAnyActions = computed(() => {
+    return this.items().some(
+      item => this.actionMap()[item.saveStatus]?.length > 0
+    );
+  });
   protected readonly COLOR_MAP = COLOR_MAP;
 }
