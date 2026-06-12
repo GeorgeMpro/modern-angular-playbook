@@ -1,6 +1,6 @@
-import {Component, computed, input, output} from '@angular/core';
+import {Component, computed, input} from '@angular/core';
 import {TitleCasePipe} from '@angular/common';
-import {COLOR_MAP, QueueEntry, QueueEntryAction} from './save-queue';
+import {COLOR_MAP, QueueEntry, QueueEntryAction} from '../shared/models/queue.model';
 
 @Component({
   selector: 'app-queue-entry-table',
@@ -13,7 +13,6 @@ export class QueueEntryTable {
 
   readonly title = input.required<string>();
   readonly items = input.required<QueueEntry[]>();
-  readonly saved = output<QueueEntry>();
 
   readonly actionMap = input.required<Record<QueueEntry['saveStatus'], QueueEntryAction[]>>()
 

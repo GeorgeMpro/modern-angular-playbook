@@ -3,31 +3,10 @@ import {Component, computed, inject, signal} from '@angular/core';
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {catchError, concatMap, delayWhen, EMPTY, Observable, Subject, tap, timer} from 'rxjs';
 
-import {Item, MockApiService} from '../mock/mock-api.service';
+import { MockApiService} from '../mock/mock-api.service';
 import {QueueEntryTable} from './queue-entry-table';
 import {SaveResult} from '../shared/models/products.model';
-
-type SaveStatus = 'idle' | 'pending' | 'success' | 'fail';
-type ActionStyle = 'primary' | 'danger'
-
-export interface QueueEntry {
-  id: number;
-  category: Item['category'];
-  saveStatus: SaveStatus;
-}
-
-export interface QueueEntryAction {
-  label: string;
-  callback: (q: QueueEntry) => void;
-  style?: ActionStyle;
-}
-
-export const COLOR_MAP: Record<SaveStatus, string> = {
-  idle: '#3b82f6',
-  pending: '#f59e0b',
-  success: '#10b981',
-  fail: '#ef4444',
-};
+import {QueueEntry, QueueEntryAction} from '../shared/models/queue.model';
 
 @Component({
   selector: 'app-save-queue',
@@ -79,7 +58,7 @@ export default class SaveQueue {
 
   private readonly itemToSave$ = new Subject<QueueEntry>();
 
-  private readonly itemsSaving$ = this.itemToSave$.pipe(
+  private readonly saveQueue$ = this.itemToSave$.pipe(
     concatMap(item => this.handleSave(item)
     )
   );
@@ -98,7 +77,7 @@ export default class SaveQueue {
     );
   }
 
-  protected readonly itemsSave = computed<QueueEntry[]>(() => {
+  protected readonly availableItems = computed<QueueEntry[]>(() => {
     return this.items().filter(item => item.saveStatus !== 'pending')
   });
   protected readonly itemsQueue = computed<QueueEntry[]>(() => {
@@ -106,13 +85,13 @@ export default class SaveQueue {
   })
 
   constructor() {
-    this.itemsSaving$.pipe(
+    this.saveQueue$.pipe(
       takeUntilDestroyed()
     )
       .subscribe();
   }
 
-  protected onSaveItem(item: QueueEntry): void {
+  private onSaveItem(item: QueueEntry): void {
     this.items.update(curr => {
         return curr.map(
           entry => entry.id === item.id ? {...entry, saveStatus: 'pending'} : {...entry}

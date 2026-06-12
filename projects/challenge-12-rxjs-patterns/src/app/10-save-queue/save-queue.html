@@ -1,8 +1,7 @@
 <div class="tables">
   <app-queue-entry-table title="available"
                          [actionMap]="actionMap"
-                         [items]="itemsSave()"
-                         (saved)="onSaveItem($event)">
+                         [items]="availableItems()">
   </app-queue-entry-table>
 
   <app-queue-entry-table title="pending"

@@ -19,12 +19,14 @@
         <td [style.color]="COLOR_MAP[item.saveStatus]">
           {{ item.saveStatus }}
         </td>
-        @for (action of actionMap()[item.saveStatus]; track action.label) {
+        @if (hasAnyActions()) {
           <td>
-            <button (click)="action.callback(item)"
-                    [class]="action.style">
-              {{ action.label }}
-            </button>
+            @for (action of actionMap()[item.saveStatus]; track action.label) {
+              <button (click)="action.callback(item)"
+                      [class]="action.style">
+                {{ action.label |titlecase }}
+              </button>
+            }
           </td>
         }
       </tr>

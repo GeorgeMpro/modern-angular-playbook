@@ -93,6 +93,15 @@ export default class HomeComponent {
       win: 'Flicker-free UI with cancellation, caching, and zero state synchronization bugs.',
       route: '/dashboard-filter',
       tags: ['combineLatest', 'switchMap', 'debounceTime', 'ViewModel']
+    },
+    {
+      id: '10',
+      title: 'Save Queue',
+      problem: 'Multiple items queued for saving must process one at a time — in order — without race conditions or out-of-order writes.',
+      solution: 'concatMap as a sequential processing queue, Subject as a command bus, and a dispatch table that maps save status to per-item actions.',
+      win: 'Order-guaranteed saves with per-item retry, dismiss, and failure recovery — zero race conditions by design.',
+      route: '/save-queue',
+      tags: ['concatMap', 'Subject', 'Dispatch Table', 'Signals']
     }
   ]);
 }
