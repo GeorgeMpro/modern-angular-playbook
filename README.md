@@ -59,6 +59,8 @@ ng serve challenge-12-rxjs-patterns
 | 06 | High-Pressure Smoother | Backpressure management | `bufferTime`, `auditTime` |
 | 07 | Signal Bridge | Angular Signals ↔ RxJS interop | `toObservable`, `toSignal`, `switchMap` |
 | 08 | Form Guard | Submission guarding + resilient retry | `exhaustMap`, `defer`, `retry` |
+| 09 | Dashboard Filter | Multi-source reactive filtering + ViewModel | `combineLatest`, `switchMap`, `debounceTime` |
+| 10 | Save Queue | Sequential queue orchestration + Command dispatch | `concatMap`, `Subject`, `signal` |
 
 ### Shared infrastructure
 

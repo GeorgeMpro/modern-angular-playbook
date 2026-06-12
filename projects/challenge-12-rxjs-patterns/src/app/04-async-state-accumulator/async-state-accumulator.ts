@@ -13,6 +13,7 @@ import {APP_CONFIG} from '../shared/tokens/config.tokens';
   imports: [],
   templateUrl: './async-state-accumulator.html',
   styleUrl: './async-state-accumulator.scss',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class AsyncStateAccumulator {

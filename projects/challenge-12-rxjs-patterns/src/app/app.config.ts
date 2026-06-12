@@ -1,13 +1,15 @@
 import {ApplicationConfig, provideBrowserGlobalErrorListeners} from '@angular/core';
-import {provideRouter} from '@angular/router';
+import {provideRouter, TitleStrategy} from '@angular/router';
 
 import {routes} from './app.routes';
 import {provideHttpClient, withXhr} from '@angular/common/http';
+import {PageTitleStrategy} from './shared/title-strategy';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withXhr()),
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes)
+    provideRouter(routes),
+    {provide: TitleStrategy, useExisting: PageTitleStrategy},
   ]
 };

@@ -50,5 +50,15 @@ export const routes: Routes = [
     path: 'form-guard',
     loadComponent: () => import('./08-form-guard/form-guard'),
     title: 'The Form Guard'
+  },
+  {
+    path: 'dashboard-filter',
+    loadComponent: () => import('./09-dashboard-filter/dashboard-filter'),
+    title: 'The Dashboard Filter'
+  },
+  {
+    path: 'save-queue',
+    loadComponent: () => import('./10-save-queue/save-queue'),
+    title: 'The Save Queue'
   }
 ];

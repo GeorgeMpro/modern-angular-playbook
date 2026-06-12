@@ -418,6 +418,47 @@ Take a service that exposes a mutable array. Make it impossible for consumers to
 
 ---
 
+---
+
+## Challenge 9: Undo Stack via Command Pattern
+
+**Pattern:** Command Pattern with history
+**Concepts:** Reversible commands, `signal<Command[]>` history, undo/redo
+
+### The Problem
+
+A user edits a list of items — renaming, reordering, deleting. There is no undo. One wrong click and the change is permanent.
+
+### Task
+
+Extend the `TableAction<T>` type with an optional `undo` callback:
+
+```ts
+export type TableAction<T> = {
+  label: string;
+  icon?: string;
+  variant?: 'primary' | 'ghost' | 'danger';
+  callback: (row: T) => void;
+  undo?: (row: T) => void;
+};
+```
+
+Maintain a `signal<ExecutedAction<T>[]>` history in a service. When an action with `undo` is executed, push it to the history stack. Expose an `undoLast()` method that pops the stack and calls `undo(row)` on the last entry.
+
+### Behavior
+
+- Actions without `undo` execute normally, nothing pushed to history
+- Actions with `undo` push to history on execution
+- `undoLast()` reverses the most recent undoable action and removes it from history
+- An "Undo" button is disabled when history is empty
+- History is scoped to the component tree (provided at component level, not root)
+
+### What you'll learn
+
+The Command Pattern's real power is reversibility — separating "what to do" from "how to undo it" into the same object. The history stack is just a `signal<Command[]>` — `computed(() => history().length > 0)` drives the undo button state. No external state manager needed.
+
+---
+
 ## Acceptance Criteria
 
 - [ ] Challenge 1: Dumb component has zero `inject()` calls; at least one input uses `transform`
@@ -428,6 +469,7 @@ Take a service that exposes a mutable array. Make it impossible for consumers to
 - [ ] Challenge 6: New event type added without touching the dispatcher service
 - [ ] Challenge 7: Illegal state transitions are impossible at the type level; no boolean flags; Signal Forms used for step inputs
 - [ ] Challenge 8: No `any`, no `as` type assertions; `assertNever` used in every discriminated union switch
+- [ ] Challenge 9: Undo reverses the last action; history is empty after full undo sequence; undo button disabled when nothing to undo
 
 ---
 
@@ -438,6 +480,7 @@ Take a service that exposes a mutable array. Make it impossible for consumers to
 | Smart / Dumb Split | Component mixes data fetching with rendering |
 | Facade + `asReadonly()` | Component injects 3+ services and orchestrates between them |
 | Command Pattern | Multiple parents need different row actions on the same table |
+| Undo Stack | Actions need to be reversible; history tracked as `signal<Command[]>` |
 | Injection Function | Same `inject()` + reactive logic copy-pasted across components |
 | Context Provider | Deep tree needs shared state without prop drilling or global scope |
 | Strategy via DI | `switch` on type that grows over time |
