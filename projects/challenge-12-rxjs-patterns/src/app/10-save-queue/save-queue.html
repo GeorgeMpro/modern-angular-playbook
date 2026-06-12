@@ -1,0 +1,11 @@
+<div class="tables">
+  <app-queue-entry-table title="available"
+                         [items]="itemsSave()"
+                         (saved)="onSaveItem($event)">
+  </app-queue-entry-table>
+
+  <app-queue-entry-table title="pending"
+                         [items]="itemsQueue()"
+                         [hasActions]="false">
+  </app-queue-entry-table>
+</div>

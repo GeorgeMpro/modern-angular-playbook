@@ -1,0 +1,37 @@
+<h3>{{ title() | titlecase }}</h3>
+
+<table>
+  <thead>
+  <tr>
+    <th>Id</th>
+    <th>Category</th>
+    <th>Status</th>
+    @if (hasActions()) {
+      <th>Action</th>
+    }
+  </tr>
+  </thead>
+  <tbody>
+    @for (item of items(); track item.id; ) {
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.category }}</td>
+        <td [style.color]="COLOR_MAP[item.saveStatus]">
+          {{ item.saveStatus }}
+        </td>
+        @if (hasActions()) {
+          <td>
+            <button (click)="onSaveItem(item)">Save</button>
+          </td>
+        }
+      </tr>
+    } @empty {
+      <tr>
+        <td colSpan="4">
+          No items in {{ title()|titlecase }}
+        </td>
+      </tr>
+    }
+  </tbody>
+
+</table>

@@ -55,5 +55,10 @@ export const routes: Routes = [
     path: 'dashboard-filter',
     loadComponent: () => import('./09-dashboard-filter/dashboard-filter'),
     title: 'The Dashboard Filter'
+  },
+  {
+    path: 'save-queue',
+    loadComponent: () => import('./10-save-queue/save-queue'),
+    title: 'The Save Queue'
   }
 ];
