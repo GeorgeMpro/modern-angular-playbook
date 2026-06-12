@@ -65,5 +65,10 @@ export const routes: Routes = [
     path: 'window-processor',
     loadComponent: () => import('./11-window-processor/window-processor'),
     title: 'The Window Processor'
+  },
+  {
+    path: 'subject-selector',
+    loadComponent: () => import('./12-subject-selector/subject-selector'),
+    title: 'The Subject Selector'
   }
 ];
