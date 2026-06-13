@@ -1,34 +1,122 @@
-# NG-TEMPLATE CHALLENGE #4: UI Composition and Dynamic Outlets
+# ng-template Challenge #4: Dynamic Layout Composition
 
-### Your Persona
-You have mastered `ngTemplateOutlet` and passing context. You are ready to architect a complex, dynamic UI layout by composing it from multiple, swappable template pieces.
+**Difficulty:** Medium–Hard
+**Angular Version:** 22+
+**Focus:** Template slots as signals, `computed()` template selection, decoupled shell architecture
 
-### The Learning Goal
-Demonstrate mastery by composing a complete UI layout from multiple, independent template "slots". You will also dynamically change which template is being passed into a slot based on application state. This is a pattern used to build highly configurable dashboards, app shells, and complex views.
+---
 
-### The Scenario
-You will build the main layout shell for a simple game UI. The layout component itself will be dumb; it will only define regions. The main application component will own all the pieces—the game board, the player stats, the inventory—and will tell the layout component what to render and where. It will also dynamically swap the content of the sidebar.
+## The Problem
 
-### The Requirements
-1.  All components must be `standalone` and use modern Angular syntax. All state must be in signals.
-2.  Create a `PageLayoutComponent`. Its template should define a simple two-column structure (e.g., a main content area and a smaller sidebar area).
-3.  The `PageLayoutComponent` must accept two `TemplateRef` inputs:
-    *   `mainSlot = input.required<TemplateRef<any>>()`
-    *   `sideSlot = input<TemplateRef<any> | null>()` (make it optional)
-4.  Use `ngTemplateOutlet` in the appropriate places to render the `mainSlot` and `sideSlot` templates.
-5.  In your `AppComponent`, create a signal to manage the state of the sidebar.
-    ```typescript
-    type SidePanelContent = 'stats' | 'inventory';
-    sidePanelState = signal<SidePanelContent>('stats');
-    ```
-6.  In `app.component.html`, define **three** distinct `<ng-template>` blocks with reference variables:
-    *   `#gameBoard`: Contains a placeholder for the main game area.
-    *   `#playerStats`: Contains placeholder stats for the player (Health, Mana, etc.).
-    *   `#inventory`: Contains a placeholder for a list of items.
-7.  Use your `<app-page-layout>` component.
-    *   The `mainSlot` input should always be bound to the `#gameBoard` template.
-    *   The `sideSlot` input must be bound **dynamically**. Use an `@if` block or a `computed` signal to pass the `#playerStats` template if `sidePanelState()` is `'stats'`, and the `#inventory` template if it's `'inventory'`.
-8.  Add two buttons in `AppComponent` to "Show Stats" and "Show Inventory". Clicking these buttons should change the `sidePanelState` signal, which will cause your layout to dynamically swap the content in the sidebar without the layout component itself knowing anything about "stats" or "inventory".
+A layout shell (sidebar + main area) shouldn't know what goes inside it. The app shell defines regions; the page decides what fills them. When the user switches between "Stats" and "Inventory" in the sidebar, the layout component should be unaware — it just renders whatever template it receives.
 
-### What to Have Ready
-Show all relevant component and template files. Be prepared to explain the full flow of data and templates. How does a state change in the `AppComponent` trigger a view change inside the `PageLayoutComponent`? Explain the power of this pattern for decoupling a "shell" or "layout" component from the content it displays. This is a critical pattern for large-scale applications.
+This is how Angular Material's `mat-sidenav`, `router-outlet`, and tab components work: the shell defines structure, the parent controls content.
+
+---
+
+## Task
+
+Build a `PageLayoutComponent` that defines a two-column layout and renders whatever templates it receives — it has no knowledge of "stats", "inventory", or "game board".
+
+### PageLayoutComponent
+
+```ts
+readonly mainSlot = input.required<TemplateRef<void>>();
+readonly sideSlot = input<TemplateRef<void> | null>(null);
+```
+
+```html
+<div class="layout">
+  <main class="layout-main">
+    <ng-container [ngTemplateOutlet]="mainSlot()" />
+  </main>
+  @if (sideSlot()) {
+    <aside class="layout-side">
+      <ng-container [ngTemplateOutlet]="sideSlot()" />
+    </aside>
+  }
+</div>
+```
+
+### AppComponent
+
+Define the state and all templates in the parent:
+
+```ts
+type SidePanelContent = 'stats' | 'inventory';
+readonly sidePanelState = signal<SidePanelContent>('stats');
+
+readonly activeSideTemplate = computed(() =>
+  this.sidePanelState() === 'stats' ? this.statsTpl() : this.inventoryTpl()
+);
+
+// Query the templates defined in the component's own view
+readonly statsTpl     = viewChild.required<TemplateRef<void>>('playerStats');
+readonly inventoryTpl = viewChild.required<TemplateRef<void>>('inventory');
+```
+
+```html
+<!-- Template definitions — not rendered until referenced -->
+<ng-template #gameBoard>
+  <h2>Game Board</h2>
+  <p>Main play area here.</p>
+</ng-template>
+
+<ng-template #playerStats>
+  <p>Health: 80/100</p>
+  <p>Mana: 45/60</p>
+</ng-template>
+
+<ng-template #inventory>
+  <ul>
+    <li>Sword +2</li>
+    <li>Health Potion x3</li>
+  </ul>
+</ng-template>
+
+<app-page-layout
+  [mainSlot]="gameBoard"
+  [sideSlot]="activeSideTemplate()" />
+
+<button (click)="sidePanelState.set('stats')">Show Stats</button>
+<button (click)="sidePanelState.set('inventory')">Show Inventory</button>
+```
+
+### Behavior
+
+- Clicking "Show Stats" swaps the sidebar content — `PageLayoutComponent` does not update, only the template reference it receives changes
+- `PageLayoutComponent` has zero knowledge of "stats" or "inventory"
+- The main slot never changes
+- If `sideSlot` is `null`, the sidebar DOM node is absent entirely
+
+### What you'll learn
+
+`viewChild<TemplateRef<void>>('gameBoard')` is the v22 signal API for querying elements in a component's own template by reference variable. Use it (not `@ViewChild`) to get `TemplateRef` objects and pass them programmatically.
+
+`computed()` template selection: when `sidePanelState` changes, `activeSideTemplate` recomputes, which changes the value passed to `[sideSlot]`, which triggers `PageLayoutComponent` to re-render with the new template. The layout component is passive — it reacts to its inputs.
+
+This is the architecture of every serious Angular shell: layout owns structure, parent owns content, signals own state.
+
+### Extension
+
+Add a third panel: `'achievements'`. Adding it requires:
+- One new `<ng-template #achievements>` in the parent
+- One new `viewChild` query
+- One additional `case` in `computed()` (or extend the dispatch table)
+- Zero changes to `PageLayoutComponent`
+
+That's the Open/Closed Principle applied to templates.
+
+### Hint
+
+`viewChild` queries the component's own template (its view). `contentChild` queries projected content (what the parent puts between the component's tags). For templates defined in `app.component.html` and used within `app.component.html`, use `viewChild`.
+
+---
+
+## Acceptance Criteria
+
+- [ ] `PageLayoutComponent` has no knowledge of "stats", "inventory", or "game board"
+- [ ] `computed()` drives which template is active — no `@if` chains in the parent template for slot selection
+- [ ] `viewChild()` used to get `TemplateRef` references (not `@ViewChild`)
+- [ ] Sidebar DOM node is absent when `sideSlot` is `null`
+- [ ] Extension: third panel added with zero changes to `PageLayoutComponent`

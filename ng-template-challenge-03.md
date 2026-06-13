@@ -1,37 +1,110 @@
-# NG-TEMPLATE CHALLENGE #3: Dynamic Data Table with Context
+# ng-template Challenge #3: Dynamic Data Table with Context
 
-### Your Persona
-You are comfortable with `ngTemplateOutlet`. Now you need to learn how to make your templated components truly dynamic by passing data from the component *down* into the template being rendered.
+**Difficulty:** Medium
+**Angular Version:** 22+
+**Focus:** `ngTemplateOutletContext`, `$implicit`, typed generics, `let-` syntax
 
-### The Learning Goal
-Master passing contextual data from a component into a template provided by a parent. This is the key to creating reusable components that render lists of complex, custom-structured data (e.g., tables, feeds, card lists).
+---
 
-### The Scenario
-You will build a generic, reusable `data-table` component. The component will know how to render a list of items, but it will have **no idea** what each row should look like. The parent component will provide the data *and* the template for rendering a single row, giving the parent full control over the look and feel.
+## The Problem
 
-### The Requirements
-1.  All components **must** be `standalone: true` and use modern `@for` syntax.
-2.  Create a `DataTableComponent`.
-3.  The component must accept two inputs:
-    *   `data = input.required<any[]>()`
-    *   `rowTemplate = input.required<TemplateRef<any>>()`
-4.  The `DataTableComponent`'s template should contain a container (e.g., a `<div>` or `<table>`).
-5.  Inside the container, use an `@for` block to loop over the `data()` signal.
-6.  For each item in the loop, use `<ng-container>` with `[ngTemplateOutlet]` to render the `rowTemplate()`.
-7.  **This is the most important step:** You must provide a *context object* to the template outlet. The context object should expose the current item from the loop to the template. The standard convention is to use the implicit variable, so the parent can use `let-item`.
-    *   `[ngTemplateOutletContext]="{ $implicit: item }"`
-8.  In your `AppComponent`, create an array of objects. For example:
-    ```typescript
-    users = signal([
-      { id: 1, name: 'George', role: 'Admin', status: 'active' },
-      { id: 2, name: 'Alice', role: 'Editor', status: 'inactive' },
-      { id: 3, name: 'Bob', role: 'Viewer', status: 'active' }
-    ]);
-    ```
-9.  Use your `<app-data-table>` component, passing the `users` signal to the `data` input.
-10. In `AppComponent`, define an `<ng-template>` with a reference variable (e.g., `#userRow`).
-11. **Use the `let-` syntax** in the template definition to capture the contextual data passed from the `DataTableComponent`. For example: `<ng-template #userRow let-user>`.
-12. Inside your row template, display the user's data in a custom layout (e.g., show the name in an `<h2>`, the role in a `<p>`, and a colored badge based on the `status`). This proves you are successfully receiving the context.
+A generic table component that only accepts `any[]` is useless — you lose all type safety in the row template. A reusable table needs to know the shape of its data so the row template gets proper type inference. `ngTemplateOutletContext` is the mechanism for passing per-row data from the table component into a template defined by the parent.
 
-### What to Have Ready
-Show your `data-table.component.ts`/`.html` and `app.component.ts`/`.html`. You must be able to explain exactly how the context object in `ngTemplateOutletContext` connects to the `let-user` syntax in the parent template. Explain what `$implicit` means and how you would pass multiple variables (like `$index`).
+---
+
+## Task
+
+Build a generic `DataTableComponent<T>` that knows how to iterate rows but has no opinion on what a row looks like.
+
+### DataTableComponent
+
+```ts
+@Component({ selector: 'app-data-table', ... })
+export class DataTableComponent<T> {
+  readonly data        = input.required<T[]>();
+  readonly rowTemplate = input.required<TemplateRef<{ $implicit: T }>>();
+}
+```
+
+```html
+<table>
+  <tbody>
+    @for (item of data(); track $index) {
+      <ng-container
+        [ngTemplateOutlet]="rowTemplate()"
+        [ngTemplateOutletContext]="{ $implicit: item }" />
+    }
+  </tbody>
+</table>
+```
+
+### Parent — two usages
+
+**Usage 1: User table**
+
+```ts
+readonly users = signal([
+  { id: 1, name: 'George', role: 'Admin',  status: 'active'   },
+  { id: 2, name: 'Alice',  role: 'Editor', status: 'inactive' },
+  { id: 3, name: 'Bob',    role: 'Viewer', status: 'active'   },
+]);
+```
+
+```html
+<ng-template #userRow let-user>
+  <tr>
+    <td>{{ user.name }}</td>
+    <td>{{ user.role }}</td>
+    <td [class]="user.status">{{ user.status }}</td>
+  </tr>
+</ng-template>
+
+<app-data-table [data]="users()" [rowTemplate]="userRow" />
+```
+
+**Usage 2: Product table** — use a different data shape with the same `DataTableComponent`. This proves the component is truly generic and reusable.
+
+### `$implicit` — what it means
+
+`ngTemplateOutletContext` is a plain object. Any key you put on it becomes accessible in the template via `let-keyName`. The special key `$implicit` maps to the bare `let-variable` syntax — no key name needed:
+
+```html
+<!-- $implicit maps to the bare let- variable -->
+<ng-template let-user>         <!-- reads $implicit -->
+<ng-template let-user="user">  <!-- reads the 'user' key explicitly -->
+```
+
+To pass multiple values:
+```ts
+[ngTemplateOutletContext]="{ $implicit: item, index: i, total: data().length }"
+```
+```html
+<ng-template let-item let-i="index" let-total="total">
+```
+
+### Behavior
+
+- `user.name`, `user.role`, `user.status` are fully typed inside the row template — no `any`, no casting
+- The `DataTableComponent` does not import or reference the `User` type
+- The same component renders the product table with a completely different row layout
+- TypeScript catches if you access a property that doesn't exist on the row type
+
+### What you'll learn
+
+`ngTemplateOutletContext` is the bridge between the table's loop and the parent's template. The table knows the data — the parent knows the layout. Context is how the table passes each row to the parent's template at render time.
+
+The generic `T` type parameter on the component propagates into the `TemplateRef<{ $implicit: T }>` input, which gives the `let-user` variable its type in the parent template. Without the generic, the row template's variable is `any` and you lose all IDE assistance.
+
+### Hint
+
+TypeScript generic components work the same way as generic functions. When you pass `[data]="users()"` where `users` is `signal<User[]>`, Angular infers `T = User` for that instance — including the `rowTemplate` input type.
+
+---
+
+## Acceptance Criteria
+
+- [ ] `DataTableComponent` is generic — `DataTableComponent<T>`
+- [ ] No `any` in the component or its inputs
+- [ ] `let-user` in the row template has full type inference (IDE shows properties)
+- [ ] Two different data shapes use the same `DataTableComponent`
+- [ ] `$implicit` is used for the row data; at least one named context variable (`index` or similar) is also passed and used

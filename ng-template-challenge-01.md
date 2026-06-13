@@ -1,47 +1,89 @@
-# COMBINED CHALLENGE: The Composable Panel
+# ng-template Challenge #1: The Composable Panel
 
-### Your Persona
-You are an Angular developer tasked with creating a highly reusable UI component. You must decide on the best composition strategy for different parts of the component.
+**Difficulty:** Beginner
+**Angular Version:** 22+
+**Focus:** `ng-content`, `ngTemplateOutlet`, `contentChild()`, named slots
 
-### The Learning Goal
-Master the use of both `<ng-content>` and `<ng-template>` with `ngTemplateOutlet` within a single component. You will learn to differentiate between a "default" content slot and specific, named template slots, and build a component that supports both simple and complex projection patterns.
+---
 
-### The Scenario
-You will build a single, highly reusable `PanelComponent`. This component needs to be simple enough to just wrap a block of text, but also powerful enough to be structured with a distinct header and footer (like a confirmation dialog). This requires a hybrid approach to content projection.
+## The Problem
 
-### The Requirements
+`<ng-content>` lets a parent project any content into a child. But it's a blunt instrument — you can only project into one default slot, and you can't conditionally render it. You need a `PanelComponent` that supports a simple body, an optional header, and an optional footer — each independently provided by the parent.
 
-**1. Build the `PanelComponent`**
-*   It **must** be `standalone: true`.
-*   Its template must define a root element with a class, e.g., `class="panel"`.
-*   **Default Content:** It must have one default projection slot for the main body of the panel using `<ng-content>`.
-*   **Named Slots:** It must accept two optional `TemplateRef` inputs: `header` and `footer`.
-*   **Conditional Rendering:** The component should only render the header and footer sections **if** the corresponding templates are actually provided by the parent. You will need to wrap your `ngTemplateOutlet` containers in an `@if` block.
-*   **(Bonus) Theming:** Add a `theme` input that accepts `'primary'` or `'warning'`. The component should apply a different style (e.g., `border-left-color`) based on this theme.
+---
 
-**2. Implement in `AppComponent`**
-You will create three instances of your `PanelComponent` to demonstrate its flexibility.
+## When to use each
 
-*   **Instance 1: Simple Content**
-    *   Create a panel with the `'primary'` theme.
-    *   This instance should **only** use `<ng-content>`. Simply put a paragraph of text inside the `<app-panel>` tags.
-    *   Do **not** provide a `header` or `footer` template.
+| Tool | Use when |
+|---|---|
+| `ng-content` | Parent projects arbitrary content into a single slot — child doesn't need to know what it is |
+| `ngTemplateOutlet` | Parent provides a named, conditional template that the child renders in a specific place |
 
-*   **Instance 2: Fully Structured Content**
-    *   Create a panel with the `'warning'` theme.
-    *   This instance should **not** use `<ng-content>` (i.e., leave the space between the `<app-panel>` tags empty).
-    *   Define two templates, `#warningHeader` and `#warningFooter`.
-    *   The header should contain a title like `<h2>Warning: Action Required</h2>`.
-    *   The footer should contain two action buttons.
-    *   Pass these templates to the `header` and `footer` inputs of the panel.
+`ng-content` cannot be wrapped in `@if`. `ngTemplateOutlet` can.
 
-*   **Instance 3: Hybrid Content**
-    *   Create a third panel with the `'primary'` theme.
-    *   This instance must use **both** `<ng-content>` for its main body (e.g., put some form fields in it) **and** a template for the `footer` slot (e.g., a "Submit" button).
-    *   Do **not** provide a `header` template.
+---
 
-### What to Have Ready
-Show your `panel.component.ts/html/scss` and your `app.component.html`. Be ready to defend your implementation and explain:
-1.  Why is `<ng-content>` a good choice for the "default" body content?
-2.  Why is `ngTemplateOutlet` required for the optional `header` and `footer`?
-3.  How did you achieve the conditional rendering of the header and footer slots?
+## Challenge 1: The Composable Panel
+
+**Concepts:** `ng-content`, `TemplateRef`, `ngTemplateOutlet`, `contentChild()`
+
+### Task
+
+Build a `PanelComponent` that:
+
+- Has one default `<ng-content>` slot for body content
+- Accepts an optional `header` template and an optional `footer` template
+- Renders header and footer **only if provided** — no empty containers
+- Accepts a `theme` input: `'primary' | 'warning'` that applies a left border color
+
+### v22 approach — `contentChild()`
+
+Instead of passing `TemplateRef` via `input()`, query for named `ng-template` children using the signal API:
+
+```ts
+// In PanelComponent:
+readonly headerTpl = contentChild<TemplateRef<void>>('header');
+readonly footerTpl = contentChild<TemplateRef<void>>('footer');
+```
+
+In the parent, name the templates with a template reference variable that matches:
+
+```html
+<app-panel theme="warning">
+  <ng-template #header><h2>Warning: Action Required</h2></ng-template>
+  <p>This is the body — projected via ng-content.</p>
+  <ng-template #footer><button>Confirm</button></ng-template>
+</app-panel>
+```
+
+`contentChild()` returns a `Signal<TemplateRef<void> | undefined>` — use it directly in `@if`.
+
+### Behavior
+
+Build three instances in the parent:
+
+**Instance 1 — Simple:** `theme="primary"`, body content only via `ng-content`, no header or footer templates provided.
+
+**Instance 2 — Fully structured:** `theme="warning"`, no body content, provides both `#header` and `#footer` templates.
+
+**Instance 3 — Hybrid:** `theme="primary"`, body via `ng-content` (put form fields in it), footer template only.
+
+### What you'll learn
+
+`contentChild()` is the v22 signal equivalent of `@ContentChild`. It queries for projected `ng-template` children by name — no decorator, no `ngAfterContentInit`, just a signal. Angular Material uses this exact pattern for named slots in `mat-dialog`, `mat-card`, etc.
+
+The critical difference between `ng-content` and `ngTemplateOutlet`: `ng-content` renders immediately at parse time and cannot be conditional. `ngTemplateOutlet` renders lazily — wrap it in `@if (headerTpl())` and the DOM node doesn't exist at all when no template is provided.
+
+### Hint
+
+`contentChild<TemplateRef<void>>('header')` matches `<ng-template #header>` in the parent's content. The string `'header'` is the template reference variable name.
+
+---
+
+## Acceptance Criteria
+
+- [ ] No `standalone: true` in decorator
+- [ ] No `TemplateRef<any>` — use `TemplateRef<void>` for templates with no context
+- [ ] Header and footer DOM nodes are absent (not just hidden) when not provided
+- [ ] `contentChild()` used instead of `input()` for template slots
+- [ ] Three working instances demonstrating all three composition modes
