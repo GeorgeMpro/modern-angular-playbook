@@ -52,7 +52,7 @@ In the parent, name the templates with a template reference variable that matche
 <app-panel theme="warning">
   <ng-template #header><h2>Warning: Action Required</h2></ng-template>
   <p>This is the body — projected via ng-content.</p>
-  <ng-template #footer><button>Confirm</button></ng-template>
+  <ng-template #footer><button>Confira</button></ng-template>
 </app-panel>
 ```
 
