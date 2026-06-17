@@ -1,6 +1,6 @@
 # Angular Challenges
 
-A collection of hands-on Angular challenges built to master modern framework patterns — signals, RxJS, interceptors, error handling, performance, accessibility, and more. Each challenge is a self-contained Angular workspace project with a corresponding `.md` file covering the requirements and implementation details.
+A collection of hands-on Angular 22 challenges built to master modern framework patterns — signals, RxJS, interceptors, error handling, performance, accessibility, and more. Each challenge is a self-contained Angular workspace project with a corresponding `.md` file covering the requirements and implementation details.
 
 ---
 
@@ -9,7 +9,7 @@ A collection of hands-on Angular challenges built to master modern framework pat
 - [Challenge 11 — Centralized Error Handling](#challenge-11--centralized-error-handling)
 - [Challenge 12 — Reactive Design Patterns](#challenge-12--reactive-design-patterns)
 - [Custom RxJS Operators](#custom-rxjs-operators)
-- [Challenge — Template Composition](#challenge--template-composition)
+- [Challenge — Template Composition *(in progress)*](#challenge--template-composition-in-progress)
 
 ---
 
@@ -39,7 +39,7 @@ ng serve challenge-11-centralized-error-handling
 
 ## Challenge 12 — Reactive Design Patterns
 
-**Focus:** Advanced RxJS orchestration patterns implemented as eight standalone, production-grade challenges
+**Focus:** Advanced RxJS orchestration patterns implemented as eleven standalone, production-grade challenges
 
 **Project:** `challenge-12-rxjs-patterns`  
 **Live:** https://modern-angular-ch12.web.app
@@ -73,32 +73,6 @@ ng serve challenge-12-rxjs-patterns
 
 ---
 
-## Challenge — Template Composition
-
-**Goal:** Build reusable, type-safe Angular component architecture without coupling layout to business logic.
-
-**Focus:** Template composition, content projection, dynamic rendering, generic components, recursive templates, injector scope
-
-**Project:** `challenges-ng-template`
-
-```bash
-ng serve challenges-ng-template
-```
-
-### Challenges
-
-| # | Name | Key Concepts |
-|---|------|-------------|
-| 01 | Composable Panel | `ng-content`, named slots, fallback content, `contentChild()` |
-| 02 | Configurable Modal | `TemplateRef` as input, reusable shell components |
-| 03 | Dynamic Data Table | Generic `<T>`, `ngTemplateOutletContext`, `ngTemplateContextGuard` |
-| 04 | Dynamic Layout | `viewChild`, `computed()` template selection, decoupled layout shell |
-| 05 | Recursive Folder Explorer | Self-referencing `ngTemplateOutlet`, recursive context, depth threading |
-| 06 | Template Injector Scope | `ngTemplateOutletInjector`, creation vs outlet injector |
-| 07 | Route-Driven Layout | `withComponentInputBinding`, resolvers, `loadComponent`, `CanActivateFn`, `CanDeactivateFn`, named outlets |
-
----
-
 ## Custom RxJS Operators
 
 **Project:** `challenge-custom-rxjs`  
@@ -112,3 +86,29 @@ A set of generic, reusable pipeable operators built from first principles using 
 | `retryWithBackoff<T>` | `(maxRetries, baseDelayMs)` | Exponential backoff retry; skips 4xx HTTP errors, only retries network and 5xx |
 | `withLoading<T>` | `(signal)` | Sets a `WritableSignal<boolean>` true on subscribe, false on finalize — covers complete, error, and unsubscribe |
 | `tapOnce<T>` | `(fn)` | Runs a side effect on the first emission only; uses `defer` closure so each subscription gets its own "has fired" state |
+
+---
+
+## Challenge — Template Composition *(in progress)*
+
+**Goal:** Build reusable, type-safe Angular component architecture without coupling layout to business logic.
+
+**Focus:** Template composition, content projection, dynamic rendering, generic components, recursive templates, injector scope
+
+**Project:** `challenges-ng-template`
+
+```bash
+ng serve challenges-ng-template
+```
+
+### Challenges
+
+| # | Name | Key Concepts | State |
+|---|------|-------------|-------|
+| 01 | Composable Panel | `ng-content`, named slots, fallback content, `contentChild()` | Done |
+| 02 | Configurable Modal | `TemplateRef` as input, reusable shell components | WIP |
+| 03 | Dynamic Data Table | Generic `<T>`, `ngTemplateOutletContext`, `ngTemplateContextGuard` | WIP |
+| 04 | Dynamic Layout | `viewChild`, `computed()` template selection, decoupled layout shell | WIP |
+| 05 | Recursive Folder Explorer | Self-referencing `ngTemplateOutlet`, recursive context, depth threading | WIP |
+| 06 | Template Injector Scope | `ngTemplateOutletInjector`, creation vs outlet injector | WIP |
+| 07 | Route-Driven Layout | `withComponentInputBinding`, resolvers, `loadComponent`, `CanActivateFn`, `CanDeactivateFn`, named outlets | WIP |
