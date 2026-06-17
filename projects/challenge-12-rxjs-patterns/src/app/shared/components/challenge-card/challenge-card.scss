@@ -1,8 +1,8 @@
 @import "../../styles/variables";
 
 .card {
-  background-color: $bg-secondary;
-  border: 1px solid $border;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
   border-radius: $radius-lg;
   padding: $spacing-lg;
   display: flex;
@@ -14,7 +14,7 @@
   &:hover {
     transform: translateY(-4px);
     box-shadow: $shadow-md;
-    border-color: $accent;
+    border-color: var(--accent);
   }
 }
 
@@ -25,8 +25,8 @@
   margin-bottom: $spacing-md;
 
   .challenge-id {
-    background-color: $bg-primary;
-    color: $accent;
+    background-color: var(--bg-primary);
+    color: var(--accent);
     font-family: monospace;
     font-weight: bold;
     padding: $spacing-xs $spacing-sm;
@@ -36,7 +36,7 @@
 
   .card-title {
     margin: 0;
-    color: $heading;
+    color: var(--heading);
     font-size: 1.25rem;
   }
 }
@@ -50,7 +50,7 @@
   section {
     h4 {
       margin: 0 0 $spacing-xs 0;
-      color: $text-secondary;
+      color: var(--text-secondary);
       text-transform: uppercase;
       font-size: 0.75rem;
       letter-spacing: 0.05em;
@@ -64,7 +64,7 @@
   }
 
   .win {
-    background-color: rgba($success, 0.1);
+    background-color: color-mix(in srgb, #{$success} 10%, transparent);
     border-left: 3px solid $success;
     padding: $spacing-sm $spacing-md;
     border-radius: 0 $radius $radius 0;
@@ -89,17 +89,17 @@
 
     .tag {
       font-size: 0.75rem;
-      background-color: $bg-primary;
-      color: $text-secondary;
+      background-color: var(--bg-primary);
+      color: var(--text-secondary);
       padding: 2px 8px;
       border-radius: 12px;
-      border: 1px solid $border;
+      border: 1px solid var(--border);
     }
   }
 
   .view-btn {
     text-decoration: none;
-    background-color: $accent;
+    background-color: var(--accent);
     color: white;
     padding: $spacing-sm $spacing-md;
     border-radius: $radius;
@@ -109,7 +109,7 @@
     transition: background-color $transition;
 
     &:hover {
-      background-color: $accent-hover;
+      background-color: var(--accent-hover);
     }
   }
 }

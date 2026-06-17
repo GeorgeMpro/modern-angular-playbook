@@ -1,14 +1,13 @@
 @import "./shared/styles/variables";
 
 .main-header {
-  background-color: $bg-secondary;
-  border-bottom: 1px solid $border;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
   padding: $spacing-sm $spacing-md;
   position: sticky;
   top: 0;
   z-index: 100;
   backdrop-filter: blur(8px);
-  background-color: rgba($bg-secondary, 0.8);
   margin-left: -$spacing-md;
   margin-right: -$spacing-md;
   width: calc(100% + 2 * $spacing-md);
@@ -32,10 +31,9 @@ main {
   align-items: center;
   gap: $spacing-sm;
   text-decoration: none;
-  color: $heading;
+  color: var(--heading);
   font-weight: 700;
   font-size: 1.25rem;
-
 }
 
 @media (max-width: 768px) {
