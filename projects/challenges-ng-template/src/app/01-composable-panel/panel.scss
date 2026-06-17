@@ -7,7 +7,7 @@
 
 .primary,
 .warning {
-  background-color: $bg-secondary;
+  background-color: var(--bg-secondary);
   border-radius: $radius;
   border-left: 4px solid;
   padding: $spacing-lg;
@@ -16,13 +16,13 @@
   header {
     margin-bottom: $spacing-md;
     padding-bottom: $spacing-sm;
-    border-bottom: 1px solid $border;
+    border-bottom: 1px solid var(--border);
 
     h2 {
       margin: 0;
       font-size: 1rem;
       font-weight: 600;
-      color: $heading;
+      color: var(--heading);
       text-align: left;
       padding-top: 0;
       letter-spacing: 0.01em;
@@ -35,14 +35,14 @@
     gap: $spacing-sm;
     margin-top: $spacing-md;
     padding-top: $spacing-md;
-    border-top: 1px solid $border;
-    color: $text-secondary;
+    border-top: 1px solid var(--border);
+    color: var(--text-secondary);
     font-size: 0.875rem;
   }
 }
 
 .primary {
-  border-left-color: $accent;
+  border-left-color: var(--accent);
 }
 
 .warning {

@@ -7,6 +7,19 @@
         </a>
       }
     </nav>
+
+    <button class="theme-toggle-btn" (click)="onToggle()" aria-label="Toggle theme">
+      <span #rotator
+            class="rotate-target"
+            [class.rotate-cw]="rotated()"
+            [class.rotate-ccw]="!rotated()">
+        @if (theme.isDark()) {
+          <lucide-angular [name]="sun" class="theme-icon" />
+        } @else {
+          <lucide-angular [name]="moon" class="theme-icon" />
+        }
+      </span>
+    </button>
   </div>
 </header>
 

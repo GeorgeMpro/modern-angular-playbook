@@ -1,8 +1,8 @@
 @import "./shared/styles/variables";
 
 .main-header {
-  background-color: rgba($bg-secondary, 0.8);
-  border-bottom: 1px solid $border;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
   padding: $spacing-sm $spacing-md;
   position: sticky;
   top: 0;
@@ -28,7 +28,7 @@
   flex-wrap: wrap;
 
   .nav-link {
-    color: $text-secondary;
+    color: var(--text-secondary);
     text-decoration: none;
     font-size: 0.9rem;
     padding: $spacing-xs $spacing-sm;
@@ -36,13 +36,13 @@
     transition: color $transition, background-color $transition;
 
     &:hover {
-      color: $text-primary;
-      background-color: rgba($accent, 0.1);
+      color: var(--text-primary);
+      background-color: var(--accent-subtle);
     }
 
     &.active {
-      color: $accent;
-      background-color: rgba($accent, 0.15);
+      color: var(--accent);
+      background-color: var(--accent-muted);
     }
   }
 }
