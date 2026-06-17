@@ -95,6 +95,26 @@ To pass multiple values:
 
 The generic `T` type parameter on the component propagates into the `TemplateRef<{ $implicit: T }>` input, which gives the `let-user` variable its type in the parent template. Without the generic, the row template's variable is `any` and you lose all IDE assistance.
 
+### Type Safety: `ngTemplateContextGuard`
+
+Even with `TemplateRef<{ $implicit: T }>`, the Angular template compiler sometimes can't propagate `T` into the `let-` variable — you get `any` in the IDE instead of the real type. The fix is a static type guard on the component:
+
+```ts
+export class DataTableComponent<T> {
+  readonly data        = input.required<T[]>();
+  readonly rowTemplate = input.required<TemplateRef<{ $implicit: T }>>();
+
+  static ngTemplateContextGuard<T>(
+    dir: DataTableComponent<T>,
+    ctx: unknown
+  ): ctx is { $implicit: T } {
+    return true;
+  }
+}
+```
+
+Angular's template compiler calls this guard when it type-checks the template. The return type `ctx is { $implicit: T }` narrows the context object so `let-user` becomes `T` — not `any`. The method body always returns `true`; it exists purely for the type system.
+
 ### Hint
 
 TypeScript generic components work the same way as generic functions. When you pass `[data]="users()"` where `users` is `signal<User[]>`, Angular infers `T = User` for that instance — including the `rowTemplate` input type.
@@ -108,3 +128,4 @@ TypeScript generic components work the same way as generic functions. When you p
 - [ ] `let-user` in the row template has full type inference (IDE shows properties)
 - [ ] Two different data shapes use the same `DataTableComponent`
 - [ ] `$implicit` is used for the row data; at least one named context variable (`index` or similar) is also passed and used
+- [ ] `static ngTemplateContextGuard` implemented — hovering `let-user` in the IDE shows the concrete type, not `any`

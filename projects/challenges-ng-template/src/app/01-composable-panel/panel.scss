@@ -1,0 +1,50 @@
+@use '../shared/styles/variables' as *;
+
+:host {
+  display: block;
+  max-width: 480px;
+}
+
+.primary,
+.warning {
+  background-color: $bg-secondary;
+  border-radius: $radius;
+  border-left: 4px solid;
+  padding: $spacing-lg;
+  box-shadow: $shadow-md;
+
+  header {
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid $border;
+
+    h2 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: $heading;
+      text-align: left;
+      padding-top: 0;
+      letter-spacing: 0.01em;
+    }
+  }
+
+  .panel-footer {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+    padding-top: $spacing-md;
+    border-top: 1px solid $border;
+    color: $text-secondary;
+    font-size: 0.875rem;
+  }
+}
+
+.primary {
+  border-left-color: $accent;
+}
+
+.warning {
+  border-left-color: $warning;
+}

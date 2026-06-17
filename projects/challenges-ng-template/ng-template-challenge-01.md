@@ -74,6 +74,51 @@ Build three instances in the parent:
 
 The critical difference between `ng-content` and `ngTemplateOutlet`: `ng-content` renders immediately at parse time and cannot be conditional. `ngTemplateOutlet` renders lazily — wrap it in `@if (headerTpl())` and the DOM node doesn't exist at all when no template is provided.
 
+### Extension: global theme switcher
+
+Add a light/dark toggle button to the app shell. The active theme is a global signal in a `ThemeService` that writes a `data-theme` attribute on `<body>`. CSS custom properties in `styles.scss` swap values based on that attribute.
+
+```ts
+@Injectable({ providedIn: 'root' })
+export class ThemeService {
+  readonly theme = signal<'light' | 'dark'>('dark');
+
+  toggle(): void {
+    this.theme.update(t => t === 'dark' ? 'light' : 'dark');
+    document.body.setAttribute('data-theme', this.theme());
+  }
+}
+```
+
+```scss
+// styles.scss
+:root, [data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --text-primary: #e5e7eb;
+}
+
+[data-theme="light"] {
+  --bg-primary: #f9fafb;
+  --text-primary: #111827;
+}
+```
+
+The `PanelComponent`'s `theme` input (`'primary' | 'warning'`) controls per-panel accent color — independent of the global light/dark switch. Both concerns coexist without coupling.
+
+### Extension: fallback content
+
+`<ng-content>` supports fallback content — rendered only when the parent projects nothing into that slot:
+
+```html
+<div class="panel-footer">
+  <ng-content select="[footer]">
+    <button>Close</button>
+  </ng-content>
+</div>
+```
+
+Add a fourth instance that provides no footer — verify the default "Close" button appears. Then provide a footer — verify it replaces the default entirely.
+
 ### Hint
 
 `contentChild<TemplateRef<void>>('header')` matches `<ng-template #header>` in the parent's content. The string `'header'` is the template reference variable name.
@@ -87,3 +132,6 @@ The critical difference between `ng-content` and `ngTemplateOutlet`: `ng-content
 - [ ] Header and footer DOM nodes are absent (not just hidden) when not provided
 - [ ] `contentChild()` used instead of `input()` for template slots
 - [ ] Three working instances demonstrating all three composition modes
+- [ ] Extension: fallback content renders when no footer is projected; disappears when one is provided
+- [ ] Extension: global light/dark toggle in the app shell — `ThemeService` signal writes `data-theme` on `<body>`, CSS custom properties respond
+- [ ] Extension: panel `theme` input and global theme switcher are independent — both work simultaneously without coupling

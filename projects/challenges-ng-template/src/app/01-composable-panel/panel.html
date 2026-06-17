@@ -1,0 +1,12 @@
+<div [class]="theme()">
+  @if (headerTemplate()) {
+    <ng-container [ngTemplateOutlet]="headerTemplate()"/>
+  }
+  <ng-content/>
+
+  @if (footerTemplate()) {
+    <div class="panel-footer">
+      <ng-container [ngTemplateOutlet]="footerTemplate()"/>
+    </div>
+  }
+</div>
