@@ -1,9 +1,10 @@
-import {computed, DOCUMENT, inject, Service, signal} from '@angular/core';
+import {computed, DOCUMENT, inject, Injectable, signal} from '@angular/core';
+
 
 export type MainTheme = 'light' | 'dark';
 
-@Service()
-export class Theme {
+@Injectable({providedIn: 'root'})
+export class ThemeService {
 
   private readonly document = inject(DOCUMENT);
   readonly theme = signal<MainTheme>('dark');
@@ -17,4 +18,5 @@ export class Theme {
     this.theme.update(t => (t === 'dark' ? 'light' : 'dark'));
     this.document.documentElement.setAttribute('data-theme', this.theme());
   }
+
 }

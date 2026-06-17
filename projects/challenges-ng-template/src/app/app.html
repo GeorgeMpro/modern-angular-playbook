@@ -8,21 +8,29 @@
       }
     </nav>
 
-    <button class="theme-toggle-btn" (click)="onToggle()" aria-label="Toggle theme">
-      <span #rotator
-            class="rotate-target"
-            [class.rotate-cw]="rotated()"
-            [class.rotate-ccw]="!rotated()">
-        @if (theme.isDark()) {
-          <lucide-angular [name]="sun" class="theme-icon" />
-        } @else {
-          <lucide-angular [name]="moon" class="theme-icon" />
-        }
-      </span>
-    </button>
+    <lib-theme-toggle/>
   </div>
 </header>
 
 <main>
-  <router-outlet />
+  <router-outlet/>
 </main>
+
+<!--
+
+  ---
+  Step 7 — Consume it in challenges-ng-template
+  - Add ThemeToggleComponent to app.ts imports
+  - Replace the inline button in app.html with <lib-theme-toggle />
+  - Remove the toggle-related code from app.ts (ViewChild, rotated signal, onToggle,
+  triggerRotate — all moves to the component)
+  - Keep the CSS custom property blocks in styles.scss — those stay in the app
+
+  ---
+  Step 8 — Verify
+  Run ng serve challenges-ng-template, toggle works, no regressions.
+
+  ---
+  The tricky parts to watch: Step 2 (@Service() vs @Injectable), Step 6 (library build
+  is stricter than app build — no implicit any, no app-level providers), and Step 7
+  (remembering to remove the code you moved, not duplicate it).-->
