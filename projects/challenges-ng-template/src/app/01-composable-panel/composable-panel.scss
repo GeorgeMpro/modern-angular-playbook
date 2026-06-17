@@ -1,0 +1,17 @@
+@use '../shared/styles/variables' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  padding: $spacing-xl;
+}
+
+h3 {
+  margin: 0 0 $spacing-sm;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $text-secondary;
+}

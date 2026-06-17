@@ -13,7 +13,12 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "paths": {
+      "ui-theme": [
+        "./dist/ui-theme"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -100,6 +105,18 @@
     },
     {
       "path": "./projects/challenge-12-rxjs-patterns/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/challenges-ng-template/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/challenges-ng-template/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/ui-theme/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ui-theme/tsconfig.spec.json"
     }
   ]
 }

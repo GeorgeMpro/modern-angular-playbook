@@ -1,6 +1,7 @@
 @import "./app/shared/styles/variables";
 
-:root {
+:root,
+:root[data-theme="dark"] {
   --bg-primary: #{$bg-primary};
   --bg-secondary: #{$bg-secondary};
   --text-primary: #{$text-primary};
@@ -12,6 +13,17 @@
   --radius: #{$radius};
   --font-family: #{$font-family};
   --transition: #{$transition};
+  --accent-subtle: color-mix(in srgb, #{$accent} 10%, transparent);
+  --accent-muted:  color-mix(in srgb, #{$accent} 15%, transparent);
+}
+
+:root[data-theme="light"] {
+  --bg-primary: #f9fafb;
+  --bg-secondary: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --heading: #111827;
+  --border: #e5e7eb;
 }
 
 *, *::before, *::after {

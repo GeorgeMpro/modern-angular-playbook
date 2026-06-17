@@ -1,0 +1,33 @@
+<ng-template #header>
+  <header>
+    <h4>Header</h4>
+  </header>
+</ng-template>
+
+<h3>Panel - Simple</h3>
+<app-panel theme="primary">
+  <p>Body</p>
+</app-panel>
+
+<h3>Panel - Fully Structured</h3>
+<app-panel theme="warning"
+           [headerTemplate]="header">
+  <ng-template #footer>
+    <footer>
+      <p>Footer</p>
+    </footer>
+  </ng-template>
+</app-panel>
+
+
+<h3>Panel - Hybrid</h3>
+<app-panel theme="primary">
+  <p>Body</p>
+  <ng-template #footer>
+    <footer>
+      <p>Footer</p>
+    </footer>
+  </ng-template>
+</app-panel>
+
+
