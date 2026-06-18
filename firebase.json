@@ -21,6 +21,17 @@
           "destination": "/index.html"
         }
       ]
+    },
+    {
+      "target": "ch-ng-template",
+      "public": "dist/challenges-ng-template/browser",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     }
   ]
 }

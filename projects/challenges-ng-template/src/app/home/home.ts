@@ -33,9 +33,9 @@ export default class Home {
       id: '03',
       title: 'Dynamic Data Table',
       focus: 'Generic table component with full type inference via ngTemplateOutletContext.',
-      concepts: ['Generic <T>', 'ngTemplateOutletContext', 'ngTemplateContextGuard'],
+      concepts: ['Generic <T>', 'ngTemplateOutletContext', 'ngTemplateContextGuard', 'TypedRow directive'],
       route: '/dynamic-data-table',
-      state: 'WIP'
+      state: 'Done'
     },
     {
       id: '04',

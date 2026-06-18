@@ -39,7 +39,13 @@ To pass multiple values, add named keys alongside `$implicit`. Each named key re
 
 ### Type Safety: `ngTemplateContextGuard`
 
-Even with a typed `TemplateRef`, the Angular template compiler sometimes can't propagate `T` into the `let-` variable — you get `any` in the IDE instead of the real type. The fix is a static method on the component class called `ngTemplateContextGuard`. Angular's template compiler calls this guard when type-checking the template — it narrows the context object so `let-user` becomes `T`, not `any`. The method body always returns `true`; it exists purely for the type system.
+Even with a typed `TemplateRef<{ $implicit: T }>`, the Angular template compiler cannot propagate `T` into the `let-` variable when the template is defined in a parent and passed as an input — you get `any` instead of the real type.
+
+The fix is **not** a guard on the component. Angular only calls `ngTemplateContextGuard` when the directive/component is applied directly to the `<ng-template>` — not when a `TemplateRef` is passed as an input.
+
+The correct pattern: create a lightweight `TypedRow<T>` directive whose selector is `ng-template[typedRow]`. Apply it to the `ng-template` in the parent with `[typedRow]="data"`. The directive has no runtime effect — it exists purely so the template type checker knows where to find the guard. The guard narrows the context to `{ $implicit: T; index: number }`, making `let-item` typed as `T`.
+
+The method body always returns `true` — it is a compile-time hint only.
 
 ---
 
@@ -59,4 +65,4 @@ Even with a typed `TemplateRef`, the Angular template compiler sometimes can't p
 - [ ] `let-user` in the row template has full type inference (IDE shows properties)
 - [ ] Two different data shapes use the same `DataTableComponent`
 - [ ] `$implicit` is used for the row data; at least one named context variable (`index` or similar) is also passed and used
-- [ ] `static ngTemplateContextGuard` implemented — hovering `let-user` in the IDE shows the concrete type, not `any`
+- [ ] A `TypedRow<T>` directive with `ngTemplateContextGuard` is applied to the `ng-template` in the parent — TypeScript catches wrong property access on `let-item` at build time

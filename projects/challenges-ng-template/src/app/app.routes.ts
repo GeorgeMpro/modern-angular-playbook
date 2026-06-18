@@ -19,6 +19,11 @@ export const routes: Routes = [
     path: 'configurable-modal',
     loadComponent: () => import('./02-configurable-modal/configurable-modal'),
     title: 'Configurable Modal'
+  },
+  {
+    path: 'dynamic-data-table',
+    loadComponent: () => import('./03-dynamic-data-table/dynamic-data-table'),
+    title: 'Dynamic Data Table'
   }
 
 ];
