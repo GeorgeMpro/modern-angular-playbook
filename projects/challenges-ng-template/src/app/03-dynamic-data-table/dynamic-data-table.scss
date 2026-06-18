@@ -1,0 +1,14 @@
+@import '../shared/styles/variables';
+
+:host {
+  display: block;
+  padding: $spacing-xl $spacing-md;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.tables-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}

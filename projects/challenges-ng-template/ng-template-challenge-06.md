@@ -20,108 +20,40 @@ The fix: `[ngTemplateOutletInjector]` — pass the outlet's injector explicitly 
 
 ---
 
-## Setup
+## Task
+
+Build this system so that a template defined in `AppComponent` can access a service that is only provided inside `PageLayoutComponent`.
 
 ### The scoped service
 
-```ts
-@Injectable()
-export class LayoutThemeService {
-  readonly theme = signal<'light' | 'dark'>('light');
-  toggle(): void {
-    this.theme.update(t => t === 'light' ? 'dark' : 'light');
-  }
-}
-```
-
-`LayoutThemeService` is **not** `providedIn: 'root'`. It is only provided inside `PageLayoutComponent`.
+`LayoutThemeService` holds a `'light' | 'dark'` theme signal and a `toggle()` method. It is **not** `providedIn: 'root'` — it is only provided in `PageLayoutComponent`'s `providers` array.
 
 ### PageLayoutComponent
 
-```ts
-@Component({
-  selector: 'app-page-layout',
-  providers: [LayoutThemeService],
-  template: `
-    <div [class]="themeService.theme()">
-      <button (click)="themeService.toggle()">Toggle theme</button>
-      <ng-container
-        [ngTemplateOutlet]="contentSlot()"
-        [ngTemplateOutletInjector]="injector" />
-    </div>
-  `
-})
-export class PageLayoutComponent {
-  readonly contentSlot = input.required<TemplateRef<void>>();
-  readonly themeService = inject(LayoutThemeService);
-  readonly injector     = inject(Injector);
-}
-```
-
-`inject(Injector)` captures `PageLayoutComponent`'s own injector. Passing it via `[ngTemplateOutletInjector]` makes the rendered template use this injector hierarchy — so it can find `LayoutThemeService`.
+- Provides `LayoutThemeService` locally
+- Accepts a `contentSlot` template input
+- Renders the template using `ngTemplateOutlet` + `ngTemplateOutletInjector`
+- Has a theme toggle button that calls the service directly
+- Injects its own `Injector` and passes it to `[ngTemplateOutletInjector]`
 
 ### AppComponent
 
-Define a template that reads from `LayoutThemeService`:
-
-```ts
-@Component({
-  selector: 'app-root',
-  imports: [PageLayoutComponent],
-  template: `
-    <ng-template #content>
-      <p>Current theme: {{ themeService.theme() }}</p>
-    </ng-template>
-
-    <app-page-layout [contentSlot]="content" />
-  `
-})
-export class AppComponent {
-  readonly themeService = inject(LayoutThemeService);
-}
-```
-
-But this won't compile — `AppComponent` can't inject `LayoutThemeService` because it's not in `AppComponent`'s injector. The template must access the service itself, which means the template's injector must be able to reach it.
-
----
-
-## Task
-
-Build this system so that:
-
-1. `LayoutThemeService` is provided **only** in `PageLayoutComponent`
-2. `AppComponent` defines a `<ng-template #content>` that renders the current theme
-3. The template accesses `LayoutThemeService` via a directive — not via the parent component
-4. `[ngTemplateOutletInjector]` makes the outlet's injector available so the directive resolves correctly
+- Defines a `<ng-template>` that displays the current theme
+- Passes that template to `PageLayoutComponent` via `[contentSlot]`
+- Does **not** inject `LayoutThemeService` itself — it has no access to it
 
 ### Directive approach
 
-Since the template can't receive a service directly as a `let-` variable, use a directive inside the template that injects the service from the outlet's injector:
+Since the template can't receive a service directly as a `let-` variable, use a directive inside the template that injects the service from the outlet's injector. The directive exposes the service's state as a property the template can read via a template reference variable.
 
-```ts
-@Directive({ selector: '[themeDisplay]' })
-export class ThemeDisplayDirective {
-  private themeService = inject(LayoutThemeService);
-  readonly theme = this.themeService.theme;
-}
-```
-
-```html
-<ng-template #content>
-  <div themeDisplay #td="themeDisplay">
-    Current theme: {{ td.theme() }}
-  </div>
-</ng-template>
-```
-
-Without `[ngTemplateOutletInjector]`, `ThemeDisplayDirective` fails to inject `LayoutThemeService` — Angular looks in the creation context (AppComponent) and finds nothing. With it, Angular uses the outlet's injector and finds the service provided by `PageLayoutComponent`.
+Without `[ngTemplateOutletInjector]`, the directive fails — Angular looks in the creation context and finds nothing. With it, Angular uses the outlet's injector and resolves the service.
 
 ---
 
 ## Behavior
 
-- Theme toggle button (inside `PageLayoutComponent`) updates `LayoutThemeService`
-- The `<ng-template>` defined in `AppComponent` reflects the current theme
+- Theme toggle button (inside `PageLayoutComponent`) updates the service
+- The `<ng-template>` defined in `AppComponent` reflects the current theme in real time
 - Remove `[ngTemplateOutletInjector]` → `NullInjectorError` for `LayoutThemeService`
 - Add it back → resolves correctly
 
@@ -131,9 +63,7 @@ Without `[ngTemplateOutletInjector]`, `ThemeDisplayDirective` fails to inject `L
 
 Every Angular injector forms a tree. When a template is instantiated, Angular must choose which node in that tree to start from. The default is the **definition site** — where the `<ng-template>` lives in source. `ngTemplateOutletInjector` overrides that to the **outlet site** — where `ngTemplateOutlet` is applied.
 
-This matters any time you render a parent-defined template inside a child that provides local services: portals, layout shells, tab containers, dialog hosts. Without the injector override, the template is blind to everything the outlet provides.
-
-### Creation context vs outlet context
+This matters any time you render a parent-defined template inside a child that provides local services: portals, layout shells, tab containers, dialog hosts.
 
 | | Creation context (default) | Outlet context (`ngTemplateOutletInjector`) |
 |---|---|---|
@@ -146,7 +76,7 @@ This matters any time you render a parent-defined template inside a child that p
 ## Acceptance Criteria
 
 - [ ] `LayoutThemeService` has no `providedIn` — provided only in `PageLayoutComponent`
-- [ ] `ThemeDisplayDirective` successfully injects `LayoutThemeService` when the outlet injector is set
-- [ ] Removing `[ngTemplateOutletInjector]` causes a `NullInjectorError` (prove you understand why)
+- [ ] The directive successfully injects `LayoutThemeService` when the outlet injector is set
+- [ ] Removing `[ngTemplateOutletInjector]` causes a `NullInjectorError`
 - [ ] The template-defined content reflects live theme changes driven by the button inside `PageLayoutComponent`
 - [ ] No `LayoutThemeService` injection in `AppComponent` itself

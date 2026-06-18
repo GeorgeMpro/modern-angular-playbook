@@ -20,96 +20,43 @@ Build a `PageLayoutComponent` that defines a two-column layout and renders whate
 
 ### PageLayoutComponent
 
-```ts
-readonly mainSlot = input.required<TemplateRef<void>>();
-readonly sideSlot = input<TemplateRef<void> | null>(null);
-```
-
-```html
-<div class="layout">
-  <main class="layout-main">
-    <ng-container [ngTemplateOutlet]="mainSlot()" />
-  </main>
-  @if (sideSlot()) {
-    <aside class="layout-side">
-      <ng-container [ngTemplateOutlet]="sideSlot()" />
-    </aside>
-  }
-</div>
-```
+- Accepts a required `mainSlot` template input and an optional `sideSlot` template input
+- If `sideSlot` is null, the sidebar DOM node is absent entirely — not hidden, absent
+- Renders each slot with `ngTemplateOutlet` in the correct region
+- Zero knowledge of what the templates contain
 
 ### AppComponent
 
-Define the state and all templates in the parent:
+Define all templates and state in the parent:
 
-```ts
-type SidePanelContent = 'stats' | 'inventory';
-readonly sidePanelState = signal<SidePanelContent>('stats');
-
-readonly activeSideTemplate = computed(() =>
-  this.sidePanelState() === 'stats' ? this.statsTpl() : this.inventoryTpl()
-);
-
-// Query the templates defined in the component's own view
-readonly statsTpl     = viewChild.required<TemplateRef<void>>('playerStats');
-readonly inventoryTpl = viewChild.required<TemplateRef<void>>('inventory');
-```
-
-```html
-<!-- Template definitions — not rendered until referenced -->
-<ng-template #gameBoard>
-  <h2>Game Board</h2>
-  <p>Main play area here.</p>
-</ng-template>
-
-<ng-template #playerStats>
-  <p>Health: 80/100</p>
-  <p>Mana: 45/60</p>
-</ng-template>
-
-<ng-template #inventory>
-  <ul>
-    <li>Sword +2</li>
-    <li>Health Potion x3</li>
-  </ul>
-</ng-template>
-
-<app-page-layout
-  [mainSlot]="gameBoard"
-  [sideSlot]="activeSideTemplate()" />
-
-<button (click)="sidePanelState.set('stats')">Show Stats</button>
-<button (click)="sidePanelState.set('inventory')">Show Inventory</button>
-```
+- Three `<ng-template>` blocks: game board (main content), player stats, inventory
+- A signal that tracks which side panel is active (`'stats'` | `'inventory'`)
+- A `computed()` that derives the active side template from that signal
+- Two buttons that switch the active panel
+- Use `viewChild()` signal queries (not `@ViewChild`) to get `TemplateRef` references for templates defined in the component's own view
 
 ### Behavior
 
-- Clicking "Show Stats" swaps the sidebar content — `PageLayoutComponent` does not update, only the template reference it receives changes
+- Clicking "Show Stats" swaps the sidebar content — `PageLayoutComponent` receives a different template reference and re-renders; it does not know why
 - `PageLayoutComponent` has zero knowledge of "stats" or "inventory"
 - The main slot never changes
-- If `sideSlot` is `null`, the sidebar DOM node is absent entirely
+- If `sideSlot` is `null`, the sidebar is removed from the DOM
 
 ### What you'll learn
 
-`viewChild<TemplateRef<void>>('gameBoard')` is the v22 signal API for querying elements in a component's own template by reference variable. Use it (not `@ViewChild`) to get `TemplateRef` objects and pass them programmatically.
+`viewChild<TemplateRef<void>>('name')` is the v22 signal API for querying elements in a component's own template by reference variable. Use it to get `TemplateRef` objects and pass them programmatically.
 
-`computed()` template selection: when `sidePanelState` changes, `activeSideTemplate` recomputes, which changes the value passed to `[sideSlot]`, which triggers `PageLayoutComponent` to re-render with the new template. The layout component is passive — it reacts to its inputs.
-
-This is the architecture of every serious Angular shell: layout owns structure, parent owns content, signals own state.
+`computed()` template selection: when the active panel signal changes, the computed recomputes, which changes the value passed to `[sideSlot]`, which triggers `PageLayoutComponent` to re-render with the new template. The layout component is passive — it reacts to its inputs.
 
 ### Extension
 
-Add a third panel: `'achievements'`. Adding it requires:
-- One new `<ng-template #achievements>` in the parent
+Add a third panel: `'achievements'`. Adding it should require:
+- One new `<ng-template>` in the parent
 - One new `viewChild` query
-- One additional `case` in `computed()` (or extend the dispatch table)
+- One additional case in `computed()`
 - Zero changes to `PageLayoutComponent`
 
 That's the Open/Closed Principle applied to templates.
-
-### Hint
-
-`viewChild` queries the component's own template (its view). `contentChild` queries projected content (what the parent puts between the component's tags). For templates defined in `app.component.html` and used within `app.component.html`, use `viewChild`.
 
 ---
 

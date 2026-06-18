@@ -18,91 +18,40 @@ Build a `ModalComponent` that is a pure shell — it owns visibility state and l
 
 ### ModalComponent
 
-- Signal `isOpen = signal(false)` with `open()` and `close()` methods
-- Three required `TemplateRef` inputs: `headerTemplate`, `bodyTemplate`, `footerTemplate`
-- Uses `ngTemplateOutlet` to render each in the correct region
+- Owns open/close state via a signal
+- Exposes `open()` and `close()` methods the parent can call
+- Accepts three required template inputs: header, body, footer
+- Renders each template in the correct region using `ngTemplateOutlet`
 - No hardcoded text, no business logic
-
-```ts
-readonly headerTemplate = input.required<TemplateRef<void>>();
-readonly bodyTemplate   = input.required<TemplateRef<void>>();
-readonly footerTemplate = input.required<TemplateRef<void>>();
-```
-
-```html
-<div class="modal-panel" @if (isOpen())>
-  <div class="modal-header">
-    <ng-container [ngTemplateOutlet]="headerTemplate()" />
-  </div>
-  <div class="modal-body">
-    <ng-container [ngTemplateOutlet]="bodyTemplate()" />
-  </div>
-  <div class="modal-footer">
-    <ng-container [ngTemplateOutlet]="footerTemplate()" />
-  </div>
-</div>
-```
 
 ### Parent — Two modal instances
 
-**Modal 1: Confirm Deletion**
+Build two independent modals in the parent:
 
-```html
-<ng-template #confirmHeader><h2>Confirm Deletion</h2></ng-template>
-<ng-template #confirmBody><p>This action cannot be undone.</p></ng-template>
-<ng-template #confirmFooter>
-  <button (click)="deleteModal.close()">Cancel</button>
-  <button class="danger" (click)="onDelete()">Yes, delete</button>
-</ng-template>
+**Modal 1: Confirm Deletion** — header, a warning message, cancel + confirm buttons
 
-<app-modal #deleteModal
-  [headerTemplate]="confirmHeader"
-  [bodyTemplate]="confirmBody"
-  [footerTemplate]="confirmFooter" />
-```
-
-**Modal 2: User Login**
-
-```html
-<ng-template #loginHeader><h2>User Login</h2></ng-template>
-<ng-template #loginBody>
-  <input placeholder="Username" />
-  <input type="password" placeholder="Password" />
-</ng-template>
-<ng-template #loginFooter>
-  <button (click)="onLogin()">Log In</button>
-</ng-template>
-
-<app-modal #loginModal
-  [headerTemplate]="loginHeader"
-  [bodyTemplate]="loginBody"
-  [footerTemplate]="loginFooter" />
-```
+**Modal 2: User Login** — header, username + password inputs, login button
 
 Two buttons open each modal independently.
 
 ### Behavior
 
 - Both modals exist in the DOM simultaneously but only the open one is visible
-- Closing one doesn't affect the other — each has its own `isOpen` signal
-- The modal shell component has zero knowledge of "deletion" or "login"
+- Closing one doesn't affect the other — each has its own state
+- The modal shell has zero knowledge of "deletion" or "login"
 
 ### What you'll learn
 
 `TemplateRef` as an `input()` is the explicit slot pattern — the parent hands a template reference directly to the child via property binding. The child renders it with `ngTemplateOutlet`. This is different from `contentChild()` (which queries projected content) — here the parent explicitly passes templates as data.
 
-Think of `TemplateRef` as a function definition for UI: it's a recipe the child can execute whenever and wherever it wants, with `ngTemplateOutlet` as the call site.
-
-### Hint
-
-`<ng-template #confirmHeader>` defines the template. `[headerTemplate]="confirmHeader"` passes the `TemplateRef` object as an input. `[ngTemplateOutlet]="headerTemplate()"` executes it.
+Think of `TemplateRef` as a function definition for UI: it's a recipe the child can execute whenever and wherever it wants.
 
 ---
 
 ## Acceptance Criteria
 
 - [ ] `ModalComponent` has no hardcoded content
-- [ ] `TemplateRef<void>` — no `any`
+- [ ] No `any` — use the correct `TemplateRef` generic
 - [ ] Each modal instance has independent visibility state
 - [ ] Closing modal 1 does not affect modal 2
 - [ ] Both modals can be open simultaneously (no global modal state)

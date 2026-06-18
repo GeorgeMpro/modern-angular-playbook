@@ -95,7 +95,8 @@ A set of generic, reusable pipeable operators built from first principles using 
 
 **Focus:** Template composition, content projection, dynamic rendering, generic components, recursive templates, injector scope
 
-**Project:** `challenges-ng-template`
+**Project:** `challenges-ng-template`  
+**Live:** https://modern-angular-ch-ng-template.web.app
 
 ```bash
 ng serve challenges-ng-template
@@ -106,8 +107,8 @@ ng serve challenges-ng-template
 | # | Name | Key Concepts | State |
 |---|------|-------------|-------|
 | 01 | Composable Panel | `ng-content`, named slots, fallback content, `contentChild()` | Done |
-| 02 | Configurable Modal | `TemplateRef` as input, reusable shell components | WIP |
-| 03 | Dynamic Data Table | Generic `<T>`, `ngTemplateOutletContext`, `ngTemplateContextGuard` | WIP |
+| 02 | Configurable Modal | `TemplateRef` as input, reusable shell components | Done |
+| 03 | Dynamic Data Table | Generic `<T>`, `ngTemplateOutletContext`, `ngTemplateContextGuard`, typed directive | Done |
 | 04 | Dynamic Layout | `viewChild`, `computed()` template selection, decoupled layout shell | WIP |
 | 05 | Recursive Folder Explorer | Self-referencing `ngTemplateOutlet`, recursive context, depth threading | WIP |
 | 06 | Template Injector Scope | `ngTemplateOutletInjector`, creation vs outlet injector | WIP |
