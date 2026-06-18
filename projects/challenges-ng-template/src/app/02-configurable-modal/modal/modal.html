@@ -1,0 +1,12 @@
+@if (isOpen()) {
+  <div class="modal-backdrop"
+       role="dialog"
+       (click)="onBackdropClick($event)">
+    <div class="modal-container">
+      <ng-container [ngTemplateOutlet]="headerTemplate()"/>
+      <ng-container [ngTemplateOutlet]="bodyTemplate()"/>
+      <ng-container [ngTemplateOutlet]="footerTemplate()"
+      [ngTemplateOutletContext]="{close:closeModal}"/>
+    </div>
+  </div>
+}

@@ -1,0 +1,47 @@
+<!--Delete Modal Template-->
+<ng-template #deletionHeader>
+  <h3>Confirm Deletion</h3>
+</ng-template>
+<ng-template #deletionBody>
+  <strong>Any unsaved data would be deleted. Proceed?</strong>
+</ng-template>
+
+<!--Login Modal Template-->
+<ng-template #loginHeader>
+  <h3>User Login</h3>
+</ng-template>
+<ng-template #loginBody>
+  <label for="username">Username</label>
+  <input id="username" name="username" type="text" placeholder="Username...">
+
+  <label for="password">Password</label>
+  <input id="password" name="password" type="password" placeholder="Password...">
+</ng-template>
+
+<!--Shared Footer-->
+<ng-template #sharedFooter let-close="close">
+  <div class="footer-actions">
+    <button class="btn-secondary" (click)="close()">Cancel</button>
+    <button class="btn-primary" (click)="close()">Confirm</button>
+  </div>
+</ng-template>
+
+<div class="demo-controls">
+  @if (!isDeleteModalOpen()) {
+    <button (click)="isDeleteModalOpen.set(true)">Open Delete Modal</button>
+  }
+  @if (!isLoginModalOpen()) {
+    <button (click)="isLoginModalOpen.set(true)">Open Login Modal</button>
+  }
+</div>
+
+<app-modal [(isOpen)]="isDeleteModalOpen"
+           [headerTemplate]="deletionHeader"
+           [bodyTemplate]="deletionBody"
+           [footerTemplate]="sharedFooter">
+</app-modal>
+
+<app-modal [(isOpen)]="isLoginModalOpen"
+           [headerTemplate]="loginHeader"
+           [bodyTemplate]="loginBody"
+           [footerTemplate]="sharedFooter"/>

@@ -14,6 +14,11 @@ export const routes: Routes = [
     path: 'composable-panel',
     loadComponent: () => import('./01-composable-panel/composable-panel'),
     title: 'The Composable Panel'
+  },
+  {
+    path: 'configurable-modal',
+    loadComponent: () => import('./02-configurable-modal/configurable-modal'),
+    title: 'Configurable Modal'
   }
 
 ];

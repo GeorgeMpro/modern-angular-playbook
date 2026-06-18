@@ -106,7 +106,7 @@ ng serve challenges-ng-template
 | # | Name | Key Concepts | State |
 |---|------|-------------|-------|
 | 01 | Composable Panel | `ng-content`, named slots, fallback content, `contentChild()` | Done |
-| 02 | Configurable Modal | `TemplateRef` as input, reusable shell components | WIP |
+| 02 | Configurable Modal | `TemplateRef` as input, reusable shell components | Done |
 | 03 | Dynamic Data Table | Generic `<T>`, `ngTemplateOutletContext`, `ngTemplateContextGuard` | WIP |
 | 04 | Dynamic Layout | `viewChild`, `computed()` template selection, decoupled layout shell | WIP |
 | 05 | Recursive Folder Explorer | Self-referencing `ngTemplateOutlet`, recursive context, depth threading | WIP |

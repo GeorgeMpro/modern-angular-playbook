@@ -22,25 +22,9 @@ interface TreeNode {
   name: string;
   children: TreeNode[];
 }
-
-readonly tree = signal<TreeNode[]>([
-  {
-    id: 1, name: 'src', children: [
-      {
-        id: 2, name: 'app', children: [
-          { id: 3, name: 'components', children: [] },
-          { id: 4, name: 'services',   children: [] },
-        ]
-      },
-      { id: 5, name: 'assets', children: [
-          { id: 6, name: 'icons', children: [] },
-        ]
-      },
-    ]
-  },
-  { id: 7, name: 'public', children: [] },
-]);
 ```
+
+Seed the component with a tree at least 3 levels deep to verify recursion works.
 
 ---
 
@@ -50,48 +34,22 @@ Build a `FolderExplorerComponent` that renders the full tree using a **single `<
 
 ### The recursive template
 
-```html
-<ng-template #node let-folder let-depth="depth">
-  <div [style.padding-left.px]="depth * 20" class="node">
-    📁 {{ folder.name }}
-  </div>
-  @for (child of folder.children; track child.id) {
-    <ng-container
-      [ngTemplateOutlet]="node"
-      [ngTemplateOutletContext]="{ $implicit: child, depth: depth + 1 }" />
-  }
-</ng-template>
-```
+The template receives the current node via context. For each child, it renders the same template again with the child as the new `$implicit` and an incremented `depth` value. Recursion terminates naturally when a node has no children — `@for` over an empty array produces nothing.
 
-Bootstrap it for each root node:
+Pass `depth` as a named context variable alongside `$implicit` so the template can use it for indentation. Start depth at `0` for root nodes.
 
-```html
-@for (root of tree(); track root.id) {
-  <ng-container
-    [ngTemplateOutlet]="node"
-    [ngTemplateOutletContext]="{ $implicit: root, depth: 0 }" />
-}
-```
-
-### Why this works
-
-`#node` is a `TemplateRef`. Inside the template, `[ngTemplateOutlet]="node"` refers to that same `TemplateRef` — Angular resolves it from the same view. Each call passes a child node and increments `depth`, so the recursion terminates naturally when `folder.children` is empty and `@for` produces nothing.
-
-### Context
-
-| Key | Type | Description |
-|---|---|---|
-| `$implicit` | `TreeNode` | The current folder (read with bare `let-folder`) |
-| `depth` | `number` | Nesting level, starts at `0` for roots |
-
----
-
-## Behavior
+### Behavior
 
 - Entire tree renders from a single template definition
-- Each level is indented 20px more than its parent
-- Adding a node to `tree()` re-renders without touching the template
+- Each level is indented more than its parent (use `depth` to calculate `padding-left`)
+- Adding a node to the signal re-renders without touching the template
 - No `FolderNodeComponent`, no recursion in TypeScript — only in the template
+
+### What you'll learn
+
+A `TemplateRef` is just an object — you can reference it from within itself. Recursion in templates terminates the same way recursion in functions does: a base case where nothing is produced (`@for` over an empty array emits nothing).
+
+The `depth` context variable illustrates how to thread accumulating state through recursive template calls without any component state — the template is stateless, the caller provides everything it needs.
 
 ---
 
@@ -99,50 +57,16 @@ Bootstrap it for each root node:
 
 Add a collapse toggle: clicking a folder hides/shows its children.
 
-```ts
-readonly collapsed = signal<Set<number>>(new Set());
-
-toggle(id: number): void {
-  this.collapsed.update(set => {
-    const next = new Set(set);
-    next.has(id) ? next.delete(id) : next.add(id);
-    return next;
-  });
-}
-```
-
-Pass `collapsed` as a named context variable so the template can read it:
-
-```html
-[ngTemplateOutletContext]="{ $implicit: child, depth: depth + 1, collapsed: collapsed() }"
-```
-
-```html
-<ng-template #node let-folder let-depth="depth" let-collapsed="collapsed">
-  <div [style.padding-left.px]="depth * 20" class="node" (click)="toggle(folder.id)">
-    {{ collapsed.has(folder.id) ? '▶' : '▼' }} {{ folder.name }}
-  </div>
-  @if (!collapsed.has(folder.id)) {
-    @for (child of folder.children; track child.id) {
-      <ng-container
-        [ngTemplateOutlet]="node"
-        [ngTemplateOutletContext]="{ $implicit: child, depth: depth + 1, collapsed: collapsed }" />
-    }
-  }
-</ng-template>
-```
-
-### What you'll learn
-
-A `TemplateRef` is just an object — you can pass it as context data or reference it from within itself. Recursion in templates terminates the same way recursion in functions does: a base case where nothing is produced (`@for` over an empty array emits nothing).
-
-The `depth` context variable illustrates how to thread accumulating state through recursive template calls without any component state — the template is stateless, the caller provides everything it needs.
+- Track collapsed nodes by id in a `signal<Set<number>>`
+- A `toggle(id)` method adds/removes from the set immutably
+- Pass the collapsed set as a named context variable so the template can read it at any depth
+- Each node independently shows/hides its children
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] Single `<ng-template #node>` — no recursive component
+- [ ] Single `<ng-template>` — no recursive component
 - [ ] Full tree renders to arbitrary depth
 - [ ] Indentation increases with `depth`
 - [ ] `TreeNode` type used throughout — no `any`

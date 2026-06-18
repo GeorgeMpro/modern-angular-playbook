@@ -23,8 +23,8 @@ A developer portfolio app with a persistent layout shell: sidebar navigation + m
 ## Part 1 — Route-Driven Templates
 
 ### Concepts
-- `withComponentInputBinding()` — route params, query params, and resolver data bind directly to `input()` properties
-- Functional resolver (`ResolveFn<T>`) — prefetch data before a component loads; result binds to `input()`
+- `withComponentInputBinding()` — route params, query params, and resolver data bind directly to `input()` properties — no `ActivatedRoute` injection needed
+- `ResolveFn<T>` — prefetch data before a component loads; result binds to `input()`
 - Route `data` — static config on the route object, readable via `input()`
 - `loadComponent` — lazy load components at the route level
 
@@ -37,54 +37,20 @@ A developer portfolio app with a persistent layout shell: sidebar navigation + m
 /about            → AboutComponent (lazy)
 ```
 
-### ProjectDetailComponent — no ActivatedRoute
+### ProjectDetailComponent
 
-```ts
-@Component({ selector: 'app-project-detail' })
-export class ProjectDetailComponent {
-  readonly id      = input.required<string>();    // bound from :id route param
-  readonly project = input.required<Project>();   // bound from resolver
-  readonly layout  = input<string>('default');    // bound from route data
-}
-```
-
-The router sets these automatically when `withComponentInputBinding()` is configured. The component has no knowledge of the router.
-
-### Resolver
-
-```ts
-export const projectResolver: ResolveFn<Project> = (route) => {
-  return inject(ProjectService).getById(route.paramMap.get('id')!);
-};
-```
-
-Wire it to the route:
-
-```ts
-{
-  path: 'projects/:id',
-  loadComponent: () => import('./project-detail.component').then(m => m.ProjectDetailComponent),
-  resolve: { project: projectResolver },
-  data: { layout: 'detail' }
-}
-```
-
-### Router setup
-
-```ts
-provideRouter(routes, withComponentInputBinding())
-```
+Has no `ActivatedRoute` injection. Route param (`:id`), resolved data, and static route `data` all arrive as `input()` properties automatically when `withComponentInputBinding()` is configured.
 
 ### Behavior
 
-- Navigating to `/projects/3` sets `id = '3'` and `project = <resolved Project>` on the component — no subscription needed
+- Navigating to `/projects/3` sets the id and project inputs on the component — no subscription needed
 - `ProjectListComponent` has its data available on init — no loading flicker
-- Opening DevTools Network tab: feature JS chunks load only when the route is first visited
-- Route `data.layout` flows into `input()` and drives a CSS class on the component host
+- Feature JS chunks load only when the route is first visited (verify in DevTools Network)
+- Route `data` value flows into `input()` and drives a CSS class on the component
 
 ### What you'll learn
 
-`withComponentInputBinding` makes the component a pure function of its inputs — it doesn't care whether values come from a parent, the router, or a resolver. This is the v22 way: the router is just another input source, not a service you inject and subscribe to.
+`withComponentInputBinding` makes the component a pure function of its inputs — it doesn't care whether values come from a parent, the router, or a resolver. The router is just another input source.
 
 Resolvers are prefetch contracts: the router won't activate the route until the resolver resolves. The component always boots with data — no `undefined` guard needed inside the template.
 
@@ -100,69 +66,15 @@ Resolvers are prefetch contracts: the router won't activate the route until the 
 
 ### Guards
 
-```ts
-// auth.guard.ts
-export const authGuard: CanActivateFn = () =>
-  inject(AuthService).isLoggedIn()
-    ? true
-    : inject(Router).createUrlTree(['/']);
+Build two functional guards (no class-based implementations):
+- `authGuard` — blocks `/admin` and redirects unauthenticated users to `/`
+- `unsavedGuard` — prompts before leaving a dirty contact form; reads signal state directly from the component instance
 
-// unsaved.guard.ts
-export const unsavedGuard: CanDeactivateFn<ContactComponent> =
-  (component) => component.isDirty()
-    ? confirm('You have unsaved changes. Leave anyway?')
-    : true;
-```
-
-Add to routes:
-
-```ts
-{ path: 'admin', loadComponent: ..., canActivate: [authGuard] },
-{ path: 'contact', loadComponent: ..., canDeactivate: [unsavedGuard] }
-```
+`AuthService` is minimal: a private `loggedIn` signal, exposed readonly, with `login()` and `logout()` methods.
 
 ### Named outlets
 
-The layout shell has two outlets:
-
-```html
-<div class="layout">
-  <aside>
-    <router-outlet name="sidebar" />
-  </aside>
-  <main>
-    <router-outlet />
-  </main>
-</div>
-```
-
-A secondary route targets the named outlet:
-
-```ts
-{ path: 'projects', outlet: 'sidebar', component: ProjectNavComponent }
-```
-
-Navigate to fill both:
-
-```html
-<a [routerLink]="[{ outlets: { primary: ['projects'], sidebar: ['projects'] } }]">
-  Projects
-</a>
-```
-
-Now `/projects` renders `ProjectListComponent` in the main outlet and `ProjectNavComponent` in the sidebar simultaneously.
-
-### AuthService (minimal)
-
-```ts
-@Injectable({ providedIn: 'root' })
-export class AuthService {
-  private loggedIn = signal(false);
-  isLoggedIn = this.loggedIn.asReadonly();
-  login()  { this.loggedIn.set(true);  }
-  logout() { this.loggedIn.set(false); }
-}
-```
+The layout shell has two `<router-outlet>` elements: the default (primary) and one named `sidebar`. A secondary route targets the named outlet. Navigating to `/projects` renders the project list in the primary outlet and project navigation in the sidebar simultaneously. Navigating to a route with no secondary definition clears the sidebar.
 
 ### Behavior
 
@@ -170,13 +82,13 @@ export class AuthService {
 - Logging in and navigating to `/admin` succeeds
 - Filling out the contact form and navigating away triggers the unsaved changes prompt
 - Navigating to `/projects` populates both main and sidebar outlets
-- Navigating to `/about` clears the sidebar outlet (no secondary route defined)
+- Navigating to `/about` clears the sidebar outlet
 
 ### What you'll learn
 
 Guards are the router's gate — they run before the component is created. A `CanActivateFn` returns `true`, `false`, or a `UrlTree` (redirect). A `CanDeactivateFn` takes the current component instance, so it can read signal state directly.
 
-Named outlets let the router manage multiple independent regions of the layout simultaneously. Each outlet has its own navigation state — the sidebar can show project nav while the main area shows project details. This is how Angular Material's sidenav and dialog overlay work at the router level.
+Named outlets let the router manage multiple independent regions simultaneously. Each outlet has its own navigation state.
 
 ---
 

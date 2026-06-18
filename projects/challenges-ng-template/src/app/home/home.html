@@ -1,1 +1,14 @@
-<p>home works!</p>
+<div class="home-container">
+  <main class="content">
+    <div class="grid-header">
+      <h2>{{ title }}</h2>
+      <p>{{ subtitle }}</p>
+    </div>
+
+    <div class="challenges-grid">
+      @for (challenge of challenges(); track challenge.id) {
+        <app-challenge-card [challenge]="challenge" />
+      }
+    </div>
+  </main>
+</div>
