@@ -1,0 +1,73 @@
+<ng-template #main>
+  <div class="game-board">
+    <h3>Game Board</h3>
+    <div class="board-grid">
+      @for (tile of tiles; track $index) {
+        <div class="tile">{{ tile }}</div>
+      }
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #sidebarStats>
+  <div class="sidebar-panel">
+    <h3>Player Stats</h3>
+    @for (stat of playerStats; track stat.label) {
+      <div class="stat-row">
+        <span class="label">{{ stat.label }}</span>
+        <span class="value">{{ stat.value }}</span>
+      </div>
+      @if (stat.hasBar) {
+        <div class="hp-bar">
+          <div class="hp-fill"></div>
+        </div>
+      }
+    }
+  </div>
+</ng-template>
+
+<ng-template #sidebarInventory>
+  <div class="sidebar-panel">
+    <h3>Inventory</h3>
+    <ul class="inventory-list">
+      @for (item of inventory; track item.name) {
+        <li class="inventory-item">
+          <span class="icon">{{ item.icon }}</span>
+          <span class="item-name">{{ item.name }}</span>
+          <span class="item-qty">x{{ item.qty }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
+
+<ng-template #sidebarAchievements>
+  <div class="sidebar-panel">
+    <h3>Achievements</h3>
+    <ul class="achievements-list">
+      @for (ach of achievements; track ach.title) {
+        <li class="achievement-item" [class.locked]="!ach.unlocked">
+          <span class="icon">{{ ach.unlocked ? ach.icon : '🔒' }}</span>
+          <div class="achievement-text">
+            <span class="achievement-title">{{ ach.title }}</span>
+            <span class="achievement-desc">{{ ach.description }}</span>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
+
+<div class="toolbar">
+  @for (act of actions | keyvalue: null; track act.key) {
+    @let val = act.value;
+    <button [class.active]="sidebar() === val.type"
+            [attr.aria-pressed]="sidebar()===val.type"
+            (click)="val.callback()">
+      {{ val.name }}
+    </button>
+  }
+</div>
+
+<app-page-layout [main]="main"
+                 [sidebar]="activeSidebar()"/>

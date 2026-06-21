@@ -66,3 +66,10 @@ The method body always returns `true` — it is a compile-time hint only.
 - [ ] Two different data shapes use the same `DataTableComponent`
 - [ ] `$implicit` is used for the row data; at least one named context variable (`index` or similar) is also passed and used
 - [ ] A `TypedRow<T>` directive with `ngTemplateContextGuard` is applied to the `ng-template` in the parent — TypeScript catches wrong property access on `let-item` at build time
+
+---
+
+## Useful Articles
+
+- [Does Angular support generic component types?](https://dev.to/angular/does-angular-support-generic-component-types-4fkm) — Official Angular team post on generic components, `ngTemplateContextGuard`, and typed directives
+- [Directive type checking](https://medium.com/itnext/directive-type-checking-3d3c5f1137b3) — Deep dive on `ngTemplateContextGuard`, context objects, and how Angular type-checks structural directive templates
