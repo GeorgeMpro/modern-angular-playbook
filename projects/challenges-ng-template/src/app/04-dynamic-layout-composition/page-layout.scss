@@ -1,0 +1,11 @@
+@import '../shared/styles/variables';
+
+:host {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+
+  &:has(> :nth-child(2)) {
+    grid-template-columns: 1fr 280px;
+  }
+}

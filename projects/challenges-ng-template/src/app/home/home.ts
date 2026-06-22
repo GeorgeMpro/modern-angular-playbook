@@ -42,16 +42,16 @@ export default class Home {
       title: 'Dynamic Layout',
       focus: 'Layout shell driven by computed template selection — decoupled from content.',
       concepts: ['viewChild()', 'computed()', 'TemplateRef as signal'],
-      route: '/dynamic-layout',
-      state: 'WIP'
+      route: '/dynamic-layout-composition',
+      state: 'Done'
     },
     {
       id: '05',
       title: 'Recursive Folder Explorer',
       focus: 'Self-referencing ng-template that renders a nested tree without recursive components.',
       concepts: ['Self-referencing ngTemplateOutlet', 'Recursive context', 'depth threading'],
-      route: '/folder-explorer',
-      state: 'WIP'
+      route: '/recursive-folder-explorer',
+      state: 'Done'
     },
     {
       id: '06',

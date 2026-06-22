@@ -24,6 +24,16 @@ export const routes: Routes = [
     path: 'dynamic-data-table',
     loadComponent: () => import('./03-dynamic-data-table/dynamic-data-table'),
     title: 'Dynamic Data Table'
+  },
+  {
+    path: 'dynamic-layout-composition',
+    loadComponent: () => import('./04-dynamic-layout-composition/dynamic-layout'),
+    title: 'Dynamic Layout Composition'
+  },
+  {
+    path: 'recursive-folder-explorer',
+    loadComponent: () => import('./05-recursive-folder-explorer/folder-explorer'),
+    title: 'Recursive Folder Explorer'
   }
 
 ];
