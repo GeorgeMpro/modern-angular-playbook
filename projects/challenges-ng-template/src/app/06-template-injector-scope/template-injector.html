@@ -1,0 +1,28 @@
+<ng-template #content>
+  <div appTheme #reader="themeReader"
+       class="theme-card"
+       [class.dark]="reader.theme() === 'dark'"
+       [class.light]="reader.theme() === 'light'">
+    <div class="theme-header">
+      <span class="theme-icon">{{ reader.theme() === 'dark' ? '🌙' : '☀️' }}</span>
+      <h3>Theme Preview</h3>
+    </div>
+    <div class="theme-body">
+      <div class="theme-row">
+        <span class="label">Mode</span>
+        <span class="value">{{ reader.theme() }}</span>
+      </div>
+      <div class="theme-row">
+        <span class="label">Source</span>
+        <span class="value">Child injector</span>
+      </div>
+      <div class="theme-row">
+        <span class="label">Defined in</span>
+        <span class="value">Parent template</span>
+      </div>
+    </div>
+    <p class="hint">This template reads a scoped service via outlet injector</p>
+  </div>
+</ng-template>
+
+<app-page-layout [contentSlot]="content"/>

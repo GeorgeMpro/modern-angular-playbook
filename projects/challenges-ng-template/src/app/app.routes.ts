@@ -34,6 +34,11 @@ export const routes: Routes = [
     path: 'recursive-folder-explorer',
     loadComponent: () => import('./05-recursive-folder-explorer/folder-explorer'),
     title: 'Recursive Folder Explorer'
+  },
+  {
+    path: 'template-injector-scope',
+    loadComponent: () => import('./06-template-injector-scope/template-injector'),
+    title: 'Template Injector Scope'
   }
 
 ];

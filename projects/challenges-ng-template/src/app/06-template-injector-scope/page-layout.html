@@ -1,0 +1,15 @@
+<div class="layout-shell">
+  <div class="layout-header">
+    <h2>Page Layout</h2>
+    <span class="badge">Provides LayoutTheme</span>
+  </div>
+
+  <div class="layout-content">
+    <ng-container [ngTemplateOutlet]="contentSlot()"
+                  [ngTemplateOutletInjector]="injector"/>
+  </div>
+
+  <div class="layout-footer">
+    <button class="toggle-btn" (click)="toggleTheme()">Toggle Theme</button>
+  </div>
+</div>

@@ -58,8 +58,8 @@ export default class Home {
       title: 'Template Injector Scope',
       focus: 'Override the injector used when rendering a template to access scoped services.',
       concepts: ['ngTemplateOutletInjector', 'Creation vs outlet injector'],
-      route: '/template-injector',
-      state: 'WIP'
+      route: '/template-injector-scope',
+      state: 'Done'
     },
     {
       id: '07',

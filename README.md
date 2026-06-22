@@ -111,5 +111,5 @@ ng serve challenges-ng-template
 | 03 | Dynamic Data Table | Generic `<T>`, `ngTemplateOutletContext`, `ngTemplateContextGuard`, typed directive | Done |
 | 04 | Dynamic Layout | `viewChild`, `computed()` template selection, decoupled layout shell | Done |
 | 05 | Recursive Folder Explorer | Self-referencing `ngTemplateOutlet`, recursive context, depth threading, collapse toggle | Done |
-| 06 | Template Injector Scope | `ngTemplateOutletInjector`, creation vs outlet injector | WIP |
+| 06 | Template Injector Scope | `ngTemplateOutletInjector`, creation vs outlet injector, scoped service, directive bridge | Done |
 | 07 | Route-Driven Layout | `withComponentInputBinding`, resolvers, `loadComponent`, `CanActivateFn`, `CanDeactivateFn`, named outlets | WIP |
