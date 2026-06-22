@@ -29,6 +29,11 @@ export const routes: Routes = [
     path: 'dynamic-layout-composition',
     loadComponent: () => import('./04-dynamic-layout-composition/dynamic-layout'),
     title: 'Dynamic Layout Composition'
+  },
+  {
+    path: 'recursive-folder-explorer',
+    loadComponent: () => import('./05-recursive-folder-explorer/folder-explorer'),
+    title: 'Recursive Folder Explorer'
   }
 
 ];
