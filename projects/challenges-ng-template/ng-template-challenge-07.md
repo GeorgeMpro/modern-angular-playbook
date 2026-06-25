@@ -92,6 +92,58 @@ Named outlets let the router manage multiple independent regions simultaneously.
 
 ---
 
+## Part 3 — Deferred Loading Within a Route
+
+### Concepts
+- `@defer` — lazy-render a template block based on a trigger condition
+- `@placeholder` — what to show before the defer trigger fires
+- `@loading` — what to show while the deferred chunk is loading
+- `@error` — fallback if the deferred chunk fails to load
+- `prefetch` — start loading the chunk before the trigger fires
+
+### Task
+
+`ProjectDetailComponent` has a heavy section — a project stats panel or readme preview. This section should not load its JS or render until the user scrolls to it.
+
+Use `@defer (on viewport)` to defer the heavy section. Add `@placeholder`, `@loading (minimum 300ms)`, and `@error` blocks. Optionally add `prefetch on idle` so the chunk starts downloading when the browser is idle, before the user scrolls.
+
+```html
+@defer (on viewport; prefetch on idle) {
+  <app-project-stats [projectId]="id()" />
+} @placeholder {
+  <div class="stats-placeholder">Scroll to load stats</div>
+} @loading (minimum 300ms) {
+  <div class="stats-loading">Loading stats...</div>
+} @error {
+  <div class="stats-error">Failed to load stats</div>
+}
+```
+
+### Behavior
+
+- The stats component JS chunk is not loaded on route entry — verify in DevTools Network
+- Scrolling to the stats section triggers the load
+- With `prefetch on idle`, the chunk downloads during idle time but doesn't render until viewport trigger
+- The placeholder is visible before scroll, the loading state shows during chunk fetch, the error state shows if the import fails
+
+### What you'll learn
+
+Route-level `loadComponent` and template-level `@defer` are two layers of lazy loading. The route controls *which page* loads, `@defer` controls *which section within the page* loads. Together they give fine-grained control over bundle size and initial render time. The `prefetch` option decouples "when to download" from "when to render" — the chunk is ready before the user needs it.
+
+### Available triggers
+
+| Trigger | Fires when |
+|---|---|
+| `on viewport` | Element enters the viewport |
+| `on interaction` | User clicks/focuses the placeholder |
+| `on hover` | User hovers over the placeholder |
+| `on idle` | Browser reaches idle state |
+| `on timer(Xms)` | After a delay |
+| `on immediate` | As soon as possible after render |
+| `when condition` | A boolean expression becomes true |
+
+---
+
 ## Acceptance Criteria
 
 ### Part 1
@@ -107,3 +159,9 @@ Named outlets let the router manage multiple independent regions simultaneously.
 - [ ] Named `sidebar` outlet renders independently from the primary outlet
 - [ ] Navigating to a route with no secondary definition clears the sidebar
 - [ ] Guards are functions — no class-based guard implementations
+
+### Part 3
+- [ ] `@defer (on viewport)` used for a heavy section in `ProjectDetailComponent`
+- [ ] `@placeholder`, `@loading`, and `@error` blocks all present
+- [ ] Deferred chunk is not loaded on route entry — verified in DevTools Network tab
+- [ ] Scrolling to the section triggers the load and renders the component
