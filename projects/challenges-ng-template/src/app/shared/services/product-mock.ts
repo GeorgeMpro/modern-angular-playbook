@@ -42,4 +42,14 @@ export class ProductMock {
   public getProducts(): Product[] {
     return this.products;
   }
+
+  public getProduct(id: string): Product {
+    const productId = Number(id);
+    const product = this.products.find(p => p.id === productId);
+    if (!product) {
+      throw new Error(`Product ${id} not found`)
+    }
+
+    return product;
+  }
 }

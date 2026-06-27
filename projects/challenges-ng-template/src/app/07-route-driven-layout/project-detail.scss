@@ -1,0 +1,81 @@
+:host {
+  display: block;
+  padding: 2rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+
+  &:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+  }
+}
+
+.product-card {
+  max-width: 600px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  background: var(--bg-secondary);
+
+  &__header {
+    margin-bottom: 2rem;
+  }
+
+  &__category {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+  }
+
+  &__name {
+    margin: 0.5rem 0 0.25rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--heading);
+  }
+
+  &__brand {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  &__stat {
+    dt {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    dd {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+  }
+}
+
+:host.detail-view {
+  background: var(--bg-primary);
+}
