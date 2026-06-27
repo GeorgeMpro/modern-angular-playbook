@@ -23,6 +23,8 @@ A developer portfolio app with a persistent layout shell: sidebar navigation + m
 ## Part 1 — Route-Driven Templates
 
 ### Concepts
+
+- [with component input binding](https://angular.dev/guide/routing/common-router-tasks#getting-route-information)
 - `withComponentInputBinding()` — route params, query params, and resolver data bind directly to `input()` properties — no `ActivatedRoute` injection needed
 - `ResolveFn<T>` — prefetch data before a component loads; result binds to `input()`
 - Route `data` — static config on the route object, readable via `input()`
@@ -59,6 +61,7 @@ Resolvers are prefetch contracts: the router won't activate the route until the 
 ## Part 2 — Guards + Named Outlets
 
 ### Concepts
+
 - `CanActivateFn` — block navigation to a route based on a condition
 - `CanDeactivateFn` — block navigation away from a route (unsaved changes)
 - Named router outlets — multiple independent `<router-outlet>` slots in one view
@@ -67,6 +70,7 @@ Resolvers are prefetch contracts: the router won't activate the route until the 
 ### Guards
 
 Build two functional guards (no class-based implementations):
+
 - `authGuard` — blocks `/admin` and redirects unauthenticated users to `/`
 - `unsavedGuard` — prompts before leaving a dirty contact form; reads signal state directly from the component instance
 
@@ -95,6 +99,7 @@ Named outlets let the router manage multiple independent regions simultaneously.
 ## Part 3 — Deferred Loading Within a Route
 
 ### Concepts
+
 - `@defer` — lazy-render a template block based on a trigger condition
 - `@placeholder` — what to show before the defer trigger fires
 - `@loading` — what to show while the deferred chunk is loading
@@ -109,13 +114,13 @@ Use `@defer (on viewport)` to defer the heavy section. Add `@placeholder`, `@loa
 
 ```html
 @defer (on viewport; prefetch on idle) {
-  <app-project-stats [projectId]="id()" />
+<app-project-stats [projectId]="id()"/>
 } @placeholder {
-  <div class="stats-placeholder">Scroll to load stats</div>
+<div class="stats-placeholder">Scroll to load stats</div>
 } @loading (minimum 300ms) {
-  <div class="stats-loading">Loading stats...</div>
+<div class="stats-loading">Loading stats...</div>
 } @error {
-  <div class="stats-error">Failed to load stats</div>
+<div class="stats-error">Failed to load stats</div>
 }
 ```
 
@@ -132,21 +137,22 @@ Route-level `loadComponent` and template-level `@defer` are two layers of lazy l
 
 ### Available triggers
 
-| Trigger | Fires when |
-|---|---|
-| `on viewport` | Element enters the viewport |
+| Trigger          | Fires when                          |
+|------------------|-------------------------------------|
+| `on viewport`    | Element enters the viewport         |
 | `on interaction` | User clicks/focuses the placeholder |
-| `on hover` | User hovers over the placeholder |
-| `on idle` | Browser reaches idle state |
-| `on timer(Xms)` | After a delay |
-| `on immediate` | As soon as possible after render |
-| `when condition` | A boolean expression becomes true |
+| `on hover`       | User hovers over the placeholder    |
+| `on idle`        | Browser reaches idle state          |
+| `on timer(Xms)`  | After a delay                       |
+| `on immediate`   | As soon as possible after render    |
+| `when condition` | A boolean expression becomes true   |
 
 ---
 
 ## Acceptance Criteria
 
 ### Part 1
+
 - [ ] `withComponentInputBinding()` configured in router setup
 - [ ] `ProjectDetailComponent` has no `ActivatedRoute` injection — params come via `input()`
 - [ ] Resolver runs before the component loads — component always has data on init
@@ -154,6 +160,7 @@ Route-level `loadComponent` and template-level `@defer` are two layers of lazy l
 - [ ] Route `data` value flows into an `input()` and affects the component
 
 ### Part 2
+
 - [ ] `authGuard` blocks `/admin` and redirects unauthenticated users to `/`
 - [ ] `unsavedGuard` prompts before leaving a dirty contact form
 - [ ] Named `sidebar` outlet renders independently from the primary outlet
@@ -161,6 +168,7 @@ Route-level `loadComponent` and template-level `@defer` are two layers of lazy l
 - [ ] Guards are functions — no class-based guard implementations
 
 ### Part 3
+
 - [ ] `@defer (on viewport)` used for a heavy section in `ProjectDetailComponent`
 - [ ] `@placeholder`, `@loading`, and `@error` blocks all present
 - [ ] Deferred chunk is not loaded on route entry — verified in DevTools Network tab

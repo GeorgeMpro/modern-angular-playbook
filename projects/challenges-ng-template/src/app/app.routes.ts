@@ -1,4 +1,5 @@
 import {Routes} from '@angular/router';
+import {ROUTE_DRIVEN_TEMPLATES} from './07-route-driven-templates/route-driven-templates.routes';
 
 export const routes: Routes = [
   {
@@ -39,6 +40,12 @@ export const routes: Routes = [
     path: 'template-injector-scope',
     loadComponent: () => import('./06-template-injector-scope/template-injector'),
     title: 'Template Injector Scope'
-  }
+  }, {
+    path: 'route-driven-templates',
+    loadComponent: () => import('./07-route-driven-templates/route-driven-templates'),
+    title: 'Route Driven Templates',
+    children: ROUTE_DRIVEN_TEMPLATES
+  },
+
 
 ];
