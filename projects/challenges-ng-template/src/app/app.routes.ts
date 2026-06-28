@@ -8,7 +8,7 @@ export const routes: Routes = [
     pathMatch: 'full'
   }, {
     path: 'home',
-    loadComponent: () => import('./home/home'),
+    loadComponent: () => import('./07-route-driven-layout/components/home/home'),
     title: 'Home'
   },
   {
@@ -42,7 +42,7 @@ export const routes: Routes = [
     title: 'Template Injector Scope'
   }, {
     path: 'route-driven-templates',
-    loadComponent: () => import('./07-route-driven-layout/route-driven-templates'),
+    loadComponent: () => import('./07-route-driven-layout/components/route-driven-templates'),
     title: 'Route Driven Templates',
     children: ROUTE_DRIVEN_TEMPLATES
   },

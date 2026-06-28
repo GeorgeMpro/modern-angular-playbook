@@ -78,21 +78,28 @@ Build two functional guards (no class-based implementations):
 
 ### Named outlets
 
-The layout shell has two `<router-outlet>` elements: the default (primary) and one named `sidebar`. A secondary route targets the named outlet. Navigating to `/projects` renders the project list in the primary outlet and project navigation in the sidebar simultaneously. Navigating to a route with no secondary definition clears the sidebar.
+The layout shell has two `<router-outlet>` elements: the default (primary) and one named `sidebar`. A secondary route targets the named outlet. Navigating to `/projects` renders the project list in the primary outlet and a product quick-nav panel in the sidebar simultaneously.
+
+The sidebar is a **persistent panel** — it stays open while you navigate between project details. The user closes it explicitly via a close button, which navigates the sidebar outlet to `null`. This is the correct real-world named outlet pattern: open explicitly, stay open, close explicitly. Auto-clearing on route change is not a native Angular behavior and requires router event hacks — avoid it.
+
+**Implementation note:** `router-outlet` renders as a comment node in the DOM, not an element. Activated components are inserted as siblings after the comment. Wrap each outlet in a `div` so CSS grid always has predictable element children.
+
+**Navigation note:** Named outlet routes defined as children of a parent route require `Router.navigate` with `relativeTo` to activate both primary and sidebar simultaneously — `routerLink` without `relativeTo` context resolves from root and drops the secondary outlet.
 
 ### Behavior
 
 - Navigating to `/admin` without being logged in redirects to `/`
-- Logging in and navigating to `/admin` succeeds
+- Logging in and navigating to `/admin` succeeds; logging out while on `/admin` redirects away
 - Filling out the contact form and navigating away triggers the unsaved changes prompt
-- Navigating to `/projects` populates both main and sidebar outlets
-- Navigating to `/about` clears the sidebar outlet
+- Navigating to `/projects` populates both main and sidebar outlets simultaneously
+- Clicking a product in the sidebar navigates the primary outlet to that project detail; sidebar stays open
+- Clicking the close button in the sidebar clears it; layout collapses to single column
 
 ### What you'll learn
 
 Guards are the router's gate — they run before the component is created. A `CanActivateFn` returns `true`, `false`, or a `UrlTree` (redirect). A `CanDeactivateFn` takes the current component instance, so it can read signal state directly.
 
-Named outlets let the router manage multiple independent regions simultaneously. Each outlet has its own navigation state.
+Named outlets let the router manage multiple independent regions simultaneously. Each outlet has its own navigation state. They are designed for persistent independent UI — not for content that should clear on every route change.
 
 ---
 
@@ -161,10 +168,10 @@ Route-level `loadComponent` and template-level `@defer` are two layers of lazy l
 
 ### Part 2
 
-- [ ] `authGuard` blocks `/admin` and redirects unauthenticated users to `/`
+- [ ] `authGuard` blocks `/admin` and redirects unauthenticated users to `/`; logout while on `/admin` redirects away
 - [ ] `unsavedGuard` prompts before leaving a dirty contact form
-- [ ] Named `sidebar` outlet renders independently from the primary outlet
-- [ ] Navigating to a route with no secondary definition clears the sidebar
+- [ ] Named `sidebar` outlet renders a persistent product quick-nav panel alongside `/projects`
+- [ ] Sidebar stays open while navigating between project details; close button clears it explicitly
 - [ ] Guards are functions — no class-based guard implementations
 
 ### Part 3

@@ -1,0 +1,10 @@
+<form (submit)="onSubmit($event)">
+  <label for="name">Name</label>
+  <input type="text" id="name" [formField]="contactForm.name"/>
+  <label for="email">Email</label>
+  <input type="email" id="email" [formField]="contactForm.email"/>
+  <label for="message">Message</label>
+  <textarea id="message" [formField]="contactForm.message" rows="5" cols="40"></textarea>
+
+  <button type="submit">Submit</button>
+</form>

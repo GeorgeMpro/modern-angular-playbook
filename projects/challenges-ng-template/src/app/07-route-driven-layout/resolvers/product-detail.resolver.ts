@@ -2,8 +2,8 @@ import {ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot} from '@angular/r
 
 import {inject} from '@angular/core';
 
-import {Product} from '../shared/models/product.model';
-import {ProductMock} from '../shared/services/product-mock';
+import {Product} from '../../shared/models/product.model';
+import {ProductMock} from '../../shared/services/product-mock';
 
 export const productResolver: ResolveFn<Product> = (
   route: ActivatedRouteSnapshot,

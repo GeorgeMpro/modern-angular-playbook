@@ -1,0 +1,8 @@
+<button (click)="closeSidebar()">✕ Close</button>
+<ul>
+  @for (product of products; track product.id) {
+    <li>
+      <a (click)="navigateToProject(product.id)">{{ product.name }}</a>
+    </li>
+  }
+</ul>

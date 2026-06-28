@@ -1,4 +1,4 @@
-@import "./shared/styles/variables";
+@use 'variables' as *;
 
 .main-header {
   background-color: var(--bg-secondary);

@@ -1,9 +1,9 @@
 import {Component, computed, input,} from '@angular/core';
 import {RouterLink} from '@angular/router';
 
-import {DataTable} from '../03-dynamic-data-table/data-table/data-table';
-import {TypedRow} from '../03-dynamic-data-table/data-table/typed-row.directive';
-import {Product} from '../shared/models/product.model';
+import {DataTable} from '../../03-dynamic-data-table/data-table/data-table';
+import {TypedRow} from '../../03-dynamic-data-table/data-table/typed-row.directive';
+import {Product} from '../../shared/models/product.model';
 
 @Component({
   selector: 'app-project-list',

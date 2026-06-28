@@ -1,6 +1,6 @@
 import {Component, signal} from '@angular/core';
-import {ChallengeCard} from '../shared/components/challenge-card/challenge-card';
-import {ChallengeDescriptor} from '../shared/models/challenge.model';
+import {ChallengeCard} from '../../../shared/components/challenge-card/challenge-card';
+import {ChallengeDescriptor} from '../../../shared/models/challenge.model';
 
 @Component({
   selector: 'app-home',

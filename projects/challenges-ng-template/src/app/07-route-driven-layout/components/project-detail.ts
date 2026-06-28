@@ -1,6 +1,6 @@
 import {Component, input} from '@angular/core';
 import {RouterLink} from '@angular/router';
-import {Product} from '../shared/models/product.model';
+import {Product} from '../../shared/models/product.model';
 
 @Component({
   selector: 'app-project-detail',
