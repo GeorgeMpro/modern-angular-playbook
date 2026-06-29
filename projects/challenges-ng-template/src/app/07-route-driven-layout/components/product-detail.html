@@ -1,0 +1,58 @@
+<a routerLink="../" class="back-link">← Back to Products</a>
+
+@let prod = product();
+
+<article class="product-card">
+  <header class="product-card__header">
+    <span class="product-card__category">{{ prod.category }}</span>
+    <h1 class="product-card__name">{{ prod.name }}</h1>
+    <p class="product-card__brand">{{ prod.brand }}</p>
+  </header>
+
+  <dl class="product-card__stats">
+    <div class="product-card__stat">
+      <dt>Price</dt>
+      <dd>${{ prod.price }}</dd>
+    </div>
+    <div class="product-card__stat">
+      <dt>In Stock</dt>
+      <dd>{{ prod.stock }} units</dd>
+    </div>
+    <div class="product-card__stat">
+      <dt>ID</dt>
+      <dd>#{{ prod.id }}</dd>
+    </div>
+  </dl>
+</article>
+
+
+<!-- Notice: identical to @placeholder — ng-template refs don't cross @defer block boundaries -->
+@defer (on viewport) {
+  <section aria-label="Product statistics">
+    <app-product-stats [id]="id()"/>
+  </section>
+} @placeholder (minimum 500ms) {
+  <div class="product-card skeleton-card" aria-hidden="true">
+    <div class="product-card__stats">
+      @for (_ of [1, 2, 3, 4]; track $index) {
+        <div class="product-card__stat">
+          <div class="skeleton-bar skeleton-bar--label"></div>
+          <div class="skeleton-bar skeleton-bar--value"></div>
+        </div>
+      }
+    </div>
+  </div>
+} @loading (minimum 7000ms) {
+  <div class="product-card skeleton-card skeleton-card--shimmer" aria-hidden="true">
+    <div class="product-card__stats">
+      @for (_ of [1, 2, 3, 4]; track $index) {
+        <div class="product-card__stat">
+          <div class="skeleton-bar skeleton-bar--label"></div>
+          <div class="skeleton-bar skeleton-bar--value"></div>
+        </div>
+      }
+    </div>
+  </div>
+} @error {
+  <p class="stats-error">Failed to load statistics</p>
+}

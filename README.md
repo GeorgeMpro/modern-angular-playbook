@@ -9,7 +9,7 @@ A collection of hands-on Angular 22 challenges built to master modern framework 
 - [Challenge 11 — Centralized Error Handling](#challenge-11--centralized-error-handling)
 - [Challenge 12 — Reactive Design Patterns](#challenge-12--reactive-design-patterns)
 - [Custom RxJS Operators](#custom-rxjs-operators)
-- [Challenge — Template Composition *(in progress)*](#challenge--template-composition-in-progress)
+- [Challenge — Template Composition](#challenge--template-composition)
 
 ---
 
@@ -24,16 +24,18 @@ A collection of hands-on Angular 22 challenges built to master modern framework 
 ng serve challenge-11-centralized-error-handling
 ```
 
-### What's inside
+### Challenges
 
-- **`GlobalErrorHandler`** — implements Angular's `ErrorHandler` to catch all uncaught JS errors app-wide; logs via `ErrorLogger` and surfaces a toast notification
-- **`errorInterceptor`** — functional HTTP interceptor that maps status codes to user-friendly messages and delegates network/5xx errors to `retryOnNetworkError`
-- **`mockBackendInterceptor`** — simulates HTTP error responses (400, 401, 403, 404, 500, network failure) without a real server; includes a flaky endpoint for retry testing
-- **`ToastService`** — signal-based toast queue with auto-dismiss timers, status-driven action mapping (retry/undo/dismiss), and a `Map`-backed timer registry for clean cancellation
-- **`ErrorLogger`** — structured `console.error` logging with full error context (source, HTTP status, URL, method, stack trace)
-- **`retryOnNetworkError<T>`** — pipeable operator with exponential backoff (`2^n` seconds), skips 4xx errors, fires an optional `onRetry` progress callback
-- **`trackRequest<T>`** — pipeable operator using `defer` + `finalize` to set a `WritableSignal<boolean>` for the full request lifecycle including cancellation
-- **`ErrorTest` component** — interactive trigger panel; uses `exhaustMap` to prevent concurrent requests and `takeUntil` for cancellation
+| Name | What it does |
+|------|-------------|
+| `GlobalErrorHandler` | Implements Angular's `ErrorHandler` to catch all uncaught JS errors app-wide; logs via `ErrorLogger` and surfaces a toast notification |
+| `errorInterceptor` | Functional HTTP interceptor that maps status codes to user-friendly messages; delegates network/5xx errors to `retryOnNetworkError` |
+| `mockBackendInterceptor` | Simulates HTTP error responses (400, 401, 403, 404, 500, network failure) without a real server; includes a flaky endpoint for retry testing |
+| `ToastService` | Signal-based toast queue with auto-dismiss timers, status-driven action mapping (retry/undo/dismiss), and a `Map`-backed timer registry for clean cancellation |
+| `ErrorLogger` | Structured `console.error` logging with full error context (source, HTTP status, URL, method, stack trace) |
+| `retryOnNetworkError<T>` | Pipeable operator with exponential backoff (`2^n` seconds), skips 4xx errors, fires an optional `onRetry` progress callback |
+| `trackRequest<T>` | Pipeable operator using `defer` + `finalize` to set a `WritableSignal<boolean>` for the full request lifecycle including cancellation |
+| `ErrorTest` | Interactive trigger panel; uses `exhaustMap` to prevent concurrent requests and `takeUntil` for cancellation |
 
 ---
 
@@ -89,7 +91,7 @@ A set of generic, reusable pipeable operators built from first principles using 
 
 ---
 
-## Challenge — Template Composition *(in progress)*
+## Challenge — Template Composition
 
 **Goal:** Build reusable, type-safe Angular component architecture without coupling layout to business logic.
 
@@ -111,5 +113,5 @@ ng serve challenges-ng-template
 | 03 | Dynamic Data Table | Generic `<T>`, `ngTemplateOutletContext`, `ngTemplateContextGuard`, typed directive | Done |
 | 04 | Dynamic Layout | `viewChild`, `computed()` template selection, decoupled layout shell | Done |
 | 05 | Recursive Folder Explorer | Self-referencing `ngTemplateOutlet`, recursive context, depth threading, collapse toggle | Done |
-| 06 | Template Injector Scope | `ngTemplateOutletInjector`, creation vs outlet injector | WIP |
-| 07 | Route-Driven Layout | `withComponentInputBinding`, resolvers, `loadComponent`, `CanActivateFn`, `CanDeactivateFn`, named outlets | WIP |
+| 06 | Template Injector Scope | `ngTemplateOutletInjector`, creation vs outlet injector, scoped service, directive bridge | Done |
+| 07 | Route-Driven Layout | `withComponentInputBinding`, resolvers, `loadComponent`, `CanActivateFn`, `CanDeactivateFn`, named outlets, `@defer` | Done |

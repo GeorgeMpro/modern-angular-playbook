@@ -1,4 +1,4 @@
-@import "./shared/styles/variables";
+@use 'variables' as *;
 
 .main-header {
   background-color: var(--bg-secondary);
@@ -22,28 +22,22 @@
   }
 }
 
-.nav {
-  display: flex;
-  gap: $spacing-sm;
-  flex-wrap: wrap;
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius;
+  transition: color $transition, background-color $transition;
 
-  .nav-link {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.9rem;
-    padding: $spacing-xs $spacing-sm;
-    border-radius: $radius;
-    transition: color $transition, background-color $transition;
+  &:hover {
+    color: var(--text-primary);
+    background-color: var(--accent-subtle);
+  }
 
-    &:hover {
-      color: var(--text-primary);
-      background-color: var(--accent-subtle);
-    }
-
-    &.active {
-      color: var(--accent);
-      background-color: var(--accent-muted);
-    }
+  &.active {
+    color: var(--accent);
+    background-color: var(--accent-muted);
   }
 }
 

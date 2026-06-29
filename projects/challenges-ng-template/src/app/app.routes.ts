@@ -1,4 +1,5 @@
 import {Routes} from '@angular/router';
+import {ROUTE_DRIVEN_TEMPLATES} from './07-route-driven-layout/route-driven-templates.routes';
 
 export const routes: Routes = [
   {
@@ -7,7 +8,7 @@ export const routes: Routes = [
     pathMatch: 'full'
   }, {
     path: 'home',
-    loadComponent: () => import('./home/home'),
+    loadComponent: () => import('./shared/components/home/home'),
     title: 'Home'
   },
   {
@@ -34,6 +35,17 @@ export const routes: Routes = [
     path: 'recursive-folder-explorer',
     loadComponent: () => import('./05-recursive-folder-explorer/folder-explorer'),
     title: 'Recursive Folder Explorer'
-  }
+  },
+  {
+    path: 'template-injector-scope',
+    loadComponent: () => import('./06-template-injector-scope/template-injector'),
+    title: 'Template Injector Scope'
+  }, {
+    path: 'route-driven-templates',
+    loadComponent: () => import('./07-route-driven-layout/components/route-driven-templates'),
+    title: 'Route Driven Templates',
+    children: ROUTE_DRIVEN_TEMPLATES
+  },
+
 
 ];

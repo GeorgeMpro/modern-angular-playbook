@@ -1,0 +1,21 @@
+<div class="product-card">
+  <p class="product-card__category">Analytics</p>
+  <dl class="product-card__stats">
+    <div class="product-card__stat">
+      <dt>Rating</dt>
+      <dd>{{ product().rating }}/5</dd>
+    </div>
+    <div class="product-card__stat">
+      <dt>Reviews</dt>
+      <dd>{{ product().reviewCount }}</dd>
+    </div>
+    <div class="product-card__stat">
+      <dt>Return Rate</dt>
+      <dd>{{ product().returnRate }}%</dd>
+    </div>
+    <div class="product-card__stat">
+      <dt>Sold Last Month</dt>
+      <dd>{{ product().soldLastMonth }}</dd>
+    </div>
+  </dl>
+</div>

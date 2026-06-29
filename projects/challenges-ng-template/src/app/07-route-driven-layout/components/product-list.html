@@ -1,0 +1,19 @@
+<ng-template #productsRows
+             [typedRow]="products()"
+             let-item
+             let-i="index">
+  <td>{{ i + 1 }}</td>
+  <td>{{ item.name }}</td>
+  <td>{{ item.brand }}</td>
+  <td>{{ item.category }}</td>
+  <td>{{ item.price }}</td>
+  <td>{{ item.stock }}</td>
+  <td><a [routerLink]="[item.id]" class="view-link">View</a></td>
+</ng-template>
+
+<div class="tables-wrapper">
+  <app-data-table title="product table"
+                  [columnHeaders]="productHeaders()"
+                  [data]="products()"
+                  [rowTemplate]="productsRows"/>
+</div>

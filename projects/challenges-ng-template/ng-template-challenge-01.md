@@ -49,7 +49,7 @@ readonly footerTpl = contentChild<TemplateRef<void>>('footer');
 In the parent, name the templates with a template reference variable that matches:
 
 ```html
-<app-panel theme="warning">
+<app-panel appTheme="warning">
   <ng-template #header><h2>Warning: Action Required</h2></ng-template>
   <p>This is the body — projected via ng-content.</p>
   <ng-template #footer><button>Confira</button></ng-template>

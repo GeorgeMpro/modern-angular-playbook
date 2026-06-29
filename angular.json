@@ -571,7 +571,12 @@
             ],
             "styles": [
               "projects/challenges-ng-template/src/styles.scss"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "projects/challenges-ng-template/src/app/shared/styles"
+              ]
+            }
           },
           "configurations": {
             "production": {

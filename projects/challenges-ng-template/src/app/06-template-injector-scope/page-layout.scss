@@ -1,0 +1,57 @@
+@import '../shared/styles/variables';
+
+.layout-shell {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
+.layout-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid var(--border);
+
+  h2 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--heading);
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: $spacing-xs $spacing-sm;
+    background-color: color-mix(in srgb, $accent 20%, transparent);
+    color: $accent;
+    border-radius: $radius;
+    font-weight: 600;
+  }
+}
+
+.layout-content {
+  padding: $spacing-lg;
+}
+
+.layout-footer {
+  padding: $spacing-md $spacing-lg;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+}
+
+.toggle-btn {
+  font-size: 0.85rem;
+  padding: $spacing-sm $spacing-lg;
+  background-color: $accent;
+  border: none;
+  color: white;
+  border-radius: $radius;
+  cursor: pointer;
+  transition: background-color $transition;
+
+  &:hover {
+    background-color: $accent-hover;
+  }
+}

@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr;
+
+  .sidebar-outlet { display: none; }
+
+  &.has-sidebar {
+    grid-template-columns: 1fr 220px;
+
+    .sidebar-outlet { display: block; }
+  }
+}
+
+nav {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 0 1.5rem;
+
+  a, .nav-link {
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    transition: background var(--transition), color var(--transition);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+
+    &:hover {
+      background: var(--accent-subtle);
+      color: var(--accent);
+    }
+
+    &.active-link {
+      background: var(--accent-subtle);
+      color: var(--accent);
+      font-weight: 600;
+    }
+  }
+}

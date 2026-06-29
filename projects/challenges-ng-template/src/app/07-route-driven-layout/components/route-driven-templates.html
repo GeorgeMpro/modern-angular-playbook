@@ -1,0 +1,21 @@
+<nav>
+  <a routerLink="./" routerLinkActive="active-link"
+     [routerLinkActiveOptions]="{exact: true}">Home</a>
+  <button class="nav-link" (click)="goToProducts()">Products</button>
+  <a routerLink="./contact" routerLinkActive="active-link">Contact</a>
+  <a routerLink="./admin" routerLinkActive="active-link">Admin</a>
+  <button (click)="toggleLogin()">
+    {{ isLoggedIn() ? 'Logout' : 'Login' }}
+  </button>
+</nav>
+<div class="content" [class.has-sidebar]="sidebarActive()">
+  <div class="main-outlet">
+    <router-outlet/>
+  </div>
+  <div class="sidebar-outlet">
+    <router-outlet name="sidebar"
+                   (activate)="sidebarActive.set(true)"
+                   (deactivate)="sidebarActive.set(false)"/>
+  </div>
+</div>
+
