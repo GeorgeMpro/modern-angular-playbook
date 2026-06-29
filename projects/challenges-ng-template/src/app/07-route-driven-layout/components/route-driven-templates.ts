@@ -2,7 +2,7 @@ import {Component, inject, signal,} from '@angular/core';
 
 import {ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {Auth} from '../services/auth';
-import {ROUTE_PATHS} from '../route-driven-templates.routes';
+import {navigateToProducts, ROUTE_PATHS, SHELL_PATH} from '../route-driven-templates.routes';
 
 @Component({
   selector: 'app-route-driven-templates',
@@ -23,12 +23,8 @@ export default class RouteDrivenTemplates {
   protected readonly isLoggedIn = this.authService.isLoggedIn;
   protected readonly sidebarActive = signal(false);
 
-  public goToProjects(): void {
-    //Notice: Named outlets in child routes require relativeTo; routerLink alone won't activate them
-    this.router.navigate(
-      [{outlets: {primary: [ROUTE_PATHS.projects], sidebar: [ROUTE_PATHS.projects]}}],
-      {relativeTo: this.route}
-    );
+  public goToProducts(): void {
+    navigateToProducts(this.router);
   }
 
   protected toggleLogin() {
@@ -43,6 +39,7 @@ export default class RouteDrivenTemplates {
   }
 
   private login(): void {
-    this.authService.login()
+    this.authService.login();
+    this.router.navigateByUrl(`${SHELL_PATH}/${ROUTE_PATHS.admin}`);
   }
 }

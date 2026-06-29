@@ -1,0 +1,59 @@
+@use 'product-card';
+
+:host {
+  display: block;
+  padding: 2rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+
+  &:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+  }
+}
+
+:host.detail-view {
+  background: var(--bg-primary);
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-card {
+  pointer-events: none;
+
+  .skeleton-bar {
+    border-radius: 4px;
+    background: var(--bg-primary);
+
+    &--label {
+      height: 10px;
+      width: 60%;
+      margin-bottom: 0.4rem;
+    }
+
+    &--value {
+      height: 20px;
+      width: 80%;
+    }
+  }
+
+  &--shimmer .skeleton-bar {
+    background: linear-gradient(
+      90deg,
+      var(--bg-primary) 25%,
+      var(--border) 50%,
+      var(--bg-primary) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+  }
+}

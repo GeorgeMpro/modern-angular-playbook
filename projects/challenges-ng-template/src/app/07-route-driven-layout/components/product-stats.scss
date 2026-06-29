@@ -1,0 +1,10 @@
+@use 'product-card';
+
+:host {
+  display: block;
+  padding-bottom: 2rem;
+}
+
+.product-card__stats {
+  grid-template-columns: repeat(2, 1fr);
+}

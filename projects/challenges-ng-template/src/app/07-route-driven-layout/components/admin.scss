@@ -1,0 +1,53 @@
+.admin-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+  }
+}
+
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: var(--accent-subtle);
+  color: var(--text-secondary);
+
+  &--auth {
+    color: #16a34a;
+    background: #dcfce7;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: var(--radius);
+
+  &__value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  &__label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}

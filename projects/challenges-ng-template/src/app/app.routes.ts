@@ -8,7 +8,7 @@ export const routes: Routes = [
     pathMatch: 'full'
   }, {
     path: 'home',
-    loadComponent: () => import('./07-route-driven-layout/components/home/home'),
+    loadComponent: () => import('./shared/components/home/home'),
     title: 'Home'
   },
   {

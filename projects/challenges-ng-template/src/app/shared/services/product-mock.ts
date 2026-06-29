@@ -1,6 +1,6 @@
 import {Service} from '@angular/core';
 
-import {Product} from '../models/product.model';
+import {Product, ProductStats} from '../models/product.model';
 
 @Service()
 export class ProductMock {
@@ -39,6 +39,17 @@ export class ProductMock {
     },
   ];
 
+  private readonly stats: Record<number, ProductStats> = {
+    1: {rating: 4.5, reviewCount: 312, returnRate: 3, soldLastMonth: 540},
+    2: {rating: 4.2, reviewCount: 198, returnRate: 5, soldLastMonth: 320},
+    3: {rating: 4.7, reviewCount: 451, returnRate: 2, soldLastMonth: 780},
+    4: {rating: 4.3, reviewCount: 87, returnRate: 4, soldLastMonth: 95},
+    5: {rating: 4.6, reviewCount: 263, returnRate: 1, soldLastMonth: 410},
+    6: {rating: 4.1, reviewCount: 174, returnRate: 6, soldLastMonth: 230},
+    7: {rating: 4.4, reviewCount: 329, returnRate: 3, soldLastMonth: 290},
+    8: {rating: 4.8, reviewCount: 512, returnRate: 2, soldLastMonth: 670},
+  };
+
   public getProducts(): Product[] {
     return this.products;
   }
@@ -51,5 +62,13 @@ export class ProductMock {
     }
 
     return product;
+  }
+
+
+  public getProductStats(id: string): ProductStats {
+    const productId = Number(id);
+    const stats = this.stats[productId];
+    if (!stats) throw new Error(`Stats for product ${id} not found`);
+    return stats;
   }
 }

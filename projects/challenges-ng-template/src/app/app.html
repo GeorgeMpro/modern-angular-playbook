@@ -1,13 +1,6 @@
 <header class="main-header">
   <div class="header-content">
-    <nav class="nav">
-      @for (route of navRoutes; track route.title) {
-        <a [routerLink]="route.path" routerLinkActive="active" class="nav-link">
-          {{ route.title }}
-        </a>
-      }
-    </nav>
-
+    <a routerLink="/" routerLinkActive="active" class="nav-link">Home</a>
     <lib-theme-toggle/>
   </div>
 </header>

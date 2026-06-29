@@ -18,17 +18,22 @@ ul {
   gap: 0.25rem;
 }
 
-a {
+:host button {
   display: block;
+  width: 100%;
+  text-align: left;
   padding: 0.4rem 0.75rem;
   border-radius: var(--radius);
+  border: none;
+  background: none;
+  background-color: transparent;
   cursor: pointer;
   color: var(--accent);
   font-size: 0.9rem;
-  text-decoration: none;
+  font-family: inherit;
   transition: background var(--transition);
 
   &:hover {
-    background: var(--accent-subtle);
+    background-color: var(--accent-subtle);
   }
 }

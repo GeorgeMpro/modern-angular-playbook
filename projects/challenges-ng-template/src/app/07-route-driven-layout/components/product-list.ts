@@ -6,27 +6,25 @@ import {TypedRow} from '../../03-dynamic-data-table/data-table/typed-row.directi
 import {Product} from '../../shared/models/product.model';
 
 @Component({
-  selector: 'app-project-list',
+  selector: 'app-product-list',
   imports: [
     RouterLink,
     DataTable,
     TypedRow
   ],
-  templateUrl: './project-list.html',
-  styleUrl: './project-list.scss',
+  templateUrl: './product-list.html',
+  styleUrl: './product-list.scss',
 })
-export default class ProjectList {
+export default class ProductList {
 
   protected readonly products = input.required<Product[]>();
 
-  // TODO dupe code from dynamic data table
   protected readonly productHeaders = computed(() =>
     this.toHeaders(this.products()[0]));
-
 
   private toHeaders<T extends object>(item: T): Record<keyof T, string> {
     return Object.fromEntries(
       Object.keys(item).map(k => [k, k])
     ) as Record<keyof T, string>;
   }
-};
+}

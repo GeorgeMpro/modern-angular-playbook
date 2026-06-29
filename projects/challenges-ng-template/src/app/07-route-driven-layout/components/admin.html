@@ -1,1 +1,15 @@
-<p>admin works!</p>
+<header class="admin-header">
+  <h1>Inventory Dashboard</h1>
+  <span class="badge" [class.badge--auth]="isLoggedIn()">
+    {{ isLoggedIn() ? '● Authenticated' : '○ Not authenticated' }}
+  </span>
+</header>
+
+<div class="stats-grid">
+  @for (stat of stats; track stat.label) {
+    <div class="stat-card">
+      <span class="stat-card__value">{{ stat.value }}</span>
+      <span class="stat-card__label">{{ stat.label }}</span>
+    </div>
+  }
+</div>

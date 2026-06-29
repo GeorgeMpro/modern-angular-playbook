@@ -1,12 +1,9 @@
 <nav>
   <a routerLink="./" routerLinkActive="active-link"
      [routerLinkActiveOptions]="{exact: true}">Home</a>
-  <a routerLink="./admin" routerLinkActive="active-link">Admin</a>
-  <a (click)="goToProjects()"
-     [style.cursor]="'pointer'"
-     routerLinkActive="active-link">Projects</a>
+  <button class="nav-link" (click)="goToProducts()">Products</button>
   <a routerLink="./contact" routerLinkActive="active-link">Contact</a>
-
+  <a routerLink="./admin" routerLinkActive="active-link">Admin</a>
   <button (click)="toggleLogin()">
     {{ isLoggedIn() ? 'Logout' : 'Login' }}
   </button>

@@ -4,20 +4,18 @@ import {ProductMock} from '../../shared/services/product-mock';
 import {ROUTE_PATHS} from '../route-driven-templates.routes';
 
 @Component({
-  selector: 'app-project-sidebar',
-  templateUrl: './project-sidebar.html',
-  styleUrl: './project-sidebar.scss',
+  selector: 'app-product-sidebar',
+  templateUrl: './product-sidebar.html',
+  styleUrl: './product-sidebar.scss',
 })
-export default class ProjectSidebar {
+export default class ProductSidebar {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
   protected readonly products = inject(ProductMock).getProducts();
 
-  // routerLink navigates from the sidebar outlet context, not the primary outlet.
-  // relativeTo: this.route.parent anchors navigation to route-driven-templates instead.
-  protected navigateToProject(id: number): void {
-    this.router.navigate([ROUTE_PATHS.projects, id], {relativeTo: this.route.parent});
+  protected navigateToProduct(id: number): void {
+    this.router.navigate([ROUTE_PATHS.products, id], {relativeTo: this.route.parent});
   }
 
   protected closeSidebar(): void {

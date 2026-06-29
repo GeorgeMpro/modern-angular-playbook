@@ -1,1 +1,13 @@
-<p>home works!</p>
+<section class="hero">
+  <h1 class="hero__title">TechDesk Store</h1>
+  <p class="hero__role">Premium peripherals &amp; accessories</p>
+  <p class="hero__bio">
+    Curated tech for your workspace — keyboards, monitors, hubs, and more.
+    Managed by John Doe.
+  </p>
+  <div class="hero__actions">
+    <a (click)="navigateToProducts()"
+       [style.cursor]="'pointer'" class="btn btn--primary">Browse Products</a>
+    <a routerLink="./contact" class="btn btn--secondary">Contact Us</a>
+  </div>
+</section>

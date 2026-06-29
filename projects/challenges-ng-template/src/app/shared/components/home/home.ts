@@ -1,6 +1,6 @@
 import {Component, signal} from '@angular/core';
-import {ChallengeCard} from '../../../shared/components/challenge-card/challenge-card';
-import {ChallengeDescriptor} from '../../../shared/models/challenge.model';
+import {ChallengeCard} from '../challenge-card/challenge-card';
+import {ChallengeDescriptor} from '../../models/challenge.model';
 
 @Component({
   selector: 'app-home',
@@ -66,8 +66,8 @@ export default class Home {
       title: 'Route-Driven Layout',
       focus: 'Router as input source — withComponentInputBinding, resolvers, guards, named outlets.',
       concepts: ['withComponentInputBinding', 'ResolveFn', 'CanActivateFn', 'Named outlets'],
-      route: '/route-layout',
-      state: 'WIP'
+      route: '/route-driven-templates',
+      state: 'Done'
     }
   ]);
 }

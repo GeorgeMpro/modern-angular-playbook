@@ -6,3 +6,10 @@ export interface Product {
   price: number;
   stock: number;
 }
+
+export interface ProductStats {
+  rating: number;
+  reviewCount: number;
+  returnRate: number;
+  soldLastMonth: number;
+}

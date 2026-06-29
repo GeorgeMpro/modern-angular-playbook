@@ -2,7 +2,7 @@
 <ul>
   @for (product of products; track product.id) {
     <li>
-      <a (click)="navigateToProject(product.id)">{{ product.name }}</a>
+      <button (click)="navigateToProduct(product.id)">{{ product.name }}</button>
     </li>
   }
 </ul>
