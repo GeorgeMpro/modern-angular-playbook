@@ -1,0 +1,120 @@
+@use 'app/styles/variables' as *;
+
+:host {
+  display: block;
+}
+
+.card {
+  background: var(--bg-secondary, #{$bg-secondary});
+  border: 1px solid var(--border, #{$border});
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  height: 100%;
+  transition: transform $transition, box-shadow $transition, border-color $transition;
+  box-shadow: $shadow-sm;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-md;
+    border-color: var(--accent, #{$accent});
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.challenge-id {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 0.85rem;
+  color: var(--accent, #{$accent});
+  background: var(--bg-primary, #{$bg-primary});
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius;
+}
+
+.state-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--bg-primary, #{$bg-primary});
+  color: var(--text-secondary, #{$text-secondary});
+  border: 1px solid var(--border, #{$border});
+
+  &.done {
+    color: $success;
+    border-color: $success;
+    background: color-mix(in srgb, #{$success} 10%, transparent);
+  }
+
+  &.wip {
+    color: $warning;
+    border-color: $warning;
+    background: color-mix(in srgb, #{$warning} 10%, transparent);
+  }
+}
+
+.card-title {
+  margin: 0;
+  color: var(--heading, #{$heading});
+  font-size: 1.1rem;
+}
+
+.card-focus {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #{$text-secondary});
+  line-height: 1.5;
+  flex: 1;
+}
+
+.concepts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  margin-top: auto;
+  padding-top: $spacing-sm;
+}
+
+.tag {
+  font-size: 0.75rem;
+  background: var(--bg-primary, #{$bg-primary});
+  color: var(--text-secondary, #{$text-secondary});
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border, #{$border});
+}
+
+.view-btn {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  background: var(--accent, #{$accent});
+  color: white;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: $spacing-sm;
+  transition: background-color $transition;
+
+  &:hover { background: var(--accent-hover, #{$accent-hover}); }
+}
+
+.coming-soon {
+  display: block;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #{$text-secondary});
+  padding: $spacing-sm;
+  margin-top: $spacing-sm;
+  border: 1px dashed var(--border, #{$border});
+  border-radius: $radius;
+}

@@ -367,7 +367,12 @@
             ],
             "styles": [
               "projects/challenge-08-custom-directives/src/styles.scss"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "projects/challenge-08-custom-directives/src"
+              ]
+            }
           },
           "configurations": {
             "production": {

@@ -1,6 +1,61 @@
+@use 'app/styles/variables' as *;
+
+:root,
+:root[data-theme="dark"] {
+  --bg-primary: #{$bg-primary};
+  --bg-secondary: #{$bg-secondary};
+  --text-primary: #{$text-primary};
+  --text-secondary: #{$text-secondary};
+  --heading: #{$heading};
+  --border: #{$border};
+  --accent: #{$accent};
+  --accent-hover: #{$accent-hover};
+  --radius: #{$radius};
+  --font-family: #{$font-family};
+  --transition: #{$transition};
+  --accent-subtle: color-mix(in srgb, #{$accent} 10%, transparent);
+  --accent-muted: color-mix(in srgb, #{$accent} 15%, transparent);
+}
+
+:root[data-theme="light"] {
+  --bg-primary: #f9fafb;
+  --bg-secondary: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --heading: #111827;
+  --border: #e5e7eb;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
-  background-color: #121212;
-  color: #e5e7eb;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  min-height: 100vh;
+  margin: $spacing-md;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: $spacing-md;
+
+  th, td {
+    border: 1px solid var(--border);
+    padding: $spacing-sm;
+    text-align: left;
+  }
+
+  th {
+    background-color: var(--bg-secondary);
+  }
+}
+
+.empty-state td {
+  text-align: center;
+  padding: $spacing-xl;
+  color: var(--text-secondary);
 }

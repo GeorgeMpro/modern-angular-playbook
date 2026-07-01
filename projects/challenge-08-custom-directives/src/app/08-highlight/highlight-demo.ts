@@ -1,7 +1,7 @@
 import {Component, signal, ChangeDetectionStrategy} from '@angular/core';
-import {Highlight} from '../../directives/highlight';
+import {Highlight} from '../shared/directives/highlight';
 import {TitleCasePipe} from '@angular/common';
-import {DemoShell} from '../demo-shell/demo-shell';
+import {DemoShell} from '../shared/components/demo-shell/demo-shell';
 
 interface Colors {
   label: string;
@@ -9,16 +9,16 @@ interface Colors {
 }
 
 const COLORS: Record<string, string> = {
-  'slate':   '#1e293b',
-  'yellow':  '#fef08a',
-  'cyan':    '#a5f3fc',
-  'rose':    '#fecdd3',
-  'violet':  '#ddd6fe',
+  'slate': '#1e293b',
+  'yellow': '#fef08a',
+  'cyan': '#a5f3fc',
+  'rose': '#fecdd3',
+  'violet': '#ddd6fe',
   'emerald': '#a7f3d0',
-  'indigo':  '#312e81',
-  'orange':  '#fed7aa',
+  'indigo': '#312e81',
+  'orange': '#fed7aa',
   'fuchsia': '#f0abfc',
-  'teal':    '#0f766e',
+  'teal': '#0f766e',
 }
 
 @Component({
@@ -32,13 +32,10 @@ const COLORS: Record<string, string> = {
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './highlight-demo.scss',
 })
-export class HighlightDemo {
+export default class HighlightDemo {
 
   protected readonly colorsDisplay: Colors[] = Object.entries(COLORS).map(
-    ([label, color]) => ({
-      label: label,
-      color: color
-    })
+    ([label, color]) => ({label, color})
   );
 
   protected readonly color = signal<string>('');

@@ -1,0 +1,69 @@
+<ng-template #loadingInfo let-shouldDisplay let-text="text">
+  @if (shouldDisplay) {
+    <tr class="empty-state">
+      <td colspan="4">
+        {{ text }}
+      </td>
+    </tr>
+  }
+</ng-template>
+
+
+<app-demo-shell title="infinite scroll">
+  <div
+    appInfiniteScroll
+    (scrollEnd)="onScrollEnd()"
+    ngProjectAs="[preview]"
+    class="scroll-container">
+    @if (!error()) {
+      <table>
+        <thead>
+        <tr>
+          <th>Id</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Price</th>
+        </tr>
+        </thead>
+        <tbody>
+          @let state = productState();
+          @let products = state.products;
+          @for (prod of products; track prod.id) {
+            <tr>
+              <td>{{ prod.id }}</td>
+              <td>{{ prod.title }}</td>
+              <td>{{ prod.category }}</td>
+              <td>{{ prod.price }}</td>
+            </tr>
+          } @empty {
+            <tr class="empty-state">
+              <td colspan="4">
+                @if (isLoading()) {
+                  Loading...
+                } @else {
+                  No Products
+                }
+              </td>
+            </tr>
+          }
+
+        <ng-container [ngTemplateOutlet]="loadingInfo"
+                      [ngTemplateOutletContext]="{
+                       $implicit:(isLoading() && products.length > 0),
+                       text: 'Loading...' }">
+        </ng-container>
+
+        <ng-container [ngTemplateOutlet]="loadingInfo"
+                      [ngTemplateOutletContext]="{
+                    $implicit:(products.length >= state.totalItems),
+                    text: 'All items loaded.' }">
+        </ng-container>
+
+        </tbody>
+      </table>
+    } @else {
+      <p>{{ error() }}</p>
+    }
+  </div>
+</app-demo-shell>
+

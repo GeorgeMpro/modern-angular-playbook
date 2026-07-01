@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import {DemoShell} from '../demo-shell/demo-shell';
+import {DemoShell} from '../shared/components/demo-shell/demo-shell';
 
 @Component({
   selector: 'app-copy-to-clipboard-demo',
@@ -10,6 +10,6 @@ import {DemoShell} from '../demo-shell/demo-shell';
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './copy-to-clipboard-demo.scss',
 })
-export class CopyToClipboardDemo {
+export default class CopyToClipboardDemo {
 
 }

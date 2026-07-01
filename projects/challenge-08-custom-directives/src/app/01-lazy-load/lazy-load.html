@@ -1,0 +1,29 @@
+<section class="gallery" appInfiniteScroll [windowScroll]="true" (scrollEnd)="onScrollEnd()">
+  @for (pic of pictures(); track pic.id) {
+    <figure class="card"
+            [class.error]="errorIds().has(pic.id)">
+      <img
+        appLazyLoad
+        [source]="buildImageUrl(pic.id)"
+        [class.shimmer]="!loadedIds().has(pic.id) && !errorIds().has(pic.id)"
+        (load)="onImageLoad(pic.id)"
+        (error)="onImageError(pic.id)"
+        [alt]="pic.author"/>
+      <figcaption>
+        <span class="author">{{ pic.author }}</span>
+        <a [href]="pic.url" target="_blank" rel="noopener noreferrer">View on Picsum</a>
+      </figcaption>
+    </figure>
+  }
+</section>
+
+@if (isLoading()) {
+  <div class="loading-bar">
+    <span>Loading more images</span>
+    <div class="dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+}

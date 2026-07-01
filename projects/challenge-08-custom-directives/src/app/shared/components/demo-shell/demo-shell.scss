@@ -1,4 +1,4 @@
-@use '../../styles/demo-ui' as demo;
+@use 'app/styles/demo-ui' as demo;
 
 .display-container {
   @include demo.demo-container;
@@ -15,18 +15,4 @@
     @include demo.btn-trigger;
     flex-shrink: 0;
   }
-}
-
-.counter {
-  font-weight: bold;
-  color: #e5e7eb;
-  font-size: 1rem;
-  white-space: nowrap;
-  margin: 0;
-}
-
-.log-view {
-  @include demo.log-view;
-  flex: 1;
-  margin: 0;
 }

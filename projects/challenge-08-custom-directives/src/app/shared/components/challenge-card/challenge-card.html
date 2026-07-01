@@ -1,0 +1,23 @@
+<div class="card">
+  <div class="card-header">
+    <span class="challenge-id">#{{ challenge().id }}</span>
+    <span class="state-badge" [class.done]="challenge().state === 'Done'" [class.wip]="challenge().state === 'WIP'">
+      {{ challenge().state }}
+    </span>
+  </div>
+
+  <h3 class="card-title">{{ challenge().title }}</h3>
+  <p class="card-focus">{{ challenge().focus }}</p>
+
+  <div class="concepts">
+    @for (concept of challenge().concepts; track concept) {
+      <span class="tag">{{ concept }}</span>
+    }
+  </div>
+
+  @if (challenge().state === 'Done') {
+    <a [routerLink]="challenge().route" class="view-btn">View</a>
+  } @else {
+    <span class="coming-soon">Coming soon</span>
+  }
+</div>

@@ -1,0 +1,11 @@
+.scroll-container {
+  height: 400px;
+  overflow-y: auto;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border);
+}

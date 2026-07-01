@@ -1,1 +1,13 @@
-<app-directive-display></app-directive-display>
+<header class="main-header">
+  <div class="header-content">
+    <a routerLink="/home" routerLinkActive="active" class="nav-link">Home</a>
+    <lib-theme-toggle/>
+  </div>
+</header>
+
+<main>
+  @if (titleStrategy.currentTitle() && titleStrategy.currentTitle() !== 'Home') {
+    <h2>{{ titleStrategy.currentTitle() }}</h2>
+  }
+  <router-outlet/>
+</main>

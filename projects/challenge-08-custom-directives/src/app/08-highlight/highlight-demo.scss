@@ -1,4 +1,4 @@
-@use '../../styles/demo-ui' as demo;
+@use 'app/styles/demo-ui' as demo;
 
 .color-picker {
   @include demo.color-picker;

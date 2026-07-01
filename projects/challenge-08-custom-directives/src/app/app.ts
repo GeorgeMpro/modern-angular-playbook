@@ -1,14 +1,14 @@
-import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import {DirectiveDisplay} from './components/directive-display/directive-display';
+import {Component, inject} from '@angular/core';
+import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
+import {ThemeToggle} from 'ui-theme';
+import {PageTitleStrategy} from './shared/title-strategy';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, DirectiveDisplay],
+  imports: [RouterOutlet, ThemeToggle, RouterLink, RouterLinkActive],
   templateUrl: './app.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('challenge-08-custom-directives');
+  protected readonly titleStrategy = inject(PageTitleStrategy);
 }

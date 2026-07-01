@@ -10,22 +10,6 @@
 
 Directives are Angular's mechanism for attaching reusable behavior to DOM elements. A well-built directive library eliminates copy-paste logic across components and is one of the clearest signals of senior-level Angular work — every interview that asks "how do you share behavior across components without inheritance?" is answered here.
 
-This challenge builds 15 directives: 13 practical utilities and 2 that teach the Directive Composition API.
-
----
-
-## Core Rules (apply to every directive)
-
-- No `@HostListener` / `@HostBinding` — use the `host` object in `@Directive`
-- No constructor injection — use `inject()`
-- No `@Input()` / `@Output()` decorators — use `input()` / `output()`
-- No `standalone: true` — v22 default
-- `Renderer2` for imperative DOM mutations (adding classes, creating elements, setting attributes via TypeScript). Not needed for `host` style/class bindings — those are declarative and go directly in the `host` object.
-- `effect()` to react to signal input changes — not `ngOnChanges`
-- All Observers (`IntersectionObserver`, `ResizeObserver`, `MutationObserver`) disconnected on destroy via `inject(DestroyRef).onDestroy(() => observer.disconnect())`
-
----
-
 ## Directive 1: `appLazyLoad`
 
 **Concept:** IntersectionObserver, lazy image loading
@@ -46,7 +30,7 @@ Apply to an `<img>` element. The directive holds a `src = input.required<string>
 
 ### What you'll learn
 
-`IntersectionObserver` fires a callback when the observed element crosses a visibility threshold. `disconnect()` after the first hit makes it fire-once — unlike `appAnimateOnScroll` (directive 12) which can fire repeatedly.
+[`IntersectionObserver`](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#creating_an_intersection_observer) fires a callback when the observed element crosses a visibility threshold. `disconnect()` after the first hit makes it fire-once — unlike `appAnimateOnScroll` (directive 12) which can fire repeatedly.
 
 ---
 
@@ -229,25 +213,7 @@ constructor() {
 
 ### Task
 
-```ts
-@Directive({ selector: '[appPermission]' })
-export class Permission {
-  private readonly vcr  = inject(ViewContainerRef);
-  private readonly tmpl = inject(TemplateRef);
-  private readonly authService = inject(AuthService); // inject a simple mock
-
-  readonly appPermission = input.required<string>();
-
-  constructor() {
-    effect(() => {
-      this.vcr.clear();
-      if (this.authService.hasPermission(this.appPermission())) {
-        this.vcr.createEmbeddedView(this.tmpl);
-      }
-    });
-  }
-}
-```
+Inject `ViewContainerRef`, `TemplateRef`, and a simple `AuthService` mock. Accept `appPermission = input.required<string>()`. Use `effect()` to react to permission changes — clear the container and conditionally render the template.
 
 Usage in template:
 ```html
@@ -302,19 +268,7 @@ readonly threshold  = input<number>(500);
 readonly longPress  = output<void>();
 ```
 
-Using RxJS:
-```ts
-constructor() {
-  const el = inject(ElementRef<HTMLElement>).nativeElement;
-  const start$ = merge(fromEvent(el, 'mousedown'), fromEvent(el, 'touchstart'));
-  const end$   = merge(fromEvent(el, 'mouseup'), fromEvent(el, 'touchend'), fromEvent(el, 'mouseleave'));
-
-  start$.pipe(
-    switchMap(() => timer(this.threshold()).pipe(takeUntil(end$))),
-    takeUntilDestroyed()
-  ).subscribe(() => this.longPress.emit());
-}
-```
+Using RxJS in the constructor — think about: what events start the press, what events cancel it, and which operator lets you cancel an in-flight timer when a new start arrives.
 
 ### What you'll learn
 
@@ -377,19 +331,7 @@ Keyboard filtering is not sufficient alone — users can paste non-numeric conte
 readonly resize = output<{ width: number; height: number }>();
 ```
 
-Create a `ResizeObserver` in the constructor, observe `inject(ElementRef).nativeElement`. On each entry, emit `{ width: entry.contentRect.width, height: entry.contentRect.height }`. Disconnect on `DestroyRef`.
-
-```ts
-constructor() {
-  const el  = inject(ElementRef<HTMLElement>).nativeElement;
-  const obs = new ResizeObserver(entries => {
-    const { width, height } = entries[0].contentRect;
-    this.resize.emit({ width, height });
-  });
-  obs.observe(el);
-  inject(DestroyRef).onDestroy(() => obs.disconnect());
-}
-```
+Create a `ResizeObserver` in the constructor, observe the host element, emit dimensions on each entry, and disconnect on destroy.
 
 ### Behavior
 
@@ -454,13 +396,286 @@ Usage:
 
 `hostDirectives` applies directives to the component's **host element**. Angular Material uses this to compose focus management, ripple effects, and ARIA handling onto `MatButton` without the component itself implementing any of that logic. The `inputs`/`outputs` arrays in `hostDirectives` explicitly opt-in which API is exposed — anything not listed is internal.
 
+**Aliasing inputs and outputs:** You can rename the exposed API using `'originalName: aliasName'` syntax in the `inputs`/`outputs` arrays. This lets the component present a cleaner public API without being bound to the directive's internal naming:
+
+```ts
+hostDirectives: [
+  {
+    directive: DebounceClick,
+    inputs:  ['timeDelay: delay'],   // consumer uses [delay], not [timeDelay]
+    outputs: ['btnClick: click']     // consumer uses (click), not (btnClick)
+  }
+]
+```
+
+**Directive-on-directive composition:** `hostDirectives` works on directives too, not just components. If two directives always travel together, compose them into a third directive first — then the component only references the composed one. This is how Angular Material actually layers its behaviour:
+
+```ts
+// Step 1 — bundle the two behaviours into a directive
+@Directive({
+  hostDirectives: [
+    { directive: DebounceClick,    inputs: ['timeDelay'], outputs: ['btnClick'] },
+    { directive: CopyToClipboard,  inputs: ['textToCopy'], outputs: ['copied'] }
+  ]
+})
+export class InteractiveCopy {}
+
+// Step 2 — component delegates entirely to the bundle
+@Component({
+  selector: 'app-copy-button',
+  hostDirectives: [InteractiveCopy],
+  template: `<ng-content />`
+})
+export class CopyButtonComponent {}
+```
+
+`CopyButtonComponent` now has no knowledge of `DebounceClick` or `CopyToClipboard` directly. The composition chain is transitive — Angular resolves all host bindings from every level and applies them to the same host element.
+
 This is composition over inheritance at the directive level — the most Angular-native way to share behavior.
+
+---
+
+## Directive 16: `appTypedIf` — Template Type Guards
+
+**Concept:** `ngTemplateGuard_*`, `ngTemplateContextGuard`, generic structural directive, compile-time type narrowing
+
+### The Problem
+
+`*ngIf="user; as u"` still types `u` as `User | null` inside the block — the template type checker doesn't know the falsy branch is unreachable. You want `u` to be `User` inside the block, catching property access errors at compile time.
+
+### Task
+
+Build a generic structural directive that renders its template only when the value is truthy, and provides it as `$implicit` in the context. Then add the two static guards that teach the template type checker to narrow correctly.
+
+**Context interface** (define outside the class):
+
+```ts
+export interface TypedIfContext<T> {
+  $implicit: T;
+  appTypedIf: T;
+}
+```
+
+**Scaffold:**
+
+```ts
+@Directive({ selector: '[appTypedIf]' })
+export class TypedIf<T> {
+  private readonly vcr  = inject(ViewContainerRef);
+  private readonly tmpl = inject(TemplateRef<TypedIfContext<T>>);
+
+  readonly appTypedIf = input.required<T | null | undefined>();
+
+  // TODO 1: static ngTemplateGuard_appTypedIf
+  //   — signals to the template type checker how to narrow
+  //     the bound expression inside the template block
+  //   — use the 'binding' literal form (same mechanism as *ngIf)
+
+  // TODO 2: static ngTemplateContextGuard
+  //   — tells the type checker what shape the context object is
+  //   — must be generic so $implicit resolves to T, not unknown
+
+  constructor() {
+    effect(() => {
+      // TODO 3: clear the view container, then conditionally
+      //   createEmbeddedView with the correct context object
+    });
+  }
+}
+```
+
+**Usage in template:**
+
+```html
+<!-- u is typed as User — not User | null -->
+<p *appTypedIf="user; let u">{{ u.name }}</p>
+
+<!-- named binding form -->
+<p *appTypedIf="user; let u = appTypedIf">{{ u.email }}</p>
+```
+
+### Behavior
+
+- Nothing rendered when the value is `null`, `undefined`, or any other falsy value
+- Inside the block, the bound variable is the narrowed `T` — no `| null`
+- Template compiler errors if you access a property that doesn't exist on `T`
+- Reacts to signal changes — if the input transitions from `null` → value → `null`, the view is created and destroyed accordingly
+
+### What you'll learn
+
+`ngTemplateGuard_appTypedIf: 'binding'` is a static property (not a method) that tells the template type checker: "treat the expression bound to `appTypedIf` as if it were asserted truthy inside the template." The literal `'binding'` is a special token Angular recognises — it mirrors exactly what `*ngIf` does internally.
+
+`ngTemplateContextGuard<T>` is a static method that narrows the `ctx: unknown` parameter to your typed context interface. It must be generic so the `T` from the directive class flows into the context type — without this, `let-u` would resolve to `unknown`.
+
+Together they give you two layers of type safety: the input expression is narrowed before the template renders, and the context variables are fully typed once it does.
+
+---
+
+## Directive 17: `appAsync` — Typed Async Structural Directive
+
+**Concept:** `ngTemplateContextGuard`, generic `Observable<T>` structural directive, loading/error state management
+
+### The Problem
+
+The `async` pipe unwraps `Observable<T>` but gives you no loading state, no error state, and forces awkward `*ngIf="data$ | async; as data"` syntax. A structural directive can handle subscription, teardown, and state in one place — and expose a fully typed context to the template.
+
+### Task
+
+Build a generic structural directive that accepts an `Observable<T>` input, subscribes to it, and exposes three context variables to the embedded template: the current value, a loading flag, and any error.
+
+**Context interface** (define outside the class):
+
+```ts
+export interface AsyncContext<T> {
+  $implicit: T | null;
+  loading: boolean;
+  error: unknown;
+}
+```
+
+**Scaffold:**
+
+```ts
+@Directive({ selector: '[appAsync]' })
+export class Async<T> {
+  private readonly vcr  = inject(ViewContainerRef);
+  private readonly tmpl = inject(TemplateRef<AsyncContext<T>>);
+
+  readonly appAsync = input.required<Observable<T>>();
+
+  // TODO 1: static ngTemplateContextGuard
+  //   — generic method so T flows from the Observable<T> input
+  //     into the context type the template sees
+
+  constructor() {
+    // TODO 2: use toObservable(this.appAsync) to react when the
+    //   input Observable itself changes (e.g. bound to a different stream)
+
+    // TODO 3: switchMap into the new Observable, tracking three states:
+    //   - on subscribe:  loading = true,  value = null,  error = null
+    //   - on next(value): loading = false, value = value, error = null
+    //   - on error(e):    loading = false, value = null,  error = e
+
+    // TODO 4: createEmbeddedView once, then update the view's context
+    //   object in place (do NOT clear + recreate on every emission)
+
+    // TODO 5: takeUntilDestroyed() for cleanup
+  }
+}
+```
+
+**Usage in template:**
+
+```html
+<ng-container *appAsync="users$; let users; let loading = loading; let err = error">
+  @if (loading) {
+    <p>Loading…</p>
+  } @else if (err) {
+    <p>Error: {{ err }}</p>
+  } @else {
+    @for (u of users; track u.id) {
+      <p>{{ u.name }}</p>
+    }
+  }
+</ng-container>
+```
+
+### Behavior
+
+- Renders the template immediately (loading state), then updates the context in place as emissions arrive
+- Switching the bound `Observable` (new reference on input) cancels the previous subscription — no double subscriptions
+- `error` is populated and `loading` set to `false` on stream error — the template stays rendered so the error is visible
+- Cleaned up automatically on directive destroy
+
+### What you'll learn
+
+`ngTemplateContextGuard` here is purely about flowing the generic `T` from `Observable<T>` into the context type. There is no input narrowing (no `ngTemplateGuard_*` needed) — the value can legitimately be `null` while loading. The guard just ensures `$implicit` resolves to `T | null`, not `unknown`.
+
+The key implementation insight is TODO 4: you create the view **once** and mutate its context object directly via `viewRef.context.xxx = value`. This avoids destroying and re-creating the DOM on every emission — only call `createEmbeddedView` once, then patch the context.
+
+`toObservable(this.appAsync)` + `switchMap` handles the case where the parent swaps the bound Observable — `switchMap` automatically unsubscribes from the old one.
+
+---
+
+## Directive 18: `appExitConfirm` — Browser-Level Exit Guard
+
+**Concept:** `beforeunload`, `window` host listener, `CanDeactivate` complement
+
+### The Problem
+
+`CanDeactivateFn` protects against in-app navigation — the Angular router intercepts the route change and asks the guard. But it fires for nothing when the user closes the tab, hits refresh, or follows an external link. The browser handles those events directly; the router never gets involved.
+
+`appExitConfirm` fills that gap by listening to `window:beforeunload` and prompting the browser's native "Leave site?" dialog when the form is dirty.
+
+### The two-layer model
+
+| Event | Who intercepts | How |
+|---|---|---|
+| In-app route change | Angular router | `CanDeactivateFn` checks `form.dirty()` |
+| Tab close / refresh / external link | Browser | `beforeunload` + `event.preventDefault()` |
+
+Neither replaces the other. Production forms need both.
+
+### Task
+
+```ts
+@Directive({ selector: '[appExitConfirm]' })
+export class ExitConfirm {
+  readonly dirty = input.required<boolean>();
+
+  // TODO: listen to window:beforeunload via the host object
+  //   — call event.preventDefault() when dirty() is true
+  //   — modern browsers show their own "Leave site?" dialog;
+  //     you do not control the message text
+  //   — hint: '(window:beforeunload)': 'onBeforeUnload($event)'
+}
+```
+
+Usage:
+```html
+<form [appExitConfirm]="form.dirty()">
+  ...
+</form>
+```
+
+Or with the full `CanDeactivate` pairing:
+
+```ts
+// route config
+{
+  path: 'edit',
+  component: EditComponent,
+  canDeactivate: [exitConfirmGuard]   // in-app navigation
+}
+```
+
+```html
+<!-- component template -->
+<form [appExitConfirm]="form.dirty()"> <!-- browser-level exit -->
+  ...
+</form>
+```
+
+### Behavior
+
+- No dialog when `dirty` is `false` — navigation proceeds normally
+- When `dirty` is `true` and the user tries to close the tab or refresh, the browser shows its native confirmation dialog
+- Reacts to `dirty` signal changes — if the form becomes clean (saved), the guard deactivates without any re-subscription or manual teardown
+- The `window:beforeunload` listener is automatically removed when the directive is destroyed (Angular's `host` binding handles this)
+
+### What you'll learn
+
+`(window:beforeunload)` in the `host` object registers a window-level event listener scoped to the directive's lifetime — the same mechanism as `(document:click)` in `appClickOutside`. Angular removes it on destroy automatically, just like a host-element listener.
+
+`event.preventDefault()` is the modern spec-compliant way to trigger the browser dialog. The old `event.returnValue = ''` pattern still works in some browsers but is deprecated — avoid it.
+
+The key design point: `dirty` is a plain `boolean` input, not a `FormGroup` reference. The directive does not know what kind of form it is protecting — reactive, signal-based, or custom. The component decides what "dirty" means and passes the result in. This is the single-responsibility principle applied to the host binding layer.
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] All 15 directives implemented and demoed
+- [ ] All 18 directives implemented and demoed
 - [ ] No `@HostListener` / `@HostBinding` — use `host` object
 - [ ] No constructor injection — use `inject()`
 - [ ] No `@Input()` / `@Output()` — use `input()` / `output()`
@@ -470,7 +685,12 @@ This is composition over inheritance at the directive level — the most Angular
 - [ ] `appPermission` uses `ViewContainerRef.createEmbeddedView` — true structural directive
 - [ ] `appTrapFocus` passes keyboard navigation between first/last focusable element
 - [ ] `hostDirectives` used in directive 15 — inputs and outputs explicitly listed
-- [ ] Demo page showcases all 15 with interactive examples
+- [ ] `appTypedIf` has both `ngTemplateGuard_appTypedIf: 'binding'` and `static ngTemplateContextGuard<T>` — template type errors visible in IDE
+- [ ] `appAsync` has `static ngTemplateContextGuard<T>` — `$implicit` resolves to `T | null`, not `unknown`
+- [ ] `appAsync` creates the view once and patches context in place — no recreate on each emission
+- [ ] `appExitConfirm` uses `(window:beforeunload)` in `host` — no manual `addEventListener`
+- [ ] `appExitConfirm` does NOT fire the dialog when `dirty` is `false`
+- [ ] Demo page showcases all 18 with interactive examples
 
 ---
 
@@ -493,6 +713,9 @@ This is composition over inheritance at the directive level — the most Angular
 | `appNumbersOnly` | `keydown` filter, `paste` intercept, `Renderer2.setProperty` |
 | `appResizeObserver` | `ResizeObserver`, `DestroyRef.onDestroy` |
 | Composition | `hostDirectives`, explicit `inputs`/`outputs` |
+| `appTypedIf` | `ngTemplateGuard_*: 'binding'`, `ngTemplateContextGuard<T>`, `ViewContainerRef` |
+| `appAsync` | `ngTemplateContextGuard<T>`, `toObservable` + `switchMap`, patch context in place |
+| `appExitConfirm` | `window:beforeunload` in `host`, `event.preventDefault()`, `CanDeactivate` complement |
 
 ---
 
@@ -507,3 +730,7 @@ This is composition over inheritance at the directive level — the most Angular
 - [WCAG 2.4.3 Focus Order](https://www.w3.org/WAI/WCAG21/Understanding/focus-order)
 - [DestroyRef — Angular Docs](https://angular.dev/api/core/DestroyRef)
 - [afterNextRender — Angular Docs](https://angular.dev/api/core/afterNextRender)
+- [Template type checking — Angular Docs](https://angular.dev/guide/templates/template-typecheck)
+- [Structural Directives type checking — Angular Docs](https://angular.dev/guide/directives/structural-directives#improving-template-type-checking-for-custom-directives)
+- [Typing the Context Object in Structural Directives — Netanel Basal](https://medium.com/netanelbasal/typing-the-context-object-in-angular-structural-directives-d0ad1c0474a)
+- [beforeunload event — MDN](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event)

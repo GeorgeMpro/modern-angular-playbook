@@ -1,0 +1,59 @@
+@use 'app/styles/variables' as *;
+
+.main-header {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  padding: $spacing-sm $spacing-md;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  margin-left: -$spacing-md;
+  margin-right: -$spacing-md;
+  width: calc(100% + 2 * $spacing-md);
+
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing-lg;
+  }
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius;
+  transition: color $transition, background-color $transition;
+
+  &:hover {
+    color: var(--text-primary);
+    background-color: var(--accent-subtle);
+  }
+
+  &.active {
+    color: var(--accent);
+    background-color: var(--accent-muted);
+  }
+}
+
+main {
+  padding-top: $spacing-lg;
+
+  h2 {
+    text-align: center;
+    color: var(--heading);
+    margin-bottom: $spacing-lg;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

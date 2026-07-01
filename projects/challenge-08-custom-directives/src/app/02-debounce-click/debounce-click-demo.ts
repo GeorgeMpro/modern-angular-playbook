@@ -1,6 +1,6 @@
 import {Component, signal, ChangeDetectionStrategy} from '@angular/core';
-import {DebounceClick} from '../../directives/debounce-click';
-import {DemoShell} from '../demo-shell/demo-shell';
+import {DebounceClick} from '../shared/directives/debounce-click';
+import {DemoShell} from '../shared/components/demo-shell/demo-shell';
 
 @Component({
   selector: 'app-debounce-click-demo',
@@ -12,7 +12,7 @@ import {DemoShell} from '../demo-shell/demo-shell';
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './debounce-click-demo.scss',
 })
-export class DebounceClickDemo {
+export default class DebounceClickDemo {
   protected readonly customDelay: number = 500;
 
   protected readonly clickCount = signal<number>(0);

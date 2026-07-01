@@ -1,0 +1,14 @@
+<div class="home-container">
+  <main class="content">
+    <div class="grid-header">
+      <h2>{{ title }}</h2>
+      <p>A library of {{ challenges().length }} reusable Angular directives covering DOM interaction, browser APIs, structural composition, and type-safe templates.</p>
+    </div>
+
+    <div class="challenges-grid">
+      @for (challenge of challenges(); track challenge.id) {
+        <app-challenge-card [challenge]="challenge" />
+      }
+    </div>
+  </main>
+</div>
