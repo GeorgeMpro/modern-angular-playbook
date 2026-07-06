@@ -9,6 +9,7 @@ import {TitleCasePipe} from '@angular/common';
   templateUrl: './demo-shell.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './demo-shell.scss',
+  host: { '[attr.title]': 'null' },
 })
 export class DemoShell {
 

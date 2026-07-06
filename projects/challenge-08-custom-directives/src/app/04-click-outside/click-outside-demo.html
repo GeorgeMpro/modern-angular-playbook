@@ -1,0 +1,82 @@
+<app-demo-shell title="click outside">
+  <div ngProjectAs="[preview]" class="demos">
+
+    <div class="dropdown-wrapper"
+         appClickOutside
+         (clickOutside)="onClickOutsideDropdown()">
+      <button class="btn-trigger" (click)="toggleDropdown()">Options</button>
+      @if (isDropdownOpen()) {
+        <ul class="menu">
+          <li (click)="onDropdownAction('Edit')">Edit</li>
+          <li (click)="onDropdownAction('Delete')">Delete</li>
+          <li (click)="onDropdownAction('Share')">Share</li>
+        </ul>
+      }
+      @if (dropdownAction()) {
+        <p class="action-log">Last action: {{ dropdownAction() }}</p>
+      }
+    </div>
+
+    <div class="user-menu-wrapper"
+         appClickOutside
+         (clickOutside)="onClickOutsideMenu()">
+      <button class="avatar-btn" (click)="toggleUserMenu()">
+        <span class="avatar">JD</span>
+        <span>John Doe</span>
+      </button>
+      @if (isMenuOpen()) {
+        <ul class="menu">
+          <li (click)="onMenuAction('Profile')">Profile</li>
+          <li (click)="onMenuAction('Settings')">Settings</li>
+          <li (click)="onMenuAction('Sign out')">Sign out</li>
+        </ul>
+      }
+      @if (menuAction()) {
+        <p class="action-log">Last action: {{ menuAction() }}</p>
+      }
+    </div>
+
+
+    <div class="bell-wrapper"
+         appClickOutside
+         (clickOutside)="closeBell()">
+      <button class="bell-btn" (click)="toggleBell()">
+        🔔
+        @if (unreadCount > 0) {
+          <span class="badge">{{ unreadCount }}</span>
+        }
+      </button>
+      @if (isBellOpen()) {
+        <div class="notifications-panel">
+          <p class="panel-title">Notifications</p>
+          @for (n of notifications(); track n.id) {
+            <div class="notification-item"
+                 [class.unread]="!n.read"
+                 (click)="markRead(n.id)">
+              <span class="notif-text">{{ n.text }}</span>
+              <span class="notif-time">{{ n.time }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="search-wrapper"
+         appClickOutside
+         (clickOutside)="closeSearch()">
+      <input class="search-input"
+             type="text"
+             placeholder="Search..."
+             [value]="searchQuery()"
+             (input)="onSearchInput($event)" />
+      @if (isSearchOpen() && searchResults().length > 0) {
+        <ul class="menu search-results">
+          @for (result of searchResults(); track result) {
+            <li (click)="onSelectResult(result)">{{ result }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+  </div>
+</app-demo-shell>

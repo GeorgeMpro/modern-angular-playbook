@@ -2,16 +2,16 @@
   max-width: 1000px;
   margin: 0 auto;
   padding: 1.5rem 2rem;
-  background: #1e1e1e;
+  background: var(--bg-secondary);
   border-radius: 12px;
-  color: #e5e7eb;
+  color: var(--text-primary);
 
   h1 {
     font-size: 1.875rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    color: #f3f4f6;
-    border-bottom: 2px solid #374151;
+    color: var(--heading);
+    border-bottom: 2px solid var(--border);
     padding-bottom: 0.5rem;
   }
 
@@ -19,7 +19,7 @@
     font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: 1rem;
-    color: #9ca3af;
+    color: var(--text-secondary);
   }
 }
 
@@ -29,7 +29,7 @@
   gap: 1rem;
   margin-bottom: 1rem;
   padding: 1rem;
-  background: #262626;
+  background: var(--bg-primary);
   border-radius: 8px;
 
   .color-option {
@@ -42,7 +42,7 @@
     transition: background 0.2s;
 
     &:hover {
-      background: #333;
+      background: var(--border);
     }
 
     input[type="radio"] {
@@ -64,8 +64,8 @@
     }
 
     &:has(input:checked) {
-      background: #333;
-      .swatch { border-color: #fff; }
+      background: var(--border);
+      .swatch { border-color: var(--text-primary); }
     }
   }
 
@@ -87,7 +87,7 @@
 
 @mixin preview-box {
   padding: 1rem 1.5rem;
-  background: #262626;
+  background: var(--bg-primary);
   border-radius: 8px;
   text-align: center;
 }
@@ -118,9 +118,9 @@
 
 @mixin log-view {
   padding: 0.75rem 1rem;
-  background: #111;
+  background: var(--bg-primary);
   border-radius: 6px;
-  border: 1px solid #333;
+  border: 1px solid var(--border);
   text-align: left;
   min-height: 2.5rem;
   display: flex;

@@ -6,6 +6,7 @@ export const ROUTE_PATHS = {
   lazyLoad: 'lazy-load',
   debounceClick: 'debounce-click',
   infiniteScroll: 'infinite-scroll',
+  clickOutside: 'click-outside',
   copyToClipboard: 'copy-to-clipboard',
   highlight: 'highlight',
 } as const;
@@ -32,6 +33,10 @@ export const routes: Routes = [
     path: ROUTE_PATHS.infiniteScroll,
     loadComponent: () => import('./03-infinite-scroll/infinite-scroll-demo.component'),
     title: pathToTitle(ROUTE_PATHS.infiniteScroll)
+  }, {
+    path: ROUTE_PATHS.clickOutside,
+    loadComponent: () => import('./04-click-outside/./click-outside-demo'),
+    title: pathToTitle(ROUTE_PATHS.clickOutside)
   }, {
     path: ROUTE_PATHS.copyToClipboard,
     loadComponent: () => import('./05-copy-to-clipboard/copy-to-clipboard-demo'),

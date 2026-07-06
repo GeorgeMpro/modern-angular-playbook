@@ -42,8 +42,8 @@ export default class Home {
       title: 'Click Outside',
       focus: 'Emit when the user clicks anywhere outside the host element — for dropdowns and popovers.',
       concepts: ['document:click', 'ElementRef', 'el.contains()'],
-      route: '/click-outside',
-      state: 'WIP'
+      route: '/' + ROUTE_PATHS.clickOutside,
+      state: 'Done'
     },
     {
       id: '05',
