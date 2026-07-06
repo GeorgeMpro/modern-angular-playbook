@@ -7,7 +7,7 @@ import {catchError, concatMap, EMPTY, Observable, scan, Subject} from 'rxjs';
 import {withLoading} from '../shared/operators/rxjs-operators';
 import {InfiniteScroll} from '../shared/directives/infinite-scroll';
 import {AppLazyLoad} from '../shared/directives/app-lazy-load';
-
+import {NavArrows} from '../shared/directives/nav-arrows';
 
 interface PicsumImage {
   id: number;
@@ -22,7 +22,8 @@ interface PicsumImage {
   selector: 'app-lazy-load',
   imports: [
     InfiniteScroll,
-    AppLazyLoad
+    AppLazyLoad,
+    NavArrows
   ],
   templateUrl: './lazy-load.html',
   styleUrl: './lazy-load.scss',
