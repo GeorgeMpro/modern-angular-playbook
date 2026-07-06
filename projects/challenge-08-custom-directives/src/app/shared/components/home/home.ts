@@ -58,8 +58,8 @@ export default class Home {
       title: 'Tooltip',
       focus: 'Imperatively create and position a tooltip element on hover using Renderer2.',
       concepts: ['Renderer2.createElement', 'getBoundingClientRect', 'aria-describedby'],
-      route: '/tooltip',
-      state: 'WIP'
+      route: '/' + ROUTE_PATHS.toolTip,
+      state: 'Done'
     },
     {
       id: '07',

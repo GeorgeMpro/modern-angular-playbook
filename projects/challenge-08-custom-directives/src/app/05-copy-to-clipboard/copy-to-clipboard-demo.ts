@@ -1,6 +1,6 @@
 import {Component, signal} from '@angular/core';
 import {DemoShell} from '../shared/components/demo-shell/demo-shell';
-import {CopyToClipboard} from './copy-to-clipboard';
+import {CopyToClipboard} from '../shared/directives/copy-to-clipboard';
 
 @Component({
   selector: 'app-copy-to-clipboard-demo',

@@ -6,8 +6,5 @@
 </header>
 
 <main>
-  @if (titleStrategy.currentTitle() && titleStrategy.currentTitle() !== 'Home') {
-    <h2>{{ titleStrategy.currentTitle() }}</h2>
-  }
   <router-outlet/>
 </main>

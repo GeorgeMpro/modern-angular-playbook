@@ -1,5 +1,5 @@
 import {Component, signal} from '@angular/core';
-import {ClickOutside} from './click-outside.directive';
+import {ClickOutside} from '../shared/directives/click-outside.directive';
 import {DemoShell} from '../shared/components/demo-shell/demo-shell';
 
 @Component({

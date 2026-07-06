@@ -7,7 +7,7 @@ export const ROUTE_PATHS = {
   debounceClick: 'debounce-click',
   infiniteScroll: 'infinite-scroll',
   clickOutside: 'click-outside',
-  toolTip:'tooltip',
+  toolTip: 'tooltip',
   copyToClipboard: 'copy-to-clipboard',
   highlight: 'highlight',
 } as const;
@@ -45,7 +45,7 @@ export const routes: Routes = [
   }, {
     path: ROUTE_PATHS.toolTip,
     loadComponent: () => import('./06-tooltip/tooltip'),
-    title: pathToTitle(ROUTE_PATHS.copyToClipboard)
+    title: pathToTitle(ROUTE_PATHS.toolTip)
   }, {
     path: ROUTE_PATHS.highlight,
     loadComponent: () => import('./08-highlight/highlight-demo'),

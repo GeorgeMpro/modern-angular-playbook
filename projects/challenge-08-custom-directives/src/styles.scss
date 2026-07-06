@@ -59,3 +59,29 @@ table {
   padding: $spacing-xl;
   color: var(--text-secondary);
 }
+
+.app-tooltip {
+  position: absolute;
+  background: var(--border);
+  color: var(--text-primary);
+  text-align: center;
+  border-radius: $radius;
+  padding: $spacing-xs $spacing-sm;
+  font-size: 0.75rem;
+  max-width: 200px;
+  white-space: normal;
+  word-wrap: break-word;
+  pointer-events: none;
+  z-index: 1000;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--border) transparent transparent transparent;
+  }
+}

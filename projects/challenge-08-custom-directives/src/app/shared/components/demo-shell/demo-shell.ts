@@ -1,4 +1,4 @@
-import {Component, input, ChangeDetectionStrategy} from '@angular/core';
+import {Component, input} from '@angular/core';
 import {TitleCasePipe} from '@angular/common';
 
 @Component({
@@ -7,7 +7,6 @@ import {TitleCasePipe} from '@angular/common';
     TitleCasePipe
   ],
   templateUrl: './demo-shell.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './demo-shell.scss',
   host: { '[attr.title]': 'null' },
 })

@@ -1,1 +1,34 @@
-<p>tooltip works!</p>
+<app-demo-shell title="tooltip">
+  <div class="demo-area" preview>
+    <button class="demo-btn"
+            appTooltip
+            [tooltipText]="'Save your changes'">
+      Save
+    </button>
+
+    <button class="demo-btn demo-btn--danger"
+            appTooltip
+            [tooltipText]="'Permanently delete this item'">
+      Delete
+    </button>
+
+    <button class="demo-icon"
+            aria-label="Warning: destructive action"
+            appTooltip
+            [tooltipText]="'This action cannot be undone and will remove all associated data'">
+      ⚠️
+    </button>
+
+    <span class="demo-term"
+          appTooltip
+          [tooltipText]="'A directive attaches behavior to a DOM element without a template'">
+      Directive
+    </span>
+
+    <input class="demo-input"
+           type="text"
+           placeholder="Enter email"
+           appTooltip
+           [tooltipText]="'Format: name@example.com'" />
+  </div>
+</app-demo-shell>
