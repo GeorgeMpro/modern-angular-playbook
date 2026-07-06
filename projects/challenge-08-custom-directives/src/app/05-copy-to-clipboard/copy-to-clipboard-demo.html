@@ -1,6 +1,22 @@
 <app-demo-shell title="Copy to Clipboard">
 
-  <div ngProjectAs="[controls]">
+  <div ngProjectAs="[preview]" class="demo-area">
+    <input class="copy-input"
+           type="text"
+           #inputEl
+           placeholder="Type something to copy..."
+           [value]="text()"
+           (input)="text.set(inputEl.value)">
 
+    <div class="tooltip">
+      <button class="copy-btn"
+              appCopyToClipboard
+              [textToCopy]="text()"
+              (copied)="onCopied($event)"
+              (mouseleave)="onMouseOut()">
+        <span class="tooltiptext">{{ tooltipMessage() }}</span>
+        Copy Text
+      </button>
+    </div>
   </div>
 </app-demo-shell>

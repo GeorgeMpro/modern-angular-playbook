@@ -1,0 +1,75 @@
+@use 'app/styles/demo-ui' as demo;
+@use 'app/styles/variables' as *;
+
+.display-container {
+  @include demo.demo-container;
+}
+
+.demo-area {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md 0;
+}
+
+.copy-input {
+  padding: 0.5rem 0.875rem;
+  height: 42px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: $radius;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color $transition;
+  box-sizing: border-box;
+  min-width: 220px;
+
+  &::placeholder { color: var(--text-secondary); }
+  &:focus { border-color: var(--accent); }
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+
+  .copy-btn {
+    @include demo.btn-trigger;
+    position: relative;
+  }
+
+  .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background: var(--border);
+    color: var(--text-primary);
+    text-align: center;
+    border-radius: $radius;
+    padding: $spacing-xs $spacing-sm;
+    position: absolute;
+    z-index: 1;
+    bottom: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity $transition;
+    font-size: 0.75rem;
+    white-space: nowrap;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 5px;
+      border-style: solid;
+      border-color: var(--border) transparent transparent transparent;
+    }
+  }
+
+  &:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+}
