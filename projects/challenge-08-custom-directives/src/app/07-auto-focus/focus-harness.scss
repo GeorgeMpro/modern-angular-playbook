@@ -1,0 +1,23 @@
+@use 'app/styles/demo-ui' as demo;
+@use 'app/styles/variables' as *;
+
+.showcase {
+  @include demo.preview-box;
+  width: 260px;
+  text-align: left;
+}
+
+.showcase-label {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.showcase-body {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}

@@ -1,8 +1,10 @@
-import {computed, DestroyRef, Directive, inject, OnInit} from '@angular/core';
+import {Renderer2, computed, DestroyRef, Directive, inject, OnInit} from '@angular/core';
+
 import {NavigationEnd, Router} from '@angular/router';
-import {Renderer2} from '@angular/core';
+
 import {toSignal} from '@angular/core/rxjs-interop';
 import {filter, map} from 'rxjs';
+
 import {routes} from '../../app.routes';
 
 @Directive({
@@ -12,6 +14,11 @@ export class NavArrows implements OnInit {
 
   private readonly PREV_CLASS = 'nav-arrow nav-arrow--prev';
   private readonly NEXT_CLASS = 'nav-arrow nav-arrow--next';
+
+  private prevBtn: HTMLElement | null = null;
+  private nextBtn: HTMLElement | null = null;
+  private unlistenPrev: (() => void) | null = null;
+  private unlistenNext: (() => void) | null = null;
 
   private readonly router = inject(Router);
   private readonly renderer = inject(Renderer2);
@@ -26,7 +33,7 @@ export class NavArrows implements OnInit {
       filter(e => e instanceof NavigationEnd),
       map(() => this.router.url)
     ),
-    { initialValue: this.router.url }
+    {initialValue: this.router.url}
   );
 
   private readonly currentIndex = computed(() =>
@@ -43,14 +50,9 @@ export class NavArrows implements OnInit {
     return this.demoRoutes[i === this.demoRoutes.length - 1 ? 0 : i + 1];
   });
 
-  private prevBtn: HTMLElement | null = null;
-  private nextBtn: HTMLElement | null = null;
-  private unlistenPrev: (() => void) | null = null;
-  private unlistenNext: (() => void) | null = null;
-
   ngOnInit(): void {
-    this.prevBtn = this.createButton(this.PREV_CLASS, '‹', 'Previous directive');
-    this.nextBtn = this.createButton(this.NEXT_CLASS, '›', 'Next directive');
+    this.prevBtn = this.buildButton(this.PREV_CLASS, '‹', 'Previous directive');
+    this.nextBtn = this.buildButton(this.NEXT_CLASS, '›', 'Next directive');
 
     this.unlistenPrev = this.renderer.listen(this.prevBtn, 'click', () =>
       void this.router.navigate([this.prevRoute()])
@@ -70,7 +72,7 @@ export class NavArrows implements OnInit {
     });
   }
 
-  private createButton(classes: string, label: string, ariaLabel: string): HTMLElement {
+  private buildButton(classes: string, label: string, ariaLabel: string): HTMLElement {
     const btn: HTMLElement = this.renderer.createElement('button');
     classes.split(' ').forEach(cls => this.renderer.addClass(btn, cls));
     this.renderer.setAttribute(btn, 'aria-label', ariaLabel);

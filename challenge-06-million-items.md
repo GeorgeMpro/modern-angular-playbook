@@ -1,7 +1,7 @@
 # Challenge #6: Million Items Performance - Virtual Scrolling + Optimization
 
 **Difficulty:** Hard
-**Time Estimate:** 3-4 hours
+**Time Estimate:** 4-6 hours
 **Focus:** Performance optimization for massive datasets
 
 -
@@ -14,7 +14,8 @@
 - Use Web Workers for heavy computation
 - Implement infinite scroll with pagination
 - Combine: virtual scroll + debounce + signals + OnPush + trackBy
-- Measure and optimize performance metrics
+- Instrument and display **live** performance metrics (FPS, long tasks, rendered DOM node count) instead of only checking DevTools by hand
+- Toggle virtualized vs. non-virtualized rendering to **prove** the technique works, not just assert it
 
 ---
 
@@ -29,6 +30,8 @@ Build a **Product Catalog** that can handle **1 MILLION items** smoothly:
 - Filter update < 300ms
 - Memory usage < 500MB
 - No UI freezing/blocking
+- A live side panel showing FPS, long-task count, and rendered DOM node count — visible in the running app, not only in DevTools
+- A toggle to switch between virtualized and non-virtualized rendering, for direct side-by-side proof
 
 **You MUST combine ALL these techniques:**
 1. Virtual scrolling (only render visible items)
@@ -94,7 +97,6 @@ import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrollin
 
 @Component({
   selector: 'app-product-list',
-  standalone: true,
   imports: [ScrollingModule, CommonModule],
   template: `
     <cdk-virtual-scroll-viewport
@@ -130,8 +132,7 @@ import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrollin
       padding: 12px;
       border-bottom: 1px solid #eee;
     }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  `]
 })
 export class ProductListComponent {
   displayedProducts = signal<Product[]>([]);
@@ -157,7 +158,7 @@ export class ProductListComponent {
 
 ```typescript
 // service/product-index.service.ts
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ProductIndexService {
   private allProducts: Product[] = [];
   private nameIndex = new Map<string, Product[]>(); // Prefix → products
@@ -237,11 +238,16 @@ export class ProductIndexService {
 
 **Component with debounced search:**
 ```typescript
+interface SearchData {
+  query: string;
+}
+
 @Component({
   selector: 'app-search',
+  imports: [FormField],
   template: `
     <input
-      [formControl]="searchControl"
+      [formField]="searchForm.query"
       placeholder="Search 1M products..."
       type="text"
     />
@@ -249,28 +255,31 @@ export class ProductIndexService {
   `
 })
 export class SearchComponent {
-  searchControl = new FormControl('');
+  private readonly indexService = inject(ProductIndexService);
+
+  private readonly searchModel = signal<SearchData>({ query: '' });
+  protected readonly searchForm = form(this.searchModel);
+
   resultCount = signal(0);
   searchTime = signal(0);
 
-  constructor(private indexService: ProductIndexService) {
-    this.searchControl.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(() => console.time('Search')),
-      map(term => {
-        const start = performance.now();
-        const results = this.indexService.search(term || '');
-        const duration = performance.now() - start;
+  private readonly results$ = toObservable(this.searchForm.query().value).pipe(
+    debounceTime(300),
+    tap(() => console.time('Search')),
+    map(term => {
+      const start = performance.now();
+      const results = this.indexService.search(term || '');
+      const duration = performance.now() - start;
 
-        this.searchTime.set(Math.round(duration));
-        this.resultCount.set(results.length);
+      this.searchTime.set(Math.round(duration));
+      this.resultCount.set(results.length);
 
-        console.timeEnd('Search');
-        return results;
-      })
-    ).subscribe();
-  }
+      console.timeEnd('Search');
+      return results;
+    })
+  );
+
+  protected readonly results = toSignal(this.results$, { initialValue: [] });
 }
 ```
 
@@ -279,6 +288,7 @@ export class SearchComponent {
 - Search by index = O(1) instead of O(n)
 - Prefix search for typeahead
 - Category index for filtering
+- A signal already only emits on an actual value change (`Object.is` equality) — `toObservable` inherits that, so there's no need for a separate `distinctUntilChanged()` here
 
 ---
 
@@ -309,17 +319,24 @@ addEventListener('message', ({ data }) => {
 
 **Using the worker:**
 ```typescript
+interface FilterData {
+  category: string;
+  minPrice: number;
+  maxPrice: number;
+}
+
 @Component({
   selector: 'app-filters',
+  imports: [FormField],
   template: `
-    <select [formControl]="categoryControl">
+    <select [formField]="filtersForm.category">
       <option value="">All</option>
       <option value="Electronics">Electronics</option>
       <option value="Clothing">Clothing</option>
     </select>
 
-    <input [formControl]="minPriceControl" type="number" placeholder="Min" />
-    <input [formControl]="maxPriceControl" type="number" placeholder="Max" />
+    <input [formField]="filtersForm.minPrice" type="number" placeholder="Min" />
+    <input [formField]="filtersForm.maxPrice" type="number" placeholder="Max" />
 
     @if (filtering()) {
       <span>Filtering...</span>
@@ -329,17 +346,22 @@ addEventListener('message', ({ data }) => {
   `
 })
 export class FiltersComponent {
-  categoryControl = new FormControl('');
-  minPriceControl = new FormControl(0);
-  maxPriceControl = new FormControl(1000);
+  private readonly indexService = inject(ProductIndexService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  private readonly filtersModel = signal<FilterData>({
+    category: '',
+    minPrice: 0,
+    maxPrice: 1000
+  });
+  protected readonly filtersForm = form(this.filtersModel);
 
   filtering = signal(false);
   resultCount = signal(0);
 
   private worker?: Worker;
 
-  constructor(private indexService: ProductIndexService) {
-    // Check if Web Workers are supported
+  constructor() {
     if (typeof Worker !== 'undefined') {
       this.worker = new Worker(new URL('./workers/filter.worker', import.meta.url));
 
@@ -348,28 +370,22 @@ export class FiltersComponent {
         this.resultCount.set(data.length);
         // Emit filtered results to product list component
       };
+
+      this.destroyRef.onDestroy(() => this.worker?.terminate());
     }
 
-    // Combine filters
-    combineLatest([
-      this.categoryControl.valueChanges.pipe(startWith('')),
-      this.minPriceControl.valueChanges.pipe(startWith(0)),
-      this.maxPriceControl.valueChanges.pipe(startWith(1000))
-    ]).pipe(
+    // The whole filters object is one signal, so one toObservable() replaces
+    // the combineLatest([...]) of three separate FormControls
+    toObservable(this.filtersModel).pipe(
       debounceTime(300),
-      tap(() => this.filtering.set(true))
-    ).subscribe(([category, minPrice, maxPrice]) => {
-      if (this.worker) {
-        this.worker.postMessage({
-          products: this.indexService.getAllProducts(), // Or subset
-          filters: { category, minPrice, maxPrice }
-        });
-      }
+      tap(() => this.filtering.set(true)),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(filters => {
+      this.worker?.postMessage({
+        products: this.indexService.getAllProducts(), // Or subset
+        filters
+      });
     });
-  }
-
-  ngOnDestroy() {
-    this.worker?.terminate();
   }
 }
 ```
@@ -378,7 +394,8 @@ export class FiltersComponent {
 - Web Worker runs in separate thread
 - UI stays responsive during heavy filtering
 - Transfer data between threads
-- Terminate worker on destroy
+- `DestroyRef.onDestroy` terminates the worker — no `ngOnDestroy` needed
+- Signal Forms models the filters as one object signal, so filtering on any field is a single `toObservable()` stream instead of a three-way `combineLatest`
 
 ---
 
@@ -388,11 +405,10 @@ export class FiltersComponent {
 
 ```typescript
 @Component({
-  selector: 'app-product-list',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-product-list'
 })
 export class ProductListComponent {
-  @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+  private readonly viewport = viewChild.required(CdkVirtualScrollViewport);
 
   private allFilteredProducts: Product[] = [];
   displayedProducts = signal<Product[]>([]);
@@ -401,17 +417,17 @@ export class ProductListComponent {
   private pageSize = 50;
   loading = signal(false);
 
-  ngAfterViewInit() {
-    // Infinite scroll trigger
-    this.viewport.scrolledIndexChange.pipe(
-      throttleTime(200),
-      filter(() => !this.loading()),
-      filter(index => {
-        const end = this.displayedProducts().length;
-        return index >= end - 10; // Near bottom
-      })
-    ).subscribe(() => {
-      this.loadMore();
+  constructor() {
+    effect(() => {
+      this.viewport().scrolledIndexChange.pipe(
+        throttleTime(200),
+        filter(() => !this.loading()),
+        filter(index => {
+          const end = this.displayedProducts().length;
+          return index >= end - 10; // Near bottom
+        }),
+        takeUntilDestroyed()
+      ).subscribe(() => this.loadMore());
     });
   }
 
@@ -447,21 +463,119 @@ export class ProductListComponent {
 - Virtual scroll handles rendering
 - Infinite scroll loads more when near bottom
 - Reset on filter change
+- `viewChild.required()` replaces `@ViewChild` + the `!` definite-assignment assertion; the `effect()` in the constructor replaces `ngAfterViewInit` — it reacts once the query resolves instead of relying on a separate lifecycle hook
 
 ---
 
-### 6. Complete Integration
+### 6. Live Performance Side Panel
+
+**Make the optimization visible instead of only checking DevTools by hand.**
+
+Follow the `demo-shell` side-panel layout already used elsewhere in this workspace, rather than a footer strip. Three metrics belong here, in order of how convincing they are:
+
+**a) Rendered DOM nodes vs. total items — the metric that actually proves virtualization works**
+
+```typescript
+@Service()
+export class RenderMetricsService {
+  readonly renderedNodes = signal(0);
+
+  increment(): void {
+    this.renderedNodes.update(n => n + 1);
+  }
+
+  decrement(): void {
+    this.renderedNodes.update(n => n - 1);
+  }
+}
+```
+
+```typescript
+@Directive({
+  selector: '[appRenderCounter]'
+})
+export class RenderCounter {
+  private readonly metrics = inject(RenderMetricsService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  constructor() {
+    this.metrics.increment();
+    this.destroyRef.onDestroy(() => this.metrics.decrement());
+  }
+}
+```
+
+Apply `appRenderCounter` to each `*cdkVirtualFor` row. With virtualization on, `renderedNodes()` stays flat (roughly viewport height ÷ item height) no matter the dataset size. With it off, watch the count climb toward the total.
+
+**b) FPS**
+
+```typescript
+@Service()
+export class FpsMonitorService {
+  readonly fps = signal(0);
+
+  private frameCount = 0;
+  private lastSampleTime = performance.now();
+
+  constructor() {
+    const loop = () => {
+      this.frameCount++;
+      const now = performance.now();
+      const elapsed = now - this.lastSampleTime;
+
+      if (elapsed >= 1000) {
+        this.fps.set(Math.round((this.frameCount * 1000) / elapsed));
+        this.frameCount = 0;
+        this.lastSampleTime = now;
+      }
+
+      requestAnimationFrame(loop);
+    };
+
+    requestAnimationFrame(loop);
+  }
+}
+```
+
+FPS is an average over the sampling window — a single long frame barely moves it. Pair it with (c) to catch what it hides.
+
+**c) Long-task count**
+
+```typescript
+@Service()
+export class LongTaskMonitorService {
+  readonly longTaskCount = signal(0);
+
+  constructor() {
+    if (typeof PerformanceObserver === 'undefined') return;
+
+    const observer = new PerformanceObserver(list => {
+      this.longTaskCount.update(n => n + list.getEntries().length);
+    });
+
+    observer.observe({ entryTypes: ['longtask'] });
+  }
+}
+```
+
+Any task blocking the main thread past 50ms counts — this is the browser-standard definition of "janky," independent of the FPS average.
+
+**Optional — JS heap size:** `performance.memory.usedJSHeapSize` is Chrome-only and quantized for Spectre mitigations, so treat it as an approximate trend, not a precise number, if you surface it.
+
+---
+
+### 7. Complete Integration — with the virtualized/non-virtualized toggle
 
 **Put it all together:**
 
 ```typescript
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
   imports: [
     SearchComponent,
     FiltersComponent,
     ProductListComponent,
+    PerformancePanel,
     ScrollingModule
   ],
   template: `
@@ -476,33 +590,27 @@ export class ProductListComponent {
       </aside>
 
       <main>
-        <app-product-list [products]="currentResults()" />
+        <label>
+          <input type="checkbox" [checked]="virtualized()" (change)="virtualized.set(!virtualized())" />
+          Virtualized rendering
+        </label>
+
+        <app-product-list [products]="currentResults()" [virtualized]="virtualized()" />
       </main>
 
-      <footer>
-        <div>Total: {{ totalCount() | number }} products</div>
-        <div>Displayed: {{ displayedCount() | number }} products</div>
-        <div>Memory: {{ memoryUsage() }} MB</div>
-      </footer>
+      <aside class="performance-panel">
+        <app-performance-panel
+          [totalCount]="totalCount()"
+          [displayedCount]="displayedCount()" />
+      </aside>
     </div>
-  `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  `
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   currentResults = signal<Product[]>([]);
   totalCount = signal(1_000_000);
   displayedCount = signal(0);
-  memoryUsage = signal('0');
-
-  ngOnInit() {
-    // Monitor performance
-    setInterval(() => {
-      if (performance.memory) {
-        const used = performance.memory.usedJSHeapSize / 1024 / 1024;
-        this.memoryUsage.set(used.toFixed(2));
-      }
-    }, 1000);
-  }
+  virtualized = signal(true);
 
   onSearch(results: Product[]) {
     this.currentResults.set(results);
@@ -516,6 +624,10 @@ export class DashboardComponent implements OnInit {
 }
 ```
 
+`PerformancePanel` reads `RenderMetricsService`, `FpsMonitorService`, and `LongTaskMonitorService` via `inject()` and displays their signals directly — no polling glue needed in the dashboard itself.
+
+**Behavior note:** rendering all 1,000,000 items with `virtualized` off will genuinely stall the tab. Either accept that as the point (the freeze itself is the proof), or cap the non-virtualized branch to a smaller subset (e.g. the first 10,000) with a label explaining why — your call, but decide deliberately rather than by accident.
+
 ---
 
 ## ✅ Acceptance Criteria
@@ -526,8 +638,8 @@ export class DashboardComponent implements OnInit {
 - [ ] Filter 1M items < 300ms (with worker)
 - [ ] Scroll at 60 FPS (no jank)
 - [ ] Memory usage < 500MB
-- [ ] DOM elements < 100 at any time
-- [ ] No UI blocking/freezing
+- [ ] DOM elements < 100 at any time (when virtualized)
+- [ ] No UI blocking/freezing (when virtualized)
 
 ### Functionality
 - [ ] Generate 1M products on startup
@@ -537,13 +649,17 @@ export class DashboardComponent implements OnInit {
 - [ ] Infinite scroll loads more
 - [ ] Combine search + filters
 - [ ] Display result counts
-- [ ] Show performance metrics
+- [ ] Live performance panel shows FPS, long-task count, and rendered DOM node count in real time — not only verified via DevTools
+- [ ] Toggle switches between virtualized and non-virtualized rendering for direct comparison
+- [ ] Rendered DOM node count visibly stays flat while virtualized and climbs when it isn't
 
 ### Code Quality
-- [ ] OnPush change detection
+- [ ] OnPush change detection (default — do not set it explicitly)
 - [ ] TrackBy functions on loops
 - [ ] Signals for state management
-- [ ] Proper unsubscribe (takeUntilDestroyed)
+- [ ] Signal Forms (`form()` / `FormField`) for search and filter inputs — not `FormControl`
+- [ ] `inject()` — no constructor injection
+- [ ] Proper unsubscribe (`takeUntilDestroyed`, `DestroyRef.onDestroy`)
 - [ ] Web Worker for heavy tasks
 - [ ] Indexed search (not linear)
 - [ ] No memory leaks
@@ -552,11 +668,13 @@ export class DashboardComponent implements OnInit {
 
 ## 🧪 Performance Testing
 
+The live panel is the first-line evidence — anyone running the app sees the numbers without opening DevTools. Use DevTools for deeper validation:
+
 **Chrome DevTools:**
 ```
 1. Performance Tab:
    - Record scrolling → should be 60 FPS
-   - Check for long tasks (> 50ms)
+   - Check for long tasks (> 50ms) — cross-check against the panel's count
    - Memory profiling
 
 2. Memory Tab:
@@ -617,14 +735,16 @@ function benchmark() {
 **Performance:**
 - [Angular Performance Guide](https://angular.dev/best-practices/performance)
 - [Chrome DevTools Performance](https://developer.chrome.com/docs/devtools/performance/)
+- [PerformanceLongTaskTiming (Long Tasks API) — MDN](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceLongTaskTiming)
+- [PerformanceObserver — MDN](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceObserver)
 
 ---
 
 ## 💡 Optimization Checklist
 
 - [ ] Virtual scrolling with fixed item size
-- [ ] OnPush change detection everywhere
-- [ ] TrackBy on all ngFor loops
+- [ ] OnPush change detection everywhere (default, don't set explicitly)
+- [ ] TrackBy on all loops
 - [ ] Debounce user inputs (300ms)
 - [ ] Throttle scroll events (200ms)
 - [ ] Index-based search (not linear)
@@ -636,6 +756,7 @@ function benchmark() {
 - [ ] Profile with Chrome DevTools
 - [ ] Monitor memory usage
 - [ ] Use production build for testing
+- [ ] Live FPS / long-task / DOM-count panel, not just DevTools
 
 ---
 
@@ -648,9 +769,11 @@ function benchmark() {
 5. Add debounced search
 6. Add filters with Web Worker
 7. Add infinite scroll
-8. Optimize with OnPush + trackBy
-9. Measure performance
-10. Optimize until metrics pass
+8. Build the live performance panel (FPS, long tasks, rendered DOM count)
+9. Add the virtualized/non-virtualized toggle
+10. Optimize with OnPush + trackBy
+11. Measure performance
+12. Optimize until metrics pass
 
 ---
 

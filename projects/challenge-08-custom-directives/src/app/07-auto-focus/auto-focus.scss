@@ -1,0 +1,69 @@
+@use 'app/styles/demo-ui' as demo;
+@use 'app/styles/variables' as *;
+
+.demos {
+  display: flex;
+  gap: $spacing-lg;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: $spacing-xl 0;
+}
+
+.demo-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: $spacing-xs $spacing-sm;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: $radius;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color $transition;
+
+  &::placeholder { color: var(--text-secondary); }
+  &:focus { border-color: var(--accent); }
+}
+
+.comment-box {
+  display: flex;
+  gap: $spacing-sm;
+
+  .demo-input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.btn-post {
+  @include demo.btn-trigger;
+  padding: $spacing-xs $spacing-md;
+  font-size: 0.875rem;
+}
+
+.rename-trigger {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: $radius;
+  padding: $spacing-xs $spacing-sm;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color $transition;
+
+  &:hover,
+  &:focus-visible { border-color: var(--accent); }
+}
+
+.status {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+
+  &--focused {
+    color: $success;
+    font-weight: 600;
+  }
+}

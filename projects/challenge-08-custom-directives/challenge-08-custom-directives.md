@@ -176,6 +176,8 @@ constructor() {
 
 Optional: `shouldFocus = input<boolean>(true)` — skip focus if false.
 
+Also add a `FocusStatus` directive (tracks focused/unfocused via `(focus)`/`(blur)` host listeners, exposed with `exportAs`) and compose it with `appAutoFocus` via `hostDirectives` so the demo can show a live focus indicator.
+
 ### What you'll learn
 
 `afterNextRender` is the v17+ replacement for the `ngAfterViewInit` + `setTimeout` hack. It fires once after the DOM is painted — guaranteed safe for focus operations.

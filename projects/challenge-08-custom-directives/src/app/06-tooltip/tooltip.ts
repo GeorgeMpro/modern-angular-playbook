@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {AppTooltip} from './app-tooltip';
+import {AppTooltip} from '../shared/directives/app-tooltip';
 import {DemoShell} from '../shared/components/demo-shell/demo-shell';
 
 @Component({

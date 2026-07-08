@@ -9,6 +9,7 @@ export const ROUTE_PATHS = {
   clickOutside: 'click-outside',
   toolTip: 'tooltip',
   copyToClipboard: 'copy-to-clipboard',
+  autoFocus: 'auto-focus',
   highlight: 'highlight',
 } as const;
 
@@ -46,6 +47,10 @@ export const routes: Routes = [
     path: ROUTE_PATHS.toolTip,
     loadComponent: () => import('./06-tooltip/tooltip'),
     title: pathToTitle(ROUTE_PATHS.toolTip)
+  }, {
+    path: ROUTE_PATHS.autoFocus,
+    loadComponent: () => import('./07-auto-focus/auto-focus'),
+    title: pathToTitle(ROUTE_PATHS.autoFocus)
   }, {
     path: ROUTE_PATHS.highlight,
     loadComponent: () => import('./08-highlight/highlight-demo'),

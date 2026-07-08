@@ -1,0 +1,52 @@
+<ng-template #statusLine
+             let-indicator="indicator">
+  <p class="status" [class.status--focused]="indicator() === 'Focused'">{{ indicator() }}</p>
+</ng-template>
+
+<ng-template #withInput>
+  <div class="comment-box">
+    <input appFocusWithStatus
+           [shouldFocus]="true"
+           #status="focusWithStatus"
+           class="demo-input"
+           placeholder="Write a comment..."/>
+    <button class="btn-post">Post</button>
+  </div>
+  <ng-container [ngTemplateOutlet]="statusLine"
+                [ngTemplateOutletContext]="{indicator: status.indicator}"/>
+</ng-template>
+
+<ng-template #withRename>
+  @if (isRenaming()) {
+    <input appFocusWithStatus
+           [shouldFocus]="true"
+           #status="focusWithStatus"
+           class="demo-input"
+           value="Untitled document"
+           (blur)="isRenaming.set(false)"/>
+    <ng-container [ngTemplateOutlet]="statusLine"
+                  [ngTemplateOutletContext]="{indicator: status.indicator}"/>
+  } @else {
+    <button class="rename-trigger" (click)="isRenaming.set(true)">
+      Untitled document <span aria-hidden="true">✏️</span>
+    </button>
+  }
+</ng-template>
+
+<ng-template #withoutFocus>
+  <input appFocusWithStatus
+         [shouldFocus]="false"
+         #status="focusWithStatus"
+         class="demo-input"
+         placeholder="I should not steal focus"/>
+  <ng-container [ngTemplateOutlet]="statusLine"
+                [ngTemplateOutletContext]="{indicator: status.indicator}"/>
+</ng-template>
+
+<app-demo-shell [title]="'auto focus'">
+  <div preview class="demos">
+    <app-focus-harness label="Reply box" [content]="withInput"/>
+    <app-focus-harness label="Inline rename" [content]="withRename"/>
+    <app-focus-harness label="shouldFocus = false" [content]="withoutFocus"/>
+  </div>
+</app-demo-shell>
