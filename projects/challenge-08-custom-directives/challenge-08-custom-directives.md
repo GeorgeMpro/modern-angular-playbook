@@ -43,9 +43,12 @@ Apply to an `<img>` element. The directive holds a `src = input.required<string>
 Debounce button clicks to prevent duplicate submissions. Emits a debounced `btnClick` output instead of the native click event.
 
 ```ts
-readonly timeDelay = input<number>(300);
-private readonly clickListener$ = new Subject<void>();
-readonly btnClick = outputFromObservable(
+readonly
+timeDelay = input<number>(300);
+private readonly
+clickListener$ = new Subject<void>();
+readonly
+btnClick = outputFromObservable(
   this.clickListener$.pipe(debounce(() => timer(this.timeDelay())))
 );
 ```
@@ -81,13 +84,20 @@ Dropdowns and popovers need to close when the user clicks anywhere outside them.
 ### Task
 
 ```ts
-readonly clickOutside = output<void>();
-private readonly el = inject(ElementRef<HTMLElement>);
+readonly
+clickOutside = output<void>();
+private readonly
+el = inject(ElementRef<HTMLElement>);
 ```
 
 In `host`:
+
 ```ts
-host: { '(document:click)': 'onDocClick($event)' }
+host: {
+  '(document:click)'
+:
+  'onDocClick($event)'
+}
 ```
 
 In `onDocClick(event: MouseEvent)`: if `!this.el.nativeElement.contains(event.target as Node)`, emit `clickOutside`.
@@ -115,8 +125,10 @@ Any element can become a "click to copy" button. The directive handles the Clipb
 ### Task
 
 ```ts
-readonly textToCopy = input.required<string>();
-readonly copied     = output<boolean>(); // true = success, false = failed
+readonly
+textToCopy = input.required<string>();
+readonly
+copied = output<boolean>(); // true = success, false = failed
 ```
 
 `host`: `'(click)': 'onCopy()'`
@@ -145,8 +157,12 @@ Show a tooltip on hover. The tooltip text comes from `tooltipText = input.requir
 
 ```ts
 host: {
-  '(mouseenter)': 'show()',
-  '(mouseleave)': 'hide()'
+  '(mouseenter)'
+:
+  'show()',
+    '(mouseleave)'
+:
+  'hide()'
 }
 ```
 
@@ -167,7 +183,8 @@ This is the case where `Renderer2` is genuinely required — you're creating a D
 Auto-focus the host element when the component mounts. Use `afterNextRender` — not `ngAfterViewInit` — because it runs after the first render is complete.
 
 ```ts
-constructor() {
+constructor()
+{
   afterNextRender(() => {
     inject(ElementRef<HTMLElement>).nativeElement.focus();
   });
@@ -191,7 +208,8 @@ Also add a `FocusStatus` directive (tracks focused/unfocused via `(focus)`/`(blu
 **Already implemented** — add one improvement: if `appHighlight` is a signal input, use `effect()` to react to changes instead of relying on `onMouseEnter` re-reading the value:
 
 ```ts
-constructor() {
+constructor()
+{
   effect(() => {
     // precompute derived values when input changes
     this._resolvedColor = this.appHighlight() || this.defaultColor() || 'yellow';
@@ -218,13 +236,19 @@ constructor() {
 Inject `ViewContainerRef`, `TemplateRef`, and a simple `AuthService` mock. Accept `appPermission = input.required<string>()`. Use `effect()` to react to permission changes — clear the container and conditionally render the template.
 
 Usage in template:
+
 ```html
+
 <button *appPermission="'admin'">Delete</button>
 ```
 
 This desugars to:
+
 ```html
-<ng-template [appPermission]="'admin'"><button>Delete</button></ng-template>
+
+<ng-template [appPermission]="'admin'">
+  <button>Delete</button>
+</ng-template>
 ```
 
 ### What you'll learn
@@ -242,10 +266,15 @@ This desugars to:
 Cycle `Tab` and `Shift+Tab` within a container — required for accessible modals (WCAG 2.4.3).
 
 ```ts
-host: { '(keydown)': 'onKeydown($event)' }
+host: {
+  '(keydown)'
+:
+  'onKeydown($event)'
+}
 ```
 
 `onKeydown(event: KeyboardEvent)`:
+
 1. If key is not `Tab`, return
 2. `querySelectorAll` all focusable elements inside the host: `'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'`
 3. On `Tab`: if focus is on last element, move to first and `preventDefault()`
@@ -266,8 +295,10 @@ Focus trapping is a WCAG requirement for modal dialogs. The directive queries fo
 Emit a `longPress` output after the user holds for a configurable `threshold` (default 500ms). Cancel if the user releases early.
 
 ```ts
-readonly threshold  = input<number>(500);
-readonly longPress  = output<void>();
+readonly
+threshold = input<number>(500);
+readonly
+longPress = output<void>();
 ```
 
 Using RxJS in the constructor — think about: what events start the press, what events cancel it, and which operator lets you cancel an in-flight timer when a new start arrives.
@@ -285,6 +316,7 @@ Using RxJS in the constructor — think about: what events start the press, what
 ### Task
 
 Add a CSS class (e.g. `'visible'`) when the element scrolls into view. Accept two inputs:
+
 - `animationClass = input<string>('visible')`
 - `repeat = input<boolean>(false)` — if false, disconnect after first trigger; if true, remove the class when the element leaves and re-add on re-entry
 
@@ -304,8 +336,12 @@ Block non-numeric keystrokes on an `<input>` element. Also intercept paste event
 
 ```ts
 host: {
-  '(keydown)': 'onKey($event)',
-  '(paste)':   'onPaste($event)'
+  '(keydown)'
+:
+  'onKey($event)',
+    '(paste)'
+:
+  'onPaste($event)'
 }
 ```
 
@@ -330,7 +366,8 @@ Keyboard filtering is not sufficient alone — users can paste non-numeric conte
 ### Task
 
 ```ts
-readonly resize = output<{ width: number; height: number }>();
+readonly
+resize = output<{ width: number; height: number }>();
 ```
 
 Create a `ResizeObserver` in the constructor, observe the host element, emit dimensions on each entry, and disconnect on destroy.
@@ -358,27 +395,31 @@ A `<button>` needs to be debounce-protected AND copy text on click. Without `hos
 ### Task
 
 ```ts
+
 @Component({
   selector: 'app-copy-button',
   hostDirectives: [
     {
       directive: DebounceClick,
-      inputs:  ['timeDelay'],
+      inputs: ['timeDelay'],
       outputs: ['btnClick']
     },
     {
       directive: CopyToClipboard,
-      inputs:  ['textToCopy'],
+      inputs: ['textToCopy'],
       outputs: ['copied']
     }
   ],
   template: `<ng-content />`
 })
-export class CopyButtonComponent { }
+export class CopyButtonComponent {
+}
 ```
 
 Usage:
+
 ```html
+
 <app-copy-button
   textToCopy="Hello World"
   [timeDelay]="500"
@@ -404,7 +445,7 @@ Usage:
 hostDirectives: [
   {
     directive: DebounceClick,
-    inputs:  ['timeDelay: delay'],   // consumer uses [delay], not [timeDelay]
+    inputs: ['timeDelay: delay'],   // consumer uses [delay], not [timeDelay]
     outputs: ['btnClick: click']     // consumer uses (click), not (btnClick)
   }
 ]
@@ -416,11 +457,12 @@ hostDirectives: [
 // Step 1 — bundle the two behaviours into a directive
 @Directive({
   hostDirectives: [
-    { directive: DebounceClick,    inputs: ['timeDelay'], outputs: ['btnClick'] },
-    { directive: CopyToClipboard,  inputs: ['textToCopy'], outputs: ['copied'] }
+    {directive: DebounceClick, inputs: ['timeDelay'], outputs: ['btnClick']},
+    {directive: CopyToClipboard, inputs: ['textToCopy'], outputs: ['copied']}
   ]
 })
-export class InteractiveCopy {}
+export class InteractiveCopy {
+}
 
 // Step 2 — component delegates entirely to the bundle
 @Component({
@@ -428,7 +470,8 @@ export class InteractiveCopy {}
   hostDirectives: [InteractiveCopy],
   template: `<ng-content />`
 })
-export class CopyButtonComponent {}
+export class CopyButtonComponent {
+}
 ```
 
 `CopyButtonComponent` now has no knowledge of `DebounceClick` or `CopyToClipboard` directly. The composition chain is transitive — Angular resolves all host bindings from every level and applies them to the same host element.
@@ -461,9 +504,10 @@ export interface TypedIfContext<T> {
 **Scaffold:**
 
 ```ts
-@Directive({ selector: '[appTypedIf]' })
+
+@Directive({selector: '[appTypedIf]'})
 export class TypedIf<T> {
-  private readonly vcr  = inject(ViewContainerRef);
+  private readonly vcr = inject(ViewContainerRef);
   private readonly tmpl = inject(TemplateRef<TypedIfContext<T>>);
 
   readonly appTypedIf = input.required<T | null | undefined>();
@@ -538,9 +582,10 @@ export interface AsyncContext<T> {
 **Scaffold:**
 
 ```ts
-@Directive({ selector: '[appAsync]' })
+
+@Directive({selector: '[appAsync]'})
 export class Async<T> {
-  private readonly vcr  = inject(ViewContainerRef);
+  private readonly vcr = inject(ViewContainerRef);
   private readonly tmpl = inject(TemplateRef<AsyncContext<T>>);
 
   readonly appAsync = input.required<Observable<T>>();
@@ -569,15 +614,16 @@ export class Async<T> {
 **Usage in template:**
 
 ```html
+
 <ng-container *appAsync="users$; let users; let loading = loading; let err = error">
   @if (loading) {
-    <p>Loading…</p>
+  <p>Loading…</p>
   } @else if (err) {
-    <p>Error: {{ err }}</p>
+  <p>Error: {{ err }}</p>
   } @else {
-    @for (u of users; track u.id) {
-      <p>{{ u.name }}</p>
-    }
+  @for (u of users; track u.id) {
+  <p>{{ u.name }}</p>
+  }
   }
 </ng-container>
 ```
@@ -611,17 +657,18 @@ The key implementation insight is TODO 4: you create the view **once** and mutat
 
 ### The two-layer model
 
-| Event | Who intercepts | How |
-|---|---|---|
-| In-app route change | Angular router | `CanDeactivateFn` checks `form.dirty()` |
-| Tab close / refresh / external link | Browser | `beforeunload` + `event.preventDefault()` |
+| Event                               | Who intercepts | How                                       |
+|-------------------------------------|----------------|-------------------------------------------|
+| In-app route change                 | Angular router | `CanDeactivateFn` checks `form.dirty()`   |
+| Tab close / refresh / external link | Browser        | `beforeunload` + `event.preventDefault()` |
 
 Neither replaces the other. Production forms need both.
 
 ### Task
 
 ```ts
-@Directive({ selector: '[appExitConfirm]' })
+
+@Directive({selector: '[appExitConfirm]'})
 export class ExitConfirm {
   readonly dirty = input.required<boolean>();
 
@@ -634,7 +681,9 @@ export class ExitConfirm {
 ```
 
 Usage:
+
 ```html
+
 <form [appExitConfirm]="form.dirty()">
   ...
 </form>
@@ -646,8 +695,12 @@ Or with the full `CanDeactivate` pairing:
 // route config
 {
   path: 'edit',
-  component: EditComponent,
-  canDeactivate: [exitConfirmGuard]   // in-app navigation
+    component
+:
+  EditComponent,
+    canDeactivate
+:
+  [exitConfirmGuard]   // in-app navigation
 }
 ```
 
@@ -698,26 +751,26 @@ The key design point: `dirty` is a plain `boolean` input, not a `FormGroup` refe
 
 ## Pattern Quick Reference
 
-| Directive | Key API |
-|---|---|
-| `appLazyLoad` | `IntersectionObserver`, `disconnect()` on first hit |
-| `appDebounceClick` | `Subject` + `debounce`, `outputFromObservable` |
-| `appInfiniteScroll` | `throttleTime`, `afterNextRender`, scroll threshold |
-| `appClickOutside` | `document:click` in `host`, `el.contains(target)` |
-| `appCopyToClipboard` | `navigator.clipboard.writeText`, emit result |
-| `appTooltip` | `Renderer2.createElement`, `body.appendChild`, `getBoundingClientRect` |
-| `appAutoFocus` | `afterNextRender`, `el.focus()` |
-| `appHighlight` | `host` style bindings, `effect()` for input changes |
-| `appPermission` | `ViewContainerRef`, `TemplateRef`, `createEmbeddedView` |
-| `appTrapFocus` | `querySelectorAll` focusables, wrap Tab at boundary |
-| `appLongPress` | `switchMap` + `timer` + `takeUntil` |
-| `appAnimateOnScroll` | `IntersectionObserver`, class toggle, repeat option |
-| `appNumbersOnly` | `keydown` filter, `paste` intercept, `Renderer2.setProperty` |
-| `appResizeObserver` | `ResizeObserver`, `DestroyRef.onDestroy` |
-| Composition | `hostDirectives`, explicit `inputs`/`outputs` |
-| `appTypedIf` | `ngTemplateGuard_*: 'binding'`, `ngTemplateContextGuard<T>`, `ViewContainerRef` |
-| `appAsync` | `ngTemplateContextGuard<T>`, `toObservable` + `switchMap`, patch context in place |
-| `appExitConfirm` | `window:beforeunload` in `host`, `event.preventDefault()`, `CanDeactivate` complement |
+| Directive            | Key API                                                                               |
+|----------------------|---------------------------------------------------------------------------------------|
+| `appLazyLoad`        | `IntersectionObserver`, `disconnect()` on first hit                                   |
+| `appDebounceClick`   | `Subject` + `debounce`, `outputFromObservable`                                        |
+| `appInfiniteScroll`  | `throttleTime`, `afterNextRender`, scroll threshold                                   |
+| `appClickOutside`    | `document:click` in `host`, `el.contains(target)`                                     |
+| `appCopyToClipboard` | `navigator.clipboard.writeText`, emit result                                          |
+| `appTooltip`         | `Renderer2.createElement`, `body.appendChild`, `getBoundingClientRect`                |
+| `appAutoFocus`       | `afterNextRender`, `el.focus()`                                                       |
+| `appHighlight`       | `host` style bindings, `effect()` for input changes                                   |
+| `appPermission`      | `ViewContainerRef`, `TemplateRef`, `createEmbeddedView`                               |
+| `appTrapFocus`       | `querySelectorAll` focusables, wrap Tab at boundary                                   |
+| `appLongPress`       | `switchMap` + `timer` + `takeUntil`                                                   |
+| `appAnimateOnScroll` | `IntersectionObserver`, class toggle, repeat option                                   |
+| `appNumbersOnly`     | `keydown` filter, `paste` intercept, `Renderer2.setProperty`                          |
+| `appResizeObserver`  | `ResizeObserver`, `DestroyRef.onDestroy`                                              |
+| Composition          | `hostDirectives`, explicit `inputs`/`outputs`                                         |
+| `appTypedIf`         | `ngTemplateGuard_*: 'binding'`, `ngTemplateContextGuard<T>`, `ViewContainerRef`       |
+| `appAsync`           | `ngTemplateContextGuard<T>`, `toObservable` + `switchMap`, patch context in place     |
+| `appExitConfirm`     | `window:beforeunload` in `host`, `event.preventDefault()`, `CanDeactivate` complement |
 
 ---
 

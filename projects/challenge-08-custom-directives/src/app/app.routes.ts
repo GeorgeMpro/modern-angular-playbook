@@ -11,6 +11,8 @@ export const ROUTE_PATHS = {
   copyToClipboard: 'copy-to-clipboard',
   autoFocus: 'auto-focus',
   highlight: 'highlight',
+  permission: 'permission',
+
 } as const;
 
 export const routes: Routes = [
@@ -55,6 +57,10 @@ export const routes: Routes = [
     path: ROUTE_PATHS.highlight,
     loadComponent: () => import('./08-highlight/highlight-demo'),
     title: pathToTitle(ROUTE_PATHS.highlight)
+  }, {
+    path: ROUTE_PATHS.permission,
+    loadComponent: () => import('./09-permission/permission'),
+    title: pathToTitle(ROUTE_PATHS.permission)
   },
 ];
 

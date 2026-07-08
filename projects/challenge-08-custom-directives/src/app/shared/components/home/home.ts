@@ -1,7 +1,7 @@
-import { Component, signal } from '@angular/core';
-import { ChallengeCard } from '../challenge-card/challenge-card';
-import { ChallengeDescriptor } from '../../models/challenge.model';
-import { ROUTE_PATHS } from '../../../app.routes';
+import {Component, signal} from '@angular/core';
+import {ChallengeCard} from '../challenge-card/challenge-card';
+import {ChallengeDescriptor} from '../../models/challenge.model';
+import {ROUTE_PATHS} from '../../../app.routes';
 
 @Component({
   selector: 'app-home',
@@ -67,7 +67,7 @@ export default class Home {
       focus: 'Focus the host element after the first render — no ngAfterViewInit setTimeout hack.',
       concepts: ['afterNextRender', 'ElementRef', 'focus()'],
       route: '/auto-focus',
-      state: 'WIP'
+      state: 'Done'
     },
     {
       id: '08',
@@ -83,7 +83,7 @@ export default class Home {
       focus: 'Structural directive that shows or hides content based on the current user\'s role.',
       concepts: ['ViewContainerRef', 'TemplateRef', 'createEmbeddedView'],
       route: '/permission',
-      state: 'WIP'
+      state: 'Done'
     },
     {
       id: '10',

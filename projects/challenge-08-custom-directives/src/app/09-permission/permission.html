@@ -1,0 +1,28 @@
+<app-demo-shell [title]="'permission'">
+  <div preview class="demo">
+    <fieldset class="role-switcher">
+      <legend>Current role</legend>
+      @for (role of roles; track role) {
+        <label class="role-option">
+          <input type="radio"
+                 name="userRole"
+                 [value]="role"
+                 [checked]="auth.userRole() === role"
+                 (change)="auth.setRole(role)">
+          <span class="role-dot" [attr.data-role]="role"></span>
+          {{ role }}
+        </label>
+      }
+    </fieldset>
+
+    <div class="gated-actions">
+      @for (ura of rolesAndActions; track ura.role) {
+        <button *appPermission="ura.role"
+                class="action-btn "
+                [class]="'action-btn--'+ura.role">
+          {{ ura.action }}
+        </button>
+      }
+    </div>
+  </div>
+</app-demo-shell>

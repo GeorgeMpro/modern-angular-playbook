@@ -1,0 +1,101 @@
+@use 'app/styles/variables' as *;
+
+.demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-xl 0;
+}
+
+.role-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  align-items: center;
+  margin: 0;
+  padding: $spacing-md;
+  border: none;
+  background: var(--bg-primary);
+  border-radius: $radius-lg;
+
+  legend {
+    width: 100%;
+    padding: 0 0 $spacing-sm;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+  }
+}
+
+.role-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: background $transition, color $transition;
+
+  &:hover {
+    background: var(--border);
+  }
+
+  input[type="radio"] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+
+  &:has(input:checked) {
+    background: var(--border);
+    color: var(--text-primary);
+  }
+
+  &:has(input:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.role-dot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: $text-secondary;
+
+  &[data-role="editor"] { background: $info; }
+  &[data-role="admin"] { background: $success; }
+}
+
+.gated-actions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.action-btn {
+  padding: $spacing-xs $spacing-md;
+  border: 1px solid var(--border);
+  border-radius: $radius;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color $transition;
+
+  &:hover { border-color: var(--accent); }
+  &:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  &--admin { border-color: rgba($success, 0.4); }
+  &--editor { border-color: rgba($info, 0.4); }
+  &--viewer { border-color: rgba($text-secondary, 0.4); }
+}
