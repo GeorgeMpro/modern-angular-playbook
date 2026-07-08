@@ -12,7 +12,7 @@ export const ROUTE_PATHS = {
   autoFocus: 'auto-focus',
   highlight: 'highlight',
   permission: 'permission',
-
+  trapFocus: 'trap-focus',
 } as const;
 
 export const routes: Routes = [
@@ -61,6 +61,10 @@ export const routes: Routes = [
     path: ROUTE_PATHS.permission,
     loadComponent: () => import('./09-permission/permission'),
     title: pathToTitle(ROUTE_PATHS.permission)
+  }, {
+    path: ROUTE_PATHS.trapFocus,
+    loadComponent: () => import('./10-trap-focus/trap-focus'),
+    title: pathToTitle(ROUTE_PATHS.trapFocus)
   },
 ];
 

@@ -1,0 +1,97 @@
+@use 'app/styles/variables' as *;
+
+.demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-xl 0;
+}
+
+.hint {
+  max-width: 420px;
+  margin: 0;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+
+  strong {
+    color: var(--text-primary);
+  }
+}
+
+.trap-box {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  min-width: 280px;
+  margin: 0;
+  padding: $spacing-lg;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
+
+  legend {
+    padding: 0 0 $spacing-xs;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  input {
+    box-sizing: border-box;
+    padding: $spacing-xs $spacing-sm;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: $radius;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color $transition;
+
+    &::placeholder { color: var(--text-secondary); }
+    &:focus { border-color: var(--accent); }
+  }
+
+  &--outside {
+    padding: $spacing-sm;
+    border: 1px dashed var(--border);
+    border-radius: $radius;
+    opacity: 0.6;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-sm;
+
+  button {
+    flex: 1;
+    padding: $spacing-xs $spacing-md;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: $radius;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color $transition;
+
+    &:hover { border-color: var(--accent); }
+    &:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  }
+}

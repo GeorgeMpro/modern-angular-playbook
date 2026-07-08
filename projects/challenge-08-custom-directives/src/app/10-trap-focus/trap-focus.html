@@ -1,0 +1,37 @@
+<app-demo-shell [title]="'trap focus'">
+  <div preview class="demo">
+    <p class="hint">
+      Tab from <strong>Four</strong> wraps to <strong>One</strong>; Shift+Tab from <strong>One</strong> wraps to
+      <strong>Four</strong>. Focus never leaves the box.
+    </p>
+
+    <div class="field field--outside">
+      <label for="before">Outside (before)</label>
+      <input id="before" name="before" placeholder="You should never land here" type="text">
+    </div>
+
+    <fieldset appTrapFocus class="trap-box">
+      <legend>Inside trap</legend>
+
+      <div class="field">
+        <label for="one">One</label>
+        <input id="one" name="one" placeholder="First field" type="text">
+      </div>
+
+      <div class="actions">
+        <button type="button">Two</button>
+        <button type="button">Three</button>
+      </div>
+
+      <div class="field">
+        <label for="four">Four</label>
+        <input id="four" name="four" placeholder="Last field" type="text">
+      </div>
+    </fieldset>
+
+    <div class="field field--outside">
+      <label for="after">Outside (after)</label>
+      <input id="after" name="after" placeholder="You should never land here" type="text">
+    </div>
+  </div>
+</app-demo-shell>
