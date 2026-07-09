@@ -1,0 +1,66 @@
+@use 'app/styles/demo-ui' as demo;
+@use 'app/styles/variables' as *;
+
+.display-container {
+  @include demo.demo-container;
+}
+
+.comparison-grid {
+  @include demo.preview-box;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: $spacing-lg;
+}
+
+.field-card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  flex: 1 1 260px;
+  max-width: 300px;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+  }
+
+  input {
+    box-sizing: border-box;
+    padding: $spacing-xs $spacing-sm;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: $radius;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color $transition;
+
+    &::placeholder {
+      color: var(--text-secondary);
+    }
+
+    &:focus {
+      border-color: var(--accent);
+    }
+  }
+
+  .hint {
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--text-secondary);
+
+    code {
+      font-family: 'Courier New', Courier, monospace;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      padding: 0 0.25rem;
+      border-radius: 3px;
+    }
+  }
+}

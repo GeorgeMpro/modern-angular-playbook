@@ -1,0 +1,25 @@
+<app-demo-shell [title]="'animate on scroll'">
+  <div preview class="preview-box">
+
+    <label class="repeat-toggle">
+      <input type="checkbox"
+             [checked]="repeat()"
+             (change)="repeat.set(!repeat())"/>
+      <span>Repeat animation</span>
+    </label>
+
+    <div class="scroll-area">
+      <div class="spacer">Scroll down ↓</div>
+
+      <div class="reveal-box"
+           appAnimateOnScroll
+           [animationClass]="'visible'"
+           [repeat]="repeat()">
+        <p>I fade in when scrolled into view.</p>
+      </div>
+
+      <div class="spacer spacer--bottom">Scroll back up ↑</div>
+    </div>
+
+  </div>
+</app-demo-shell>

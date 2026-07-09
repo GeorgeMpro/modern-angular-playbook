@@ -14,6 +14,8 @@ export const ROUTE_PATHS = {
   permission: 'permission',
   trapFocus: 'trap-focus',
   longPress: 'long-press',
+  animateOnScroll: 'animate-on-scroll',
+  numbersOnly: 'numbers-only',
 } as const;
 
 export const routes: Routes = [
@@ -70,6 +72,14 @@ export const routes: Routes = [
     path: ROUTE_PATHS.longPress,
     loadComponent: () => import('./11-long-press/long-press'),
     title: pathToTitle(ROUTE_PATHS.longPress)
+  }, {
+    path: ROUTE_PATHS.animateOnScroll,
+    loadComponent: () => import('./12-animate-on-scroll/animate-on-scroll'),
+    title: pathToTitle(ROUTE_PATHS.animateOnScroll)
+  }, {
+    path: ROUTE_PATHS.numbersOnly,
+    loadComponent: () => import('./13-numbers-only/numbers-only'),
+    title: pathToTitle(ROUTE_PATHS.numbersOnly)
   },
 ];
 

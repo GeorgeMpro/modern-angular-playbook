@@ -107,7 +107,7 @@ export default class Home {
       focus: 'Add a CSS class when an element enters the viewport. Optionally repeat on re-entry.',
       concepts: ['IntersectionObserver', 'class toggle', 'repeat option'],
       route: '/animate-on-scroll',
-      state: 'WIP'
+      state: 'Done'
     },
     {
       id: '13',

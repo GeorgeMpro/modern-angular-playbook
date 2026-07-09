@@ -1,0 +1,30 @@
+<app-demo-shell [title]="'numbers only'">
+  <div preview class="comparison-grid">
+
+    <div class="field-card">
+      <label for="plain-text">Plain text</label>
+      <input id="plain-text"
+             type="text"
+             placeholder="Type anything..."/>
+      <p class="hint">No restrictions — accepts anything.</p>
+    </div>
+
+    <div class="field-card">
+      <label for="numbers-only">Digits Only</label>
+      <input id="numbers-only"
+             type="text"
+             appNumbersOnly
+             placeholder="Try letters or paste 'abc123'"/>
+      <p class="hint">Digits only — blocks keystrokes and strips pasted text.</p>
+    </div>
+
+    <div class="field-card">
+      <label for="number">Native type="number"</label>
+      <input id="number"
+             type="number"
+             placeholder="-0123e+3"/>
+      <p class="hint">Blocks letters, but still allows <code>e + - .</code> and drops leading zeros.</p>
+    </div>
+
+  </div>
+</app-demo-shell>
