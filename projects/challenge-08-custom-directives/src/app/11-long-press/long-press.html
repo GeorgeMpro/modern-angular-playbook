@@ -1,0 +1,35 @@
+<app-demo-shell [title]="'long press'">
+  <div preview class="preview-box">
+
+    <button appLongPress
+            [threshold]="duration()"
+            [style.--duration.ms]="duration()"
+            (longPress)="onLongPress()"
+            (animationend)="onPulseEnd()"
+            [class.pulse]="pulsing()"
+            class="long-press-btn">
+      <svg class="ring" viewBox="0 0 44 44" aria-hidden="true">
+        <circle class="ring-track" cx="22" cy="22" r="20"/>
+        <circle class="ring-fill" cx="22" cy="22" r="20"/>
+      </svg>
+      <span class="label">Hold Me</span>
+    </button>
+
+    <label class="duration-field">
+      <span class="duration-field__label">Hold duration</span>
+      <input #range
+             type="range"
+             min="500" max="10000" step="100"
+             [value]="duration()"
+             (input)="duration.set(range.valueAsNumber)"/>
+      <span class="duration-field__value">{{ durationLabel() }}</span>
+    </label>
+
+    <div class="log-view">
+      @for (entry of log().slice(0, 1); track $index) {
+        <p class="log-entry">{{ entry }}</p>
+      }
+    </div>
+
+  </div>
+</app-demo-shell>

@@ -13,6 +13,7 @@ export const ROUTE_PATHS = {
   highlight: 'highlight',
   permission: 'permission',
   trapFocus: 'trap-focus',
+  longPress: 'long-press',
 } as const;
 
 export const routes: Routes = [
@@ -65,6 +66,10 @@ export const routes: Routes = [
     path: ROUTE_PATHS.trapFocus,
     loadComponent: () => import('./10-trap-focus/trap-focus'),
     title: pathToTitle(ROUTE_PATHS.trapFocus)
+  }, {
+    path: ROUTE_PATHS.longPress,
+    loadComponent: () => import('./11-long-press/long-press'),
+    title: pathToTitle(ROUTE_PATHS.longPress)
   },
 ];
 

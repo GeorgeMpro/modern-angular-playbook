@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {DemoShell} from '../shared/components/demo-shell/demo-shell';
-import {AppTrapFocus} from './app-trap-focus';
+import {AppTrapFocus} from '../shared/directives/app-trap-focus';
 
 @Component({
   selector: 'app-trap-focus',

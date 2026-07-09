@@ -1,0 +1,115 @@
+@use 'app/styles/demo-ui' as demo;
+@use 'app/styles/variables' as *;
+
+$ring-circumference: 125.6;
+
+.display-container {
+  @include demo.demo-container;
+}
+
+.preview-box {
+  @include demo.preview-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.long-press-btn {
+  @include demo.btn-trigger;
+  position: relative;
+  overflow: visible;
+  width: 96px;
+  height: 96px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  .ring {
+    position: absolute;
+    inset: -10px;
+    width: calc(100% + 20px);
+    height: calc(100% + 20px);
+    pointer-events: none;
+    transform: rotate(-90deg);
+  }
+
+  .ring-track {
+    fill: none;
+    stroke: $border;
+    stroke-width: 3;
+  }
+
+  .ring-fill {
+    fill: none;
+    stroke: $success;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: #{$ring-circumference};
+    stroke-dashoffset: #{$ring-circumference};
+    transition: stroke-dashoffset 0.2s ease-out;
+  }
+
+  &:active .ring-fill {
+    transition: stroke-dashoffset var(--duration, 500ms) linear;
+    stroke-dashoffset: 0;
+  }
+
+  &.pulse {
+    animation: long-press-pulse 0.4s ease;
+  }
+}
+
+@keyframes long-press-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba($success, 0.5);
+  }
+  40% {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 10px rgba($success, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba($success, 0);
+  }
+}
+
+.duration-field {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  width: 100%;
+  max-width: 320px;
+
+  &__label {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  &__value {
+    flex-shrink: 0;
+    min-width: 2.5rem;
+    text-align: right;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+  }
+
+  input[type="range"] {
+    flex: 1;
+    accent-color: $accent;
+    cursor: pointer;
+  }
+}
+
+.log-view {
+  @include demo.log-view;
+  width: 100%;
+  max-width: 320px;
+}

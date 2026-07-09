@@ -91,7 +91,7 @@ export default class Home {
       focus: 'Cycle Tab and Shift+Tab within a container — required for accessible modal dialogs.',
       concepts: ['querySelectorAll', 'KeyboardEvent', 'WCAG 2.4.3'],
       route: '/trap-focus',
-      state: 'WIP'
+      state: 'Done'
     },
     {
       id: '11',
@@ -99,7 +99,7 @@ export default class Home {
       focus: 'Emit after the user holds for a configurable threshold. Cancel if released early.',
       concepts: ['switchMap', 'timer', 'takeUntil', 'fromEvent'],
       route: '/long-press',
-      state: 'WIP'
+      state: 'Done'
     },
     {
       id: '12',
