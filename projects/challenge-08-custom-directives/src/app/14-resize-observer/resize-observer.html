@@ -1,0 +1,15 @@
+<app-demo-shell [title]="'resize observer'">
+  <div preview class="preview-box">
+
+    <div class="resize-box"
+         appResizeObserver
+         (resize)="dimensions.set($event)"
+         [class.full]="layoutMode() === 'Full'">
+      <span class="dimensions">{{ dimensions().width | number:'1.0-0' }} × {{ dimensions().height | number:'1.0-0' }}</span>
+      <span class="layout-mode">{{ layoutMode() }} Layout</span>
+    </div>
+
+    <p class="hint">Drag the bottom-right corner to resize.</p>
+
+  </div>
+</app-demo-shell>

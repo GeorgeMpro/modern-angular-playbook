@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header">
-    <span class="challenge-id">#{{ challenge().id }}</span>
+    <span class="challenge-id">#{{ index() }}</span>
     <span class="state-badge" [class.done]="challenge().state === 'Done'" [class.wip]="challenge().state === 'WIP'">
       {{ challenge().state }}
     </span>

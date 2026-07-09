@@ -10,4 +10,5 @@ import { ChallengeDescriptor } from '../../models/challenge.model';
 })
 export class ChallengeCard {
   readonly challenge = input.required<ChallengeDescriptor>();
+  readonly index = input.required<number>();
 }

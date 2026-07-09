@@ -1,0 +1,60 @@
+@use 'app/styles/demo-ui' as demo;
+@use 'app/styles/variables' as *;
+
+.display-container {
+  @include demo.demo-container;
+}
+
+.preview-box {
+  @include demo.preview-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.resize-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  width: 200px;
+  height: 120px;
+  min-width: 140px;
+  min-height: 90px;
+  max-width: 100%;
+  resize: both;
+  overflow: auto;
+  padding: $spacing-md;
+  background: var(--bg-primary);
+  border: 2px solid $accent;
+  border-radius: $radius-lg;
+  color: var(--text-primary);
+  transition: border-color $transition, background-color $transition;
+
+  &.full {
+    border-color: $success;
+    background: color-mix(in srgb, #{$success} 8%, var(--bg-primary));
+  }
+
+  .dimensions {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .layout-mode {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+  }
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
