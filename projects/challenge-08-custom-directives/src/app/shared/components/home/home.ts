@@ -23,23 +23,16 @@ export default class Home {
     {
       title: 'Animate On Scroll',
       focus: 'Add a CSS class when an element enters the viewport. Optionally repeat on re-entry.',
-      concepts: ['IntersectionObserver', 'class toggle', 'repeat option'],
+      concepts: ['IntersectionObserver', 'effect()', 'repeat option'],
       route: '/animate-on-scroll',
       state: 'Done'
-    },
-    {
-      title: 'Composition',
-      focus: 'Compose DebounceClick and CopyToClipboard onto a single component via hostDirectives.',
-      concepts: ['hostDirectives', 'inputs alias', 'directive-on-directive'],
-      route: '/composition',
-      state: 'WIP'
     },
     {
       title: 'Typed If',
       focus: 'Structural directive that narrows T | null to T inside the template block.',
       concepts: ['ngTemplateGuard', 'ngTemplateContextGuard', 'type narrowing'],
       route: '/typed-if',
-      state: 'WIP'
+      state: 'Done'
     },
     {
       title: 'Async',
@@ -72,7 +65,7 @@ export default class Home {
     {
       title: 'Permission',
       focus: 'Structural directive that shows or hides content based on the current user\'s role.',
-      concepts: ['ViewContainerRef', 'TemplateRef', 'createEmbeddedView'],
+      concepts: ['ViewContainerRef', 'TemplateRef', 'createEmbeddedView', 'effect()'],
       route: '/permission',
       state: 'Done'
     },
@@ -120,15 +113,15 @@ export default class Home {
     },
     {
       title: 'Auto Focus',
-      focus: 'Focus the host element after the first render — no ngAfterViewInit setTimeout hack.',
-      concepts: ['afterNextRender', 'ElementRef', 'focus()'],
+      focus: 'Auto-focus an element after render, composed with a FocusStatus directive via hostDirectives for a live focused/unfocused indicator.',
+      concepts: ['afterNextRender', 'hostDirectives', 'exportAs'],
       route: '/auto-focus',
       state: 'Done'
     },
     {
       title: 'Highlight',
       focus: 'Apply a background highlight colour to the host element, reacting to signal input changes.',
-      concepts: ['effect()', 'host style bindings', 'defaultColor'],
+      concepts: ['computed()', 'host style bindings', 'defaultColor'],
       route: '/' + ROUTE_PATHS.highlight,
       state: 'Done'
     },

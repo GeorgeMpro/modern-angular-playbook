@@ -1,0 +1,63 @@
+@use 'app/styles/demo-ui' as demo;
+@use 'app/styles/variables' as *;
+
+.controls {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.btn-trigger {
+  @include demo.btn-trigger;
+}
+
+.demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-lg;
+  padding: $spacing-xl 0;
+}
+
+.card {
+  flex: 1 1 240px;
+  padding: $spacing-md;
+  background: var(--bg-primary);
+  border-radius: $radius-lg;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+  }
+}
+
+.type-tag {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: $radius;
+  color: var(--accent);
+  background: rgba($accent, 0.12);
+}
+
+.field {
+  margin: 0 0 $spacing-sm;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+
+  strong {
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+}
+
+.empty {
+  margin: 0;
+  padding: $spacing-sm;
+  border: 1px dashed var(--border);
+  border-radius: $radius;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-style: italic;
+}

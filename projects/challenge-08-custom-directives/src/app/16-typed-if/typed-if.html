@@ -1,0 +1,44 @@
+<app-demo-shell [title]="'typed if'">
+  <div ngProjectAs="[controls]" class="controls">
+    <button type="button" class="btn-trigger" (click)="toggleUser()">
+      {{ user() ? 'Clear user' : 'Restore user' }}
+    </button>
+    <button type="button" class="btn-trigger" (click)="toggleOrder()">
+      {{ order() ? 'Clear order' : 'Restore order' }}
+    </button>
+  </div>
+
+  <div preview class="demo">
+
+    <section class="card">
+      <h2>User <span class="type-tag">T = User</span></h2>
+
+      <!-- bare form: let u binds $implicit -->
+      <p *appTypedIf="user(); let u" class="field">
+        <strong>Name:</strong> {{ u.name }}
+      </p>
+
+      <!-- named form: let u = appTypedIf binds the appTypedIf context key -->
+      <p *appTypedIf="user(); let u = appTypedIf" class="field">
+        <strong>Email:</strong> {{ u.email }}
+      </p>
+
+      @if (!user()) {
+        <p class="empty">appTypedIf rendered nothing — user is null</p>
+      }
+    </section>
+
+    <section class="card">
+      <h2>Order <span class="type-tag">T = Order</span></h2>
+
+      <p *appTypedIf="order(); let o" class="field">
+        <strong>#{{ o.id }}</strong> — ${{ o.total }}
+      </p>
+
+      @if (!order()) {
+        <p class="empty">appTypedIf rendered nothing — order is null</p>
+      }
+    </section>
+
+  </div>
+</app-demo-shell>

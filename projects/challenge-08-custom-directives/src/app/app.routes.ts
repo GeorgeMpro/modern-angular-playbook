@@ -16,7 +16,8 @@ export const ROUTE_PATHS = {
   longPress: 'long-press',
   animateOnScroll: 'animate-on-scroll',
   numbersOnly: 'numbers-only',
-  resizeObserver: 'resize-observer'
+  resizeObserver: 'resize-observer',
+  typedIf: 'typed-if',
 } as const;
 
 export const routes: Routes = [
@@ -36,6 +37,10 @@ export const routes: Routes = [
     path: ROUTE_PATHS.animateOnScroll,
     loadComponent: () => import('./12-animate-on-scroll/animate-on-scroll'),
     title: pathToTitle(ROUTE_PATHS.animateOnScroll)
+  }, {
+    path: ROUTE_PATHS.typedIf,
+    loadComponent: () => import('./16-typed-if/typed-if'),
+    title: pathToTitle(ROUTE_PATHS.typedIf)
   }, {
     path: ROUTE_PATHS.numbersOnly,
     loadComponent: () => import('./13-numbers-only/numbers-only'),
@@ -66,7 +71,7 @@ export const routes: Routes = [
     title: pathToTitle(ROUTE_PATHS.infiniteScroll)
   }, {
     path: ROUTE_PATHS.clickOutside,
-    loadComponent: () => import('./04-click-outside/./click-outside-demo'),
+    loadComponent: () => import('./04-click-outside/click-outside-demo'),
     title: pathToTitle(ROUTE_PATHS.clickOutside)
   }, {
     path: ROUTE_PATHS.copyToClipboard,
