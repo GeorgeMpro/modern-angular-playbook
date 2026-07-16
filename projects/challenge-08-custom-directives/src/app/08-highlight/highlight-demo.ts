@@ -1,4 +1,4 @@
-import {Component, signal, ChangeDetectionStrategy} from '@angular/core';
+import {Component} from '@angular/core';
 import {Highlight} from '../shared/directives/highlight';
 import {TitleCasePipe} from '@angular/common';
 import {DemoShell} from '../shared/components/demo-shell/demo-shell';
@@ -29,7 +29,6 @@ const COLORS: Record<string, string> = {
     DemoShell
   ],
   templateUrl: './highlight-demo.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './highlight-demo.scss',
 })
 export default class HighlightDemo {
@@ -37,6 +36,4 @@ export default class HighlightDemo {
   protected readonly colorsDisplay: Colors[] = Object.entries(COLORS).map(
     ([label, color]) => ({label, color})
   );
-
-  protected readonly color = signal<string>('');
 }

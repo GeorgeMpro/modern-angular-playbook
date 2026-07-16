@@ -9,7 +9,7 @@ import {DemoShell} from '../shared/components/demo-shell/demo-shell';
     DemoShell
   ],
   templateUrl: './debounce-click-demo.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './debounce-click-demo.scss',
 })
 export default class DebounceClickDemo {

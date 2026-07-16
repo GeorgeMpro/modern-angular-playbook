@@ -4,7 +4,6 @@
       @for (c of colorsDisplay; track c.label) {
         <label [appHighlight]="c.color"
                defaultColor="violet"
-               for="color-option"
                class="color-option">
           <span>{{ c.label |titlecase }}</span>
         </label>
