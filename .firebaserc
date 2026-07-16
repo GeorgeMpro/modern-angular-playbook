@@ -13,6 +13,9 @@
         ],
         "ch-ng-template": [
           "modern-angular-ch-ng-template"
+        ],
+        "ch-directives": [
+          "modern-angular-ch-directives"
         ]
       }
     }

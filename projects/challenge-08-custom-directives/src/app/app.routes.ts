@@ -18,6 +18,7 @@ export const ROUTE_PATHS = {
   numbersOnly: 'numbers-only',
   resizeObserver: 'resize-observer',
   typedIf: 'typed-if',
+  async:'async',
 } as const;
 
 export const routes: Routes = [
@@ -41,6 +42,10 @@ export const routes: Routes = [
     path: ROUTE_PATHS.typedIf,
     loadComponent: () => import('./16-typed-if/typed-if'),
     title: pathToTitle(ROUTE_PATHS.typedIf)
+  }, {
+    path: ROUTE_PATHS.async,
+    loadComponent: () => import('./17-async/async'),
+    title: pathToTitle(ROUTE_PATHS.async)
   }, {
     path: ROUTE_PATHS.numbersOnly,
     loadComponent: () => import('./13-numbers-only/numbers-only'),

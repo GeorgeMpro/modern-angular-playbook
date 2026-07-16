@@ -1,6 +1,7 @@
 import {Component, signal} from '@angular/core';
 import {DemoShell} from '../shared/components/demo-shell/demo-shell';
 import {AppTypedIf} from '../shared/directives/app-typed-if';
+import {TitleCasePipe} from '@angular/common';
 
 export interface User {
   name: string;
@@ -19,7 +20,8 @@ const INITIAL_ORDER: Order = {id: 'ORD-1029', total: 84.5};
   selector: 'app-typed-if',
   imports: [
     DemoShell,
-    AppTypedIf
+    AppTypedIf,
+    TitleCasePipe
   ],
   templateUrl: './typed-if.html',
   styleUrl: './typed-if.scss',

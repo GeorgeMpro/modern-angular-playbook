@@ -32,6 +32,17 @@
           "destination": "/index.html"
         }
       ]
+    },
+    {
+      "target": "ch-directives",
+      "public": "dist/challenge-08-custom-directives/browser",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     }
   ]
 }

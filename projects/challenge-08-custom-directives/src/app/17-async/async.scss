@@ -1,0 +1,65 @@
+@use 'app/styles/demo-ui' as demo;
+@use 'app/styles/variables' as *;
+
+.controls {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.btn-trigger {
+  @include demo.btn-trigger;
+}
+
+.demo {
+  padding: $spacing-xl 0;
+}
+
+.card {
+  padding: $spacing-md;
+  background: var(--bg-primary);
+  border-radius: $radius-lg;
+  min-height: 6rem;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+
+  &--error {
+    color: $error;
+  }
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: $accent;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.user-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+
+  li {
+    padding: $spacing-xs $spacing-md;
+    background: var(--bg-secondary);
+    border-radius: $radius;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+  }
+}

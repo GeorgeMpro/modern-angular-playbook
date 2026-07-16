@@ -39,7 +39,7 @@ export default class Home {
       focus: 'Subscribe to an Observable and expose $implicit, loading, and error as typed context.',
       concepts: ['ngTemplateContextGuard', 'toObservable', 'switchMap', 'patch context'],
       route: '/async',
-      state: 'WIP'
+      state: 'Done'
     },
     {
       title: 'Numbers Only',

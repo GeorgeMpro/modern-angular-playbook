@@ -15,7 +15,7 @@
 
       <!-- bare form: let u binds $implicit -->
       <p *appTypedIf="user(); let u" class="field">
-        <strong>Name:</strong> {{ u.name }}
+        <strong>Name:</strong> {{ u.name |titlecase }}
       </p>
 
       <!-- named form: let u = appTypedIf binds the appTypedIf context key -->

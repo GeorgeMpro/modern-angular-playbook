@@ -1,0 +1,27 @@
+<app-demo-shell [title]="'async'">
+  <div ngProjectAs="[controls]" class="controls">
+    <button type="button" class="btn-trigger" (click)="reload()">Reload users</button>
+    <button type="button" class="btn-trigger" (click)="simulateError()">Simulate error</button>
+  </div>
+
+  <div preview class="demo">
+    <section class="card">
+      <ng-container *appAsync="usersSource(); let users; let loading = loading; let err = error">
+        @if (loading) {
+          <p class="status status--loading">
+            <span class="spinner"></span>
+            Loading…
+          </p>
+        } @else if (err) {
+          <p class="status status--error">{{ err }}</p>
+        } @else {
+          <ul class="user-list">
+            @for (u of users; track u.id) {
+              <li>{{ u.name | titlecase }}</li>
+            }
+          </ul>
+        }
+      </ng-container>
+    </section>
+  </div>
+</app-demo-shell>

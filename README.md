@@ -6,10 +6,48 @@ A collection of hands-on Angular 22 challenges built to master modern framework 
 
 ## Contents
 
+- [Challenge 08 — Custom Directives](#challenge-08--custom-directives)
 - [Challenge 11 — Centralized Error Handling](#challenge-11--centralized-error-handling)
 - [Challenge 12 — Reactive Design Patterns](#challenge-12--reactive-design-patterns)
 - [Custom RxJS Operators](#custom-rxjs-operators)
 - [Challenge — Template Composition](#challenge--template-composition)
+
+---
+
+## Challenge 08 — Custom Directives
+
+**Focus:** Attribute and structural directives — DOM APIs, `ViewContainerRef`/`TemplateRef`, generic type narrowing, host bindings
+
+**Project:** `challenge-08-custom-directives`
+**Live:** https://modern-angular-ch-directives.web.app
+
+```bash
+ng serve challenge-08-custom-directives
+```
+
+### Directives
+
+| # | Name | Concept | State |
+|---|------|---------|-------|
+| 01 | `appLazyLoad` | IntersectionObserver, lazy image loading | Done |
+| 02 | `appDebounceClick` | `outputFromObservable`, `Subject`, `debounce` | Done |
+| 03 | `appInfiniteScroll` | `throttleTime`, `afterNextRender`, reactive `BehaviorSubject` state | Done |
+| 04 | `appClickOutside` | `document` event listener, `ElementRef` | Done |
+| 05 | `appCopyToClipboard` | Clipboard API, async output | Done |
+| 06 | `appTooltip` | Renderer2, dynamic element creation, positioning | Done |
+| 07 | `appAutoFocus` | `afterNextRender`, `ElementRef`, `hostDirectives` composition with `FocusStatus` | Done |
+| 08 | `appHighlight` | `effect()`, computed font contrast, `host` style bindings | Done |
+| 09 | `appPermission` | Structural directive, `ViewContainerRef`, `TemplateRef`, `InjectionToken` | Done |
+| 10 | `appTrapFocus` | Keyboard event handling, `querySelectorAll`, focus management | Done |
+| 11 | `appLongPress` | `fromEvent`, `switchMap`, `timer`, touch + mouse events | Done |
+| 12 | `appAnimateOnScroll` | IntersectionObserver, CSS class toggle, fire-once vs repeat | Done |
+| 13 | `appNumbersOnly` | Keyboard event filtering, clipboard paste interception | Done |
+| 14 | `appResizeObserver` | ResizeObserver API, element-level size tracking | Done |
+| 16 | `appTypedIf` | `ngTemplateGuard_*`, `ngTemplateContextGuard`, generic structural directive, compile-time type narrowing | Done |
+| 17 | `appAsync` | `ngTemplateContextGuard`, generic `Observable<T>` structural directive, loading/error state | Done |
+| 18 | `appExitConfirm` | `beforeunload`, `window` host listener, `CanDeactivate` complement | Not started |
+
+Directive 15 (`hostDirectives` composition) was cut — redundant with #07's `AutoFocus`/`FocusStatus` composition, same technique with no new demo value.
 
 ---
 
