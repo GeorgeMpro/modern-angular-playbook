@@ -1,4 +1,5 @@
 import {Routes} from '@angular/router';
+import {exitConfirmGuard} from './shared/guards/exit-confirm-guard';
 
 
 export const ROUTE_PATHS = {
@@ -18,7 +19,8 @@ export const ROUTE_PATHS = {
   numbersOnly: 'numbers-only',
   resizeObserver: 'resize-observer',
   typedIf: 'typed-if',
-  async:'async',
+  async: 'async',
+  exitConfirm: 'exit-confirm',
 } as const;
 
 export const routes: Routes = [
@@ -94,6 +96,11 @@ export const routes: Routes = [
     path: ROUTE_PATHS.highlight,
     loadComponent: () => import('./08-highlight/highlight-demo'),
     title: pathToTitle(ROUTE_PATHS.highlight)
+  }, {
+    path: ROUTE_PATHS.exitConfirm,
+    loadComponent: () => import('./18-exit-confirm/exit-confirm'),
+    title: pathToTitle(ROUTE_PATHS.exitConfirm),
+    canDeactivate: [exitConfirmGuard]
   },
 ];
 

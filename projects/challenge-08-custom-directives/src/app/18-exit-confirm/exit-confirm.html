@@ -1,0 +1,28 @@
+<app-demo-shell [title]="'exit confirm'">
+  <div ngProjectAs="[controls]" class="controls">
+    <button type="button" class="btn-trigger" (click)="resetForm()">
+      Reset form
+    </button>
+  </div>
+
+  <div preview class="demo">
+    <form appExitConfirm [dirty]="isDirty()" class="login-form">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" [formField]="loginForm.email">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" [formField]="loginForm.password">
+      </div>
+    </form>
+
+    <p class="status" [class.status--dirty]="isDirty()">
+      @if (isDirty()) {
+        Unsaved changes — try closing the tab or navigating Home
+      } @else {
+        No changes
+      }
+    </p>
+  </div>
+</app-demo-shell>

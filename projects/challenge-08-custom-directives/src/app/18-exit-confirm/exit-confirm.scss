@@ -1,0 +1,65 @@
+@use 'app/styles/demo-ui' as demo;
+@use 'app/styles/variables' as *;
+
+.controls {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.btn-trigger {
+  @include demo.btn-trigger;
+}
+
+.demo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-xl 0;
+  max-width: 320px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  input {
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid var(--border);
+    border-radius: $radius;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-color: var(--accent);
+    }
+  }
+}
+
+.status {
+  margin: 0;
+  padding: $spacing-sm;
+  border-radius: $radius;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+
+  &--dirty {
+    color: $warning;
+  }
+}

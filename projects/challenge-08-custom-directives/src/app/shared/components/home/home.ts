@@ -130,7 +130,7 @@ export default class Home {
       focus: 'Show the browser\'s native Leave site? dialog on tab close or refresh when a form is dirty.',
       concepts: ['window:beforeunload', 'event.preventDefault()', 'CanDeactivate complement'],
       route: '/exit-confirm',
-      state: 'WIP'
+      state: 'Done'
     },
   ]);
 }

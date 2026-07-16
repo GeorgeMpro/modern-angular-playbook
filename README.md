@@ -45,7 +45,7 @@ ng serve challenge-08-custom-directives
 | 14 | `appResizeObserver` | ResizeObserver API, element-level size tracking | Done |
 | 16 | `appTypedIf` | `ngTemplateGuard_*`, `ngTemplateContextGuard`, generic structural directive, compile-time type narrowing | Done |
 | 17 | `appAsync` | `ngTemplateContextGuard`, generic `Observable<T>` structural directive, loading/error state | Done |
-| 18 | `appExitConfirm` | `beforeunload`, `window` host listener, `CanDeactivate` complement | Not started |
+| 18 | `appExitConfirm` | `beforeunload`, `window` host listener, `CanDeactivate` complement | Done |
 
 Directive 15 (`hostDirectives` composition) was cut — redundant with #07's `AutoFocus`/`FocusStatus` composition, same technique with no new demo value.
 
