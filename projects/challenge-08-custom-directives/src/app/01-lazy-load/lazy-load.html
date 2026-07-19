@@ -1,4 +1,5 @@
-<section class="gallery" appNavArrows appInfiniteScroll [windowScroll]="true" (scrollEnd)="onScrollEnd()">
+<app-arrow-navigation/>
+<section class="gallery"  appInfiniteScroll [windowScroll]="true" (scrollEnd)="onScrollEnd()">
   @for (pic of pictures(); track pic.id) {
     <figure class="card"
             [class.error]="errorIds().has(pic.id)">

@@ -1,11 +1,11 @@
 import {Component, inject} from '@angular/core';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
-import {ThemeToggle} from 'ui-theme';
+import {ArrowNavigation, ThemeToggle} from 'ui-theme';
 import {PageTitleStrategy} from './shared/title-strategy';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ThemeToggle],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ThemeToggle, ArrowNavigation],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

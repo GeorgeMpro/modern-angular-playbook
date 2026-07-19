@@ -6,6 +6,8 @@
 </header>
 
 <main>
+
+  <app-arrow-navigation/>
   @if (titleStrategy.currentTitle() && titleStrategy.currentTitle() !== 'Home') {
     <h2>{{ titleStrategy.currentTitle() }}</h2>
   }

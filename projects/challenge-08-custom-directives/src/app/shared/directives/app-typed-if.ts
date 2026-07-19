@@ -11,7 +11,7 @@ export interface TypedIfContext<T> {
   selector: '[appTypedIf]',
 })
 export class AppTypedIf<T> {
-  private readonly vcr = inject(ViewContainerRef);
+  private readonly viewContainerRef = inject(ViewContainerRef);
   private readonly templateRef = inject(TemplateRef<TypedIfContext<T>>);
 
   readonly appTypedIf = input<T | null | undefined>();
@@ -27,11 +27,11 @@ export class AppTypedIf<T> {
 
   constructor() {
     effect(() => {
-      this.vcr.clear();
+      this.viewContainerRef.clear();
 
       const parameter = this.appTypedIf();
       if (parameter) {
-        this.vcr.createEmbeddedView(this.templateRef, {
+        this.viewContainerRef.createEmbeddedView(this.templateRef, {
           $implicit: parameter,
           appTypedIf: parameter
         });
