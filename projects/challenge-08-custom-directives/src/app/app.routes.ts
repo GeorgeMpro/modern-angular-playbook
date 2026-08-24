@@ -26,7 +26,7 @@ export const ROUTE_PATHS = {
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: ROUTE_PATHS.home,
     pathMatch: 'full'
   }, {
     path: ROUTE_PATHS.home,
@@ -101,7 +101,10 @@ export const routes: Routes = [
     loadComponent: () => import('./18-exit-confirm/exit-confirm'),
     title: pathToTitle(ROUTE_PATHS.exitConfirm),
     canDeactivate: [exitConfirmGuard]
-  },
+  }, {
+    path: '**',
+    redirectTo: ROUTE_PATHS.home
+  }
 ];
 
 export function pathToTitle(path: string): string {

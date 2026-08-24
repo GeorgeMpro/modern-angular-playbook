@@ -1,48 +1,38 @@
 # Challenge: Angular Testing
 
-**Difficulty:** Hard
-**Angular Version:** 22+
-**Focus:** Pipes, attribute directives, structural directives, HTTP interceptors, guards, RxJS marble testing, CDK harnesses, custom harnesses
+**Difficulty:** Hard **Angular Version:** 22+ **Focus:** Pipes, attribute directives, structural directives, HTTP interceptors, guards, RxJS marble testing, CDK harnesses, custom harnesses
 
 ---
 
 ## Context
 
-You have 500+ tests in production code. You know `fakeAsync`, `tick`, `spyOn`, integration tests, and browser API mocking. This challenge targets the specific gaps that separate mid from senior on testing:
-
-- You've never used `TestScheduler` marble syntax
-- You've never written or used a CDK component harness
-- You've tested directives indirectly — not with `By.directive()` + host component pattern
-- You've never tested an HTTP interceptor with `HttpTestingController`
-- You've never tested a functional guard with `runInInjectionContext`
-
 **There is no new app to build.** Every section uses code that already exists across the challenges repo. You're writing tests for real code you already wrote.
 
-| Section | System Under Test | Challenge |
-|---|---|---|
-| Pipe | New `AppTruncatePipe` | New (warm-up) |
-| Attribute directives | `appHighlight`, `appClickOutside`, `appNumbersOnly` | Ch08 |
-| Structural directive | `appPermission` | Ch08 |
-| Marble testing | `retryOnNetworkError`, `retryWithBackoff`, `gatherArray` | Ch11, Ch12 |
-| HTTP interceptor | `loginInterceptor` | Ch07 |
-| Guards | `authGuard`, `roleGuard` | Ch07 |
-| Service with timers | `ToastService` | Ch11 |
-| CDK harnesses | `DemoShell` | Ch08 |
-| Custom harness | `DemoShellHarness` | Ch08 |
+| Section              | System Under Test                                        | Challenge     |
+|----------------------|----------------------------------------------------------|---------------|
+| Pipe                 | New `AppTruncatePipe`                                    | New (warm-up) |
+| Attribute directives | `appHighlight`, `appClickOutside`, `appNumbersOnly`      | Ch08          |
+| Structural directive | `appPermission`                                          | Ch08          |
+| Marble testing       | `retryOnNetworkError`, `retryWithBackoff`, `gatherArray` | Ch11, Ch12    |
+| HTTP interceptor     | `loginInterceptor`                                       | Ch07          |
+| Guards               | `authGuard`, `roleGuard`                                 | Ch07          |
+| Service with timers  | `ToastService`                                           | Ch11          |
+| CDK harnesses        | `DemoShell`                                              | Ch08          |
+| Custom harness       | `DemoShellHarness`                                       | Ch08          |
 
 ---
 
 ## What's New vs What You Already Know
 
-| Already done (english-games) | New in this challenge |
-|---|---|
-| Service testing with TestBed | Marble testing with `TestScheduler.run()` |
-| `fakeAsync` + `tick` | `By.directive()` + host component pattern |
-| Browser API mocking | Structural directive DOM assertions |
-| Integration tests | CDK component harnesses |
-| `spyOn` + `callThrough` | Creating a custom harness |
-| Data-testid DOM queries | `HttpTestingController` |
-| Scenarios array | `runInInjectionContext` for functional guards |
+| Already done (english-games) | New in this challenge                         |
+|------------------------------|-----------------------------------------------|
+| Service testing with TestBed | Marble testing with `TestScheduler.run()`     |
+| `fakeAsync` + `tick`         | `By.directive()` + host component pattern     |
+| Browser API mocking          | Structural directive DOM assertions           |
+| Integration tests            | CDK component harnesses                       |
+| `spyOn` + `callThrough`      | Creating a custom harness                     |
+| Data-testid DOM queries      | `HttpTestingController`                       |
+| Scenarios array              | `runInInjectionContext` for functional guards |
 
 ---
 
@@ -80,6 +70,7 @@ Pipes are pure functions — `transform(value, ...args)` is the entire API. `Tes
 Create a minimal host component **inside the spec file** that applies the directive. This is the standard approach — don't repurpose a real component:
 
 ```ts
+
 @Component({
   template: `<p [appHighlight]="color" [defaultColor]="'yellow'">text</p>`
 })
@@ -91,6 +82,7 @@ class HostComponent {
 ### Key APIs
 
 **`By.directive(Highlight)`** — finds elements with that directive applied, regardless of element type:
+
 ```ts
 const el = fixture.debugElement.query(By.directive(Highlight));
 ```
@@ -106,6 +98,7 @@ const el = fixture.debugElement.query(By.directive(Highlight));
 ### Tests to Write
 
 `appHighlight`:
+
 - Background is empty before hover
 - Background is set to the input on `mouseenter`
 - Background is cleared on `mouseleave`
@@ -113,10 +106,12 @@ const el = fixture.debugElement.query(By.directive(Highlight));
 - `effect()` re-runs when `appHighlight` input changes (update `color`, call `detectChanges()`, assert new bg)
 
 `appClickOutside`:
+
 - `clickOutside` emits when clicking outside the host element
 - `clickOutside` does NOT emit when clicking inside
 
 `appNumbersOnly`:
+
 - Digit keystrokes pass through
 - Letter keystrokes call `event.preventDefault()`
 - Paste event strips non-numeric characters and sets cleaned value
@@ -172,42 +167,45 @@ expect(fixture.debugElement.query(By.css('button'))).not.toBeNull();
 ### Setup
 
 ```ts
-import { TestScheduler } from 'rxjs/testing';
+import {TestScheduler} from 'rxjs/testing';
 
 const testScheduler = new TestScheduler((actual, expected) => {
   expect(actual).toEqual(expected);
 });
 
-testScheduler.run(({ hot, cold, expectObservable }) => {
+testScheduler.run(({hot, cold, expectObservable}) => {
   // virtual time — timer(1000) runs instantly
 });
 ```
 
 ### Marble Syntax
 
-| Symbol | Meaning |
-|---|---|
-| `-` | 1 virtual frame |
-| `a`, `b`, `c` | emitted value (mapped in values dict) |
-| `\|` | completion |
-| `#` | error |
-| `( )` | synchronous emissions in the same frame |
-| `1000ms a` | 1000ms delay then emit `a` |
+| Symbol        | Meaning                                 |
+|---------------|-----------------------------------------|
+| `-`           | 1 virtual frame                         |
+| `a`, `b`, `c` | emitted value (mapped in values dict)   |
+| `\|`          | completion                              |
+| `#`           | error                                   |
+| `( )`         | synchronous emissions in the same frame |
+| `1000ms a`    | 1000ms delay then emit `a`              |
 
 ### Tests to Write
 
 **`retryWithBackoff` (Ch12)** — `retry({ count, delay: (err, n) => timer(baseDelayMs * n) })`:
+
 - Succeeds on first try → no retries
 - Fails twice then succeeds → emits after two delays (`baseDelayMs * 1`, `baseDelayMs * 2`)
 - Exhausts all retries → errors
 
 **`retryOnNetworkError` (Ch11)** — retries only on 503/500/0, with exponential backoff (`Math.pow(2, n-1) * 1000`):
+
 - 503 error → retries with exponential delay
 - 404 error → does NOT retry, rethrows immediately
 - 4 consecutive 503s → errors after exhausting retries
 - Backoff is exponential: 1s, 2s, 4s, 8s
 
 **`gatherArray` (Ch12)** — `scan` that accumulates emissions into an array:
+
 - Three emissions → produces `[a]`, `[a,b]`, `[a,b,c]`
 - Error mid-stream → `catchError(() => EMPTY)` — no error propagated, stream just ends
 
@@ -282,11 +280,13 @@ No routing setup needed. `runInInjectionContext` gives the function access to th
 ### Tests to Write
 
 **`authGuard`**:
+
 - Returns `true` when token exists
 - Navigates to `/login` and returns `false` when no token
 - Note: the current implementation uses `router.navigate()` (side effect) rather than returning a `UrlTree`. Test both the return value AND that `router.navigate` was called with `['login']`.
 
 **`roleGuard`**:
+
 - Returns `true` when user role matches required role
 - Returns a `UrlTree` pointing to `/forbidden` when role doesn't match
 - `UrlTree` is the cleaner approach — assert `result instanceof UrlTree` and check `result.toString()`
@@ -299,6 +299,7 @@ expect(result instanceof UrlTree).toBeTrue();
 ```
 
 **`RouterTestingHarness`** — end-to-end navigation test:
+
 ```ts
 const harness = await RouterTestingHarness.create();
 await harness.navigateByUrl('/admin');
@@ -333,7 +334,7 @@ Note: the constructor pre-loads `dummyMessages`. Either spy to prevent this or a
 
 ### What You'll Learn
 
-Testing services that own timers requires `fakeAsync`/`tick`. Signal assertions are synchronous — read `service.toasts()` directly. `discardPeriodicTasks()` clears any remaining timers in a `fakeAsync` zone to avoid "1 timer(s) still in the queue" errors.
+Testing services that own timers requires `fakeAsync`/`tick`. Signal assertions are synchronous — read `service.toasts()` directly. `discardPeriodicTasks()` clears any remaining timers in a `fakeAsync` zone to avoid "1 timer (s) still in the queue" errors.
 
 ---
 
@@ -346,7 +347,7 @@ Testing services that own timers requires `fakeAsync`/`tick`. Signal assertions 
 ### Setup
 
 ```ts
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import {TestbedHarnessEnvironment} from '@angular/cdk/testing/testbed';
 
 const loader = TestbedHarnessEnvironment.loader(fixture);
 ```
@@ -359,8 +360,9 @@ const loader = TestbedHarnessEnvironment.loader(fixture);
 - `loader.getHarness(SomeHarness.with({ title: 'Highlight' }))` — filtered by predicate
 
 `parallel()` runs multiple async harness calls simultaneously:
+
 ```ts
-import { parallel } from '@angular/cdk/testing';
+import {parallel} from '@angular/cdk/testing';
 
 const [title, hasControls] = await parallel(() => [
   shell.getTitleText(),
@@ -389,7 +391,7 @@ Harnesses test **intent** not **structure**. When markup changes, the harness ab
 ### Structure
 
 ```ts
-import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import {ComponentHarness, HarnessPredicate} from '@angular/cdk/testing';
 
 export class DemoShellHarness extends ComponentHarness {
   static hostSelector = 'app-demo-shell';
@@ -455,18 +457,18 @@ export class DemoShellHarness extends ComponentHarness {
 
 ## Pattern Quick Reference
 
-| Topic | Key API | Source |
-|---|---|---|
-| Pipe | `new AppTruncatePipe().transform(value, args)` | New |
-| Attribute directive | `By.directive()`, `injector.get()`, `triggerEventHandler()` | Ch08 |
-| Structural directive | `query(By.css(...))` → `toBeNull()` / `not.toBeNull()` | Ch08 |
-| Marble testing | `TestScheduler.run()`, `hot()`, `cold()`, `expectObservable()` | Ch11, Ch12 |
-| HTTP interceptor | `HttpTestingController`, `expectOne()`, `req.flush()`, `controller.verify()` | Ch07 |
-| Guard | `TestBed.runInInjectionContext(() => guard(...))`, `UrlTree` | Ch07 |
-| Routing | `RouterTestingHarness.create()`, `harness.navigateByUrl()` | Ch07 |
-| Service/timers | `fakeAsync`, `tick(duration)`, signal read, `discardPeriodicTasks()` | Ch11 |
-| Using harnesses | `TestbedHarnessEnvironment.loader(fixture)`, `getHarness()`, `parallel()` | Ch08 |
-| Creating harnesses | `ComponentHarness`, `locatorFor()`, `HarnessPredicate` | Ch08 |
+| Topic                | Key API                                                                      | Source     |
+|----------------------|------------------------------------------------------------------------------|------------|
+| Pipe                 | `new AppTruncatePipe().transform(value, args)`                               | New        |
+| Attribute directive  | `By.directive()`, `injector.get()`, `triggerEventHandler()`                  | Ch08       |
+| Structural directive | `query(By.css(...))` → `toBeNull()` / `not.toBeNull()`                       | Ch08       |
+| Marble testing       | `TestScheduler.run()`, `hot()`, `cold()`, `expectObservable()`               | Ch11, Ch12 |
+| HTTP interceptor     | `HttpTestingController`, `expectOne()`, `req.flush()`, `controller.verify()` | Ch07       |
+| Guard                | `TestBed.runInInjectionContext(() => guard(...))`, `UrlTree`                 | Ch07       |
+| Routing              | `RouterTestingHarness.create()`, `harness.navigateByUrl()`                   | Ch07       |
+| Service/timers       | `fakeAsync`, `tick(duration)`, signal read, `discardPeriodicTasks()`         | Ch11       |
+| Using harnesses      | `TestbedHarnessEnvironment.loader(fixture)`, `getHarness()`, `parallel()`    | Ch08       |
+| Creating harnesses   | `ComponentHarness`, `locatorFor()`, `HarnessPredicate`                       | Ch08       |
 
 ---
 

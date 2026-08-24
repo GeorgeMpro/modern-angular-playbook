@@ -15,9 +15,7 @@ export class Panel {
 
   readonly theme = input<Theme>('primary');
 
-
   readonly headerTemplate = input<TemplateRef<void>>();
+
   readonly footerTemplate = contentChild<TemplateRef<void>>('footer');
-
-
 }

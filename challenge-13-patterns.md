@@ -29,6 +29,13 @@ src/app/
 ├── 06-strategy-di/
 ├── 07-state-machine/
 ├── 08-typescript-types/
+├── 09-control-value-accessor/
+├── 10-factory/
+├── 11-builder/
+├── 12-decorator/
+├── 13-adapter/
+├── 14-singleton/
+├── 15-observer/
 └── app.ts
 ```
 
@@ -459,6 +466,272 @@ The Command Pattern's real power is reversibility — separating "what to do" fr
 
 ---
 
+## Challenge 10: Custom Form Control (ControlValueAccessor)
+
+**Pattern:** ControlValueAccessor
+**Concepts:** `NG_VALUE_ACCESSOR`, `writeValue`, `registerOnChange`, `registerOnTouched`, `forwardRef`
+
+### The Problem
+
+You have a `StarRatingComponent` with `@Input() value` and `@Output() valueChange`. It works standalone, but it can't be used with `formControlName`, doesn't participate in form validation/dirty/touched state, and doesn't reset when the parent form calls `form.reset()`.
+
+### Task
+
+Implement `ControlValueAccessor` and register it as an `NG_VALUE_ACCESSOR`:
+
+```ts
+providers: [
+  {
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => StarRatingComponent),
+    multi: true,
+  },
+],
+```
+
+```ts
+export class StarRatingComponent implements ControlValueAccessor {
+  private onChange: (value: number) => void = () => {};
+  private onTouched: () => void = () => {};
+
+  writeValue(value: number): void { /* forms → component: sync external value in */ }
+  registerOnChange(fn: (value: number) => void): void { this.onChange = fn; }
+  registerOnTouched(fn: () => void): void { this.onTouched = fn; }
+  setDisabledState?(isDisabled: boolean): void { /* disable interaction */ }
+}
+```
+
+### Behavior
+
+- Works interchangeably with `[formControl]` and `formControlName`
+- `form.reset()` visibly resets the displayed stars
+- Clicking a star calls the registered `onChange`, updating the form model
+- `form.disable()` disables interaction with the stars
+
+### What you'll learn
+
+`ControlValueAccessor` is the contract Angular Forms uses to talk to *any* custom input — `writeValue` is forms→component, the registered `onChange` callback is component→forms. This is exactly how `mat-select`, date pickers, and every third-party form control plug into `formControlName` without Angular knowing anything about their internals.
+
+### Hint
+
+`onChange` starts as a no-op. Angular only calls `registerOnChange` once, during setup — until then, calling the stored `onChange` safely does nothing.
+
+---
+
+## Challenge 11: Factory Pattern
+
+**Pattern:** Factory Method
+**Concepts:** Encapsulated instantiation, polymorphism via a common interface, Open/Closed Principle
+
+### The Problem
+
+You have three notification types — `EmailNotification`, `SmsNotification`, `PushNotification` — each with different constructor args. `new EmailNotification(...)` calls are scattered across a dozen call sites. Adding a fourth type means hunting down every one.
+
+### Task
+
+```ts
+export interface Notification {
+  send(): void;
+}
+
+export class NotificationFactory {
+  static create(type: 'email' | 'sms' | 'push', payload: NotificationPayload): Notification {
+    // decide which concrete class to instantiate, return it typed as Notification
+  }
+}
+```
+
+Call sites only ever do `NotificationFactory.create('email', payload).send()` — never `new EmailNotification(...)` directly.
+
+### Behavior
+
+- No call site outside the factory imports a concrete `Notification` class
+- Adding a new type changes only the factory's internals
+- Each concrete class is independently unit-testable
+
+### What you'll learn
+
+Factory centralizes the "which concrete class" decision. Callers depend on the `Notification` interface, never a constructor — that's what makes the concrete classes swappable and mockable in tests.
+
+---
+
+## Challenge 12: Builder Pattern
+
+**Pattern:** Builder
+**Concepts:** Fluent method chaining, immutable output, avoiding telescoping constructors
+
+### The Problem
+
+An `HttpRequestConfig` has 8 optional fields (headers, params, timeout, retries, cache, withCredentials, responseType, auth). A single object-literal call site covering every combination is unreadable and error-prone.
+
+### Task
+
+```ts
+class RequestConfigBuilder {
+  private config: Partial<RequestConfig> = {};
+
+  withHeader(key: string, value: string): this { /* ... */ return this; }
+  withTimeout(ms: number): this { /* ... */ return this; }
+  withRetries(count: number): this { /* ... */ return this; }
+  build(): Readonly<RequestConfig> { /* validate required fields, freeze, return */ }
+}
+```
+
+Usage: `new RequestConfigBuilder().withTimeout(5000).withRetries(3).build()`
+
+### Behavior
+
+- Each `.with*` method returns `this` so calls chain in any order
+- `.build()` returns a frozen/readonly object — no mutation after construction
+- `.build()` throws if a required field was never set
+
+### What you'll learn
+
+Builder trades a constructor with 8 optional params for readable, chainable, order-independent construction. Returning `this` (not the concrete class name) is what keeps the chain typed correctly if the builder is ever subclassed.
+
+---
+
+## Challenge 13: Decorator Pattern (functional, not the `@Decorator` syntax)
+
+**Pattern:** Decorator
+**Concepts:** Higher-order functions wrapping behavior transparently, composability, same signature in/out
+
+### The Problem
+
+`fetchData(url): Promise<T>` is used everywhere. Some call sites now need logging, some need retry-on-failure, some need caching — but never all three, and never by editing `fetchData` itself.
+
+### Task
+
+```ts
+function withLogging<T extends (...args: any[]) => Promise<any>>(fn: T): T { /* wrap, log before/after */ }
+function withRetry<T extends (...args: any[]) => Promise<any>>(fn: T, attempts: number): T { /* wrap, retry on throw */ }
+```
+
+Compose: `const loggedRetryFetch = withLogging(withRetry(fetchData, 3));`
+
+### Behavior
+
+- `fetchData` itself is never modified
+- Decorators compose in any order
+- Each decorator is independently testable in isolation
+
+### What you'll learn
+
+This is literally what TS's own `@Decorator` syntax does at the class/method level — `@Component`, `@Injectable` wrap a class with added behavior without touching its body. Same pattern, two different application points: runtime function-wrapping here vs. class-declaration-time there.
+
+---
+
+## Challenge 14: Adapter Pattern
+
+**Pattern:** Adapter
+**Concepts:** Isolating third-party shape changes, translation boundary
+
+### The Problem
+
+A third-party payment SDK returns `{ txn_id: string; amt_cents: number; ok: boolean }`. Your app's internal model is `PaymentResult { transactionId: string; amount: number; success: boolean }`. Call sites currently read the SDK's raw shape directly.
+
+### Task
+
+```ts
+class PaymentSdkAdapter {
+  toPaymentResult(raw: SdkResponse): PaymentResult {
+    // translate field names/units (e.g. cents → currency amount)
+  }
+}
+```
+
+All app code only ever touches `PaymentResult` — the adapter is the one place that knows the SDK's raw shape exists.
+
+### Behavior
+
+- If the SDK changes its response shape/field names, only the adapter changes
+- No `raw.txn_id` or `raw.amt_cents` appears anywhere outside the adapter
+
+### What you'll learn
+
+Adapter is a translation boundary — it isolates your domain model from a vendor's API design so a vendor change doesn't ripple through the whole app.
+
+---
+
+## Challenge 15: Singleton — Spotting the Anti-Pattern
+
+**Pattern:** Singleton
+**Concepts:** Single shared instance, DI-provided singletons vs. hand-rolled static-instance singletons
+
+### The Problem
+
+A teammate wrote this Angular service:
+
+```ts
+@Injectable()
+export class ConfigService {
+  private static instance: ConfigService;
+  static getInstance(): ConfigService {
+    if (!ConfigService.instance) {
+      ConfigService.instance = new ConfigService();
+    }
+    return ConfigService.instance;
+  }
+  private constructor() {}
+}
+```
+
+Called via `ConfigService.getInstance()` throughout the app.
+
+### Task
+
+Identify what's wrong with this and rewrite it the Angular-idiomatic way — `@Injectable({ providedIn: 'root' })`, constructor/`inject()` injection, no static instance, no private constructor.
+
+### Behavior
+
+- The rewritten service is injected via `inject(ConfigService)` or a constructor param, never called as a static method
+- You can explain (in your own words) why the hand-rolled version is harder to test — `TestBed.overrideProvider` has nothing to hook into if nothing goes through DI
+
+### What you'll learn
+
+`providedIn: 'root'` already **is** the Singleton pattern — one instance per injector, created lazily on first use. Writing the classic GoF static-instance version inside a DI framework fights the framework instead of using it — and makes the service impossible to swap for a mock in tests.
+
+---
+
+## Challenge 16: Observer Pattern — Before You Recognize It As RxJS
+
+**Pattern:** Observer
+**Concepts:** Subscribe/notify, decoupled publishers and subscribers
+
+### The Problem
+
+You've used `Subject`, `BehaviorSubject`, and `.subscribe()` extensively — but "explain the Observer pattern" in an interview means explaining the mechanism, not naming an RxJS class.
+
+### Task
+
+Build a minimal event emitter from scratch, no RxJS:
+
+```ts
+class EventEmitter<T> {
+  private observers: Array<(value: T) => void> = [];
+
+  subscribe(observer: (value: T) => void): () => void {
+    // register observer, return an unsubscribe function
+  }
+
+  next(value: T): void {
+    // notify every currently-registered observer
+  }
+}
+```
+
+### Behavior
+
+- Multiple independent subscribers all receive every emitted value
+- Calling the returned unsubscribe function stops only that one subscriber from receiving future values
+- Unsubscribing during a `next()` notification doesn't throw or skip other subscribers
+
+### What you'll learn
+
+This is the entire mechanism a `Subject` is built on — a list of callbacks, notified in a loop. Once you've built it by hand, "what's the Observer pattern" stops being an abstract GoF definition and becomes "this, which I've written."
+
+---
+
 ## Acceptance Criteria
 
 - [ ] Challenge 1: Dumb component has zero `inject()` calls; at least one input uses `transform`
@@ -470,6 +743,13 @@ The Command Pattern's real power is reversibility — separating "what to do" fr
 - [ ] Challenge 7: Illegal state transitions are impossible at the type level; no boolean flags; Signal Forms used for step inputs
 - [ ] Challenge 8: No `any`, no `as` type assertions; `assertNever` used in every discriminated union switch
 - [ ] Challenge 9: Undo reverses the last action; history is empty after full undo sequence; undo button disabled when nothing to undo
+- [ ] Challenge 10: Component works with `formControlName`; `form.reset()` resets it; `onChange`/`onTouched` wired correctly
+- [ ] Challenge 11: No call site outside the factory imports a concrete `Notification` class
+- [ ] Challenge 12: `.build()` returns a frozen object; throws on missing required fields
+- [ ] Challenge 13: `fetchData` itself unmodified; decorators compose in any order
+- [ ] Challenge 14: No raw SDK field name appears outside the adapter
+- [ ] Challenge 15: Service uses `providedIn: 'root'` + injection, no static `getInstance()`
+- [ ] Challenge 16: Unsubscribe stops only that subscriber; all subscribers notified on `next()`
 
 ---
 
@@ -489,6 +769,13 @@ The Command Pattern's real power is reversibility — separating "what to do" fr
 | `assertNever` | Exhaustive union handling in TypeScript logic |
 | `@default never` | Same exhaustiveness guarantee in templates (v22) |
 | `ReadonlyArray` | Service exposes a collection that consumers must never mutate |
+| ControlValueAccessor | Custom component needs to work inside reactive/template-driven forms |
+| Factory Method | `new X()` for a growing set of related types scattered across call sites |
+| Builder | Object has many optional fields; constructor/object-literal call sites are unreadable |
+| Decorator (functional) | Need to add logging/retry/caching to a function without touching its body |
+| Adapter | Third-party API shape doesn't match your internal domain model |
+| Singleton | Need exactly one shared instance — use `providedIn: 'root'`, never hand-roll `getInstance()` |
+| Observer | Multiple subscribers need to react to values a publisher emits over time |
 
 ---
 
@@ -502,3 +789,6 @@ The Command Pattern's real power is reversibility — separating "what to do" fr
 - [satisfies vs as — dev.to](https://dev.to/benarambide/understanding-typescripts-satisfies-vs-as-3d6)
 - [readonly in TypeScript — betterstack.com](https://betterstack.com/community/guides/scaling-nodejs/ts-readonly/)
 - [Design Patterns in Angular — dev.to](https://dev.to/armandotrue/design-patterns-in-angular-part-i-3ld7)
+- [ControlValueAccessor guide — angular.love](https://angular.love/never-again-be-confused-when-implementing-controlvalueaccessor-in-angular-forms)
+- [Design Patterns in TypeScript — refactoring.guru](https://refactoring.guru/design-patterns/typescript)
+- [Builder in TypeScript — refactoring.guru](https://refactoring.guru/design-patterns/builder/typescript/example)

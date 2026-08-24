@@ -35,36 +35,6 @@
       "path": "./tsconfig.spec.json"
     },
     {
-      "path": "./projects/directives/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/directives/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/animation/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/animation/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/error-handling/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/error-handling/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/centralized-error-handling/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/centralized-error-handling/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/signals/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/signals/tsconfig.spec.json"
-    },
-    {
       "path": "./projects/challenge-07-auth-interceptors-guards/tsconfig.app.json"
     },
     {
@@ -77,12 +47,6 @@
       "path": "./projects/challenge-custom-rxjs/tsconfig.spec.json"
     },
     {
-      "path": "./projects/prep/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/prep/tsconfig.spec.json"
-    },
-    {
       "path": "./projects/challenge-11-centralized-error-handling/tsconfig.app.json"
     },
     {
@@ -93,12 +57,6 @@
     },
     {
       "path": "./projects/challenge-08-custom-directives/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/rxjs-course/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/rxjs-course/tsconfig.spec.json"
     },
     {
       "path": "./projects/challenge-12-rxjs-patterns/tsconfig.app.json"
