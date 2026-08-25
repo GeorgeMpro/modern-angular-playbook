@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+
 import {Highlight} from '../shared/directives/highlight';
 import {TitleCasePipe} from '@angular/common';
 import {DemoShell} from '../shared/components/demo-shell/demo-shell';

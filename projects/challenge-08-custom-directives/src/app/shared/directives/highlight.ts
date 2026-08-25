@@ -1,4 +1,4 @@
-import {computed, Directive,  input, signal} from '@angular/core';
+import {computed, Directive, input, signal} from '@angular/core';
 
 @Directive({
   selector: '[appHighlight]',
@@ -7,15 +7,15 @@ import {computed, Directive,  input, signal} from '@angular/core';
     '(mouseleave)': 'onMouseLeave()',
     '[style.background-color]': 'currentColor()',
     '[style.color]': 'fontColor()',
-    '[style.font-weight]':'600'
+    '[style.font-weight]': '600'
   }
 })
 export class Highlight {
   private readonly fontDark = '#111827';
   private readonly fontLight = '#f3f4f6'
 
-  appHighlight = input<string>('');
-  defaultColor = input.required<string>();
+  readonly appHighlight = input<string>('');
+  readonly defaultColor = input.required<string>();
 
   protected readonly currentColor = signal<string>('');
 
@@ -45,6 +45,4 @@ export class Highlight {
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     return luminance > 0.5;
   }
-
-
 }
